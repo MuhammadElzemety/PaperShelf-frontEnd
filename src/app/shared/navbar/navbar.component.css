@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Lora:wght@400;700&display=swap');
+
+.main-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px 50px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  font-family: 'Lora', serif;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.brand-logo {
+  height: 30px;
+  margin-right: 10px;
+}
+
+.brand-name {
+  font-family: Georgia, serif;
+  font-size: 2em;
+  color: #8b4513;
+  font-weight: bold;
+}
+
+.navbar-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 30px;
+}
+
+.navbar-links li {
+  position: relative;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #4a4a4a;
+  font-size: 1.05em;
+  font-weight: 600;
+  padding: 5px 0;
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+  white-space: nowrap;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #8b4513;
+  border-bottom: 2px solid #8b4513;
+}
+
+.has-dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 100%;
+  left: -20px;
+  background-color: #333;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  min-width: 160px;
+  z-index: 1000;
+  display: none;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.has-dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu li {
+  margin: 0;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 12px 20px;
+  text-decoration: none;
+  color: #f8f0e3;
+  font-size: 0.95em;
+  white-space: nowrap;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: left;
+}
+
+.dropdown-item:hover {
+  background-color: #555;
+  color: #ffd700;
+}
+
+.dropdown-arrow {
+  margin-left: 5px;
+  font-size: 0.8em;
+}
+
+.navbar-icons {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.icon-link {
+  text-decoration: none;
+  color: #4a4a4a;
+  font-size: 1.2em;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.icon-link:hover {
+  color: #8b4513;
+}
+
+.shopping-cart {
+  position: relative;
+}
+
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: #8b4513;
+  color: white;
+  font-size: 0.7em;
+  border-radius: 50%;
+  padding: 3px 6px;
+  line-height: 1;
+  min-width: 18px;
+  text-align: center;
+}
+
+@media (max-width: 992px) {
+  .main-navbar {
+    padding: 15px 20px;
+  }
+  .navbar-links {
+    gap: 15px;
+  }
+  .nav-link {
+    font-size: 0.95em;
+  }
+  .navbar-icons {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-links,
+  .navbar-icons {
+    display: none;
+  }
+  .main-navbar {
+    justify-content: center;
+  }
+}
