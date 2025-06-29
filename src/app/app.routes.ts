@@ -5,6 +5,7 @@ import { RegisterFormComponent } from './auth/register-form/register-form.compon
 import { ForgotPasswordFormComponent } from './auth/forgot-password-form/forgot-password-form.component';
 import { OtpFormComponent } from './auth/otp-form/otp-form.component';
 import { VerifyComponent } from './auth/verify/verify.component';
+import { BookCatalogComponent } from './pages/book-catalog.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/auth', pathMatch: 'full' },
@@ -19,7 +20,15 @@ export const routes: Routes = [
             { path: 'otp', component: OtpFormComponent },
             { path: 'verify', component: VerifyComponent },
             { path: '**', redirectTo: 'login', pathMatch: 'full' }
+      
+
         ]
     },
+
+    {
+    path: 'shop',
+    loadComponent: () =>
+      import('./pages/book-catalog.component').then(m => m.BookCatalogComponent)
+  },
     { path: "**", redirectTo: '/auth', pathMatch: 'full' }
 ];
