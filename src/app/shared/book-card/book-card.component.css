@@ -57,3 +57,22 @@
   padding: 4px 6px;
   font-size: 1rem;
 }
+
+.book-price {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: var(--light-gray);
+  font-size: 0.9rem;
+}
+
+.discounted-price {
+  color: var(--primary-gold);
+  font-weight: bold;
+  font-size: 1.1rem;
+}

@@ -1,11 +1,24 @@
 <div class="book-card">
-    <a [routerLink]="['/book', book.id]" class="book-click-area"></a>
+  <a [routerLink]="['/book', book.id]" class="book-click-area"></a>
+
   <img [src]="book.image" [alt]="book.title" class="book-image" />
 
   <div class="book-info">
     <h3 class="book-title">{{ book.title }}</h3>
     <p class="book-author">{{ book.author }}</p>
-    <p class="book-price">${{ book.price.toFixed(2) }}</p>
+
+    <div class="book-price">
+      <ng-container *ngIf="book.discountPercentage; else normalPrice">
+        <span class="original-price">${{ book.price.toFixed(2) }}</span>
+        <span class="discounted-price">
+          ${{ getDiscountedPrice(book.price, book.discountPercentage!).toFixed(2) }}
+        </span>
+      </ng-container>
+
+      <ng-template #normalPrice>
+        <span class="discounted-price">${{ book.price.toFixed(2) }}</span>
+      </ng-template>
+    </div>
 
     <div class="book-rating" *ngIf="book.rating">
       <span *ngFor="let star of getStars(book.rating)">⭐</span>
@@ -13,7 +26,11 @@
   </div>
 
   <div class="book-actions">
-    <button class="wishlist-btn" (click)="addToWishlist()"> <i class="fas fa-heart"></i></button>
-    <button class="cart-btn" (click)="addToCart()"> <i class="fas fa-shopping-cart"></i></button>
+    <button class="wishlist-btn" (click)="addToWishlist()">
+      <i class="fas fa-heart"></i>
+    </button>
+    <button class="cart-btn" (click)="addToCart()">
+      <i class="fas fa-shopping-cart"></i>
+    </button>
   </div>
 </div>

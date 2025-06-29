@@ -1,86 +1,31 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import { Book } from '../models/book.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BooksService {
-  getBooks(): Book[] {
-    return [
-      {
-        id: '1',
-        title: 'The Witchstone',
-        author: 'Francesca May',
-        price: 18,
-        rating: 4,
-        image: 'https://covers.openlibrary.org/b/id/10523322-L.jpg'
 
+  constructor(private http: HttpClient) {}
 
-      },
-      {
-        id: '2',
-        title: 'A Crooked Tree',
-        author: 'Una Mannion',
-        price: 26,
-        rating: 5,
-        image: 'https://covers.openlibrary.org/b/id/10523322-L.jpg'
+  getBooks(): Observable<Book[]> {
+    return this.http
+      .get<any>('https://api.themoviedb.org/3/trending/movie/week?api_key=c7b217b469f69f84e1f03b6298db99bc')
+      .pipe(
+        map(res => {
+          return res.results.map((movie: any) => ({
+            id: movie.id.toString(),                       
+            title: movie.title || 'Untitled',                 
+            author: movie.original_language,                 
+            price: Math.floor(Math.random() * 100) + 10,     
+            discountPercentage: Math.floor(Math.random() * 30), 
 
-      },
-      {
-        id: '3',
-        title: 'The Rib King',
-        author: 'Ladee Hubbard',
-        price: 29,
-        rating: 3,
-        image: 'https://covers.openlibrary.org/b/id/10523322-L.jpg'
-
-      },
-      {
-        id: '4',
-        title: 'The Bad Guys',
-        author: 'Aaron Blabey',
-        price: 34,
-        rating: 4,
-       image: 'https://covers.openlibrary.org/b/id/10523322-L.jpg'
-
-      },
-       {
-        id: '1',
-        title: 'The Witchstone',
-        author: 'Francesca May',
-        price: 18,
-        rating: 4,
-       image: 'https://covers.openlibrary.org/b/id/10523322-L.jpg'
-
-      },
-      {
-        id: '2',
-        title: 'A Crooked Tree',
-        author: 'Una Mannion',
-        price: 26,
-        rating: 5,
-        image: 'https://covers.openlibrary.org/b/id/10523322-L.jpg'
-
-      },
-      {
-        id: '3',
-        title: 'The Rib King',
-        author: 'Ladee Hubbard',
-        price: 29,
-        rating: 3,
-        image: 'https://covers.openlibrary.org/b/id/10523322-L.jpg'
-
-      },
-      {
-        id: '4',
-        title: 'The Bad Guys',
-        author: 'Aaron Blabey',
-        price: 34,
-        rating: 4,
-       image: 'https://covers.openlibrary.org/b/id/10523322-L.jpg'
-
-      }
-    ];
+            rating: Math.floor(movie.vote_average / 2),          
+            image: `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
+          }));
+        })
+      );
   }
 }
-

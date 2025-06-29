@@ -22,6 +22,10 @@ export class BookCardComponent {
   }
   getStars(rating: number): number[] {
   return Array(Math.round(rating)).fill(0);
-}
+ }
+ getDiscountedPrice(price: number, discount: number): number {
+  return price - (price * discount / 100);
+ }
+
 
 }

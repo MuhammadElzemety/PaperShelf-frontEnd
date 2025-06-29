@@ -17,6 +17,13 @@ export class BookCatalogComponent {
   constructor(private booksService: BooksService) {}
 
   ngOnInit(): void {
-    this.books = this.booksService.getBooks(); 
+    this.booksService.getBooks().subscribe({
+  next: (data) => {
+    this.books = data;
+  },
+  error: (err) => {
+    console.error('Error fetching books:', err);
+  }
+});
   }
 }
