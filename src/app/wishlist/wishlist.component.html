@@ -1,0 +1,126 @@
+<div class="wishlist-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Wishlist Page</h1>
+    <div class="dropdown-arrow">▼</div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading products...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <div class="error-message">
+      <h3>Oops! Something went wrong</h3>
+      <p>{{ error }}</p>
+      <button class="btn btn-retry" (click)="retryLoading()">Try Again</button>
+    </div>
+  </div>
+
+  <!-- Wishlist Content -->
+  <div *ngIf="!loading && !error" class="wishlist-content">
+    <!-- Wishlist Table -->
+    <div class="wishlist-table">
+      <!-- Table Header -->
+      <div class="table-header">
+        <div class="header-checkbox">
+          <input
+            type="checkbox"
+            [checked]="allSelected"
+            (change)="toggleSelectAll()"
+            id="selectAll"
+          />
+          <label for="selectAll"></label>
+        </div>
+        <div class="header-product">Product Name</div>
+        <div class="header-price">Unit Price</div>
+        <div class="header-stock">Stock Status</div>
+        <div class="header-action">Action</div>
+      </div>
+
+      <!-- Table Rows -->
+      <div class="table-row" *ngFor="let item of wishlistItems">
+        <div class="row-checkbox">
+          <input
+            type="checkbox"
+            [(ngModel)]="item.selected"
+            (change)="updateSelectAll()"
+            [id]="'item-' + item.id"
+          />
+          <label [for]="'item-' + item.id"></label>
+        </div>
+
+        <div class="row-product">
+          <div class="product-image">
+            <img
+              [src]="item.image"
+              [alt]="item.name"
+              (error)="onImageError($event)"
+            />
+          </div>
+          <div class="product-name">
+            <a href="#" class="product-link">{{ item.name }}</a>
+          </div>
+        </div>
+
+        <div class="row-price">${{ item.price.toFixed(2) }}</div>
+
+        <div class="row-stock">
+          <span [class]="item.inStock ? 'in-stock' : 'out-of-stock'">
+            {{ item.inStock ? "In stock" : "Out of stock" }}
+          </span>
+        </div>
+        <div class="row-action">
+          <button
+            *ngIf="item.inStock"
+            class="btn btn-add-cart"
+            (click)="addToCart(item)"
+          >
+            Add to Cart
+          </button>
+          <button
+            *ngIf="!item.inStock"
+            class="btn btn-read-more"
+            (click)="readMore(item)"
+          >
+            Read more
+          </button>
+          <button class="btn btn-delete" (click)="deleteItem(item)">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="bulk-actions">
+      <div class="actions-row">
+        <div class="action-dropdown">
+          <select [(ngModel)]="selectedAction" class="actions-select">
+            <option value="">Actions</option>
+            <option value="addToCart">Add to Cart</option>
+          </select>
+          <button
+            class="btn btn-apply"
+            (click)="applyAction()"
+            [disabled]="!selectedAction"
+          >
+            Apply Action
+          </button>
+        </div>
+      </div>
+
+      <div class="bulk-buttons">
+        <button class="btn btn-add-selected" (click)="addSelectedToCart()">
+          Add Selected to Cart
+        </button>
+        <button class="btn btn-add-all" (click)="addAllToCart()">
+          Add All to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

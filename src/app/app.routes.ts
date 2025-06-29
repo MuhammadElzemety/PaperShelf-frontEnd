@@ -6,22 +6,24 @@ import { ForgotPasswordFormComponent } from './auth/forgot-password-form/forgot-
 import { OtpFormComponent } from './auth/otp-form/otp-form.component';
 import { VerifyComponent } from './auth/verify/verify.component';
 import { MainShopComponent } from './shop/main-shop/main-shop.component';
+import { WishlistComponent } from './wishlist/wishlist.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: '/auth', pathMatch: 'full' },
-    {
-        path: 'auth',
-        component: AuthComponent,
-        children: [
-            { path: '', redirectTo: 'login', pathMatch: 'full' },
-            { path: 'login', component: LoginFormComponent },
-            { path: 'register', component: RegisterFormComponent },
-            { path: 'forgot', component: ForgotPasswordFormComponent },
-            { path: 'otp', component: OtpFormComponent },
-            { path: 'verify', component: VerifyComponent },
-            { path: '**', redirectTo: 'login', pathMatch: 'full' }
-        ]
-    },
-    { path: 'shop', component: MainShopComponent },
-    { path: "**", redirectTo: '/auth', pathMatch: 'full' }
+  { path: '', redirectTo: '/auth', pathMatch: 'full' },
+  {
+    path: 'auth',
+    component: AuthComponent,
+    children: [
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+      { path: 'login', component: LoginFormComponent },
+      { path: 'register', component: RegisterFormComponent },
+      { path: 'forgot', component: ForgotPasswordFormComponent },
+      { path: 'otp', component: OtpFormComponent },
+      { path: 'verify', component: VerifyComponent },
+      { path: '**', redirectTo: 'login', pathMatch: 'full' },
+    ],
+  },
+  { path: 'shop', component: MainShopComponent },
+  { path: 'wishlist', component: WishlistComponent },
+  { path: '**', redirectTo: '/auth', pathMatch: 'full' },
 ];
