@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Lora:wght@400;700&display=swap');
 
 .main-navbar {
   display: flex;
@@ -7,7 +6,7 @@
   background: rgba(255, 255, 255, 0.05);
   padding: 15px 50px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  font-family: 'Lora', serif;
+  
 }
 
 .navbar-brand {
@@ -142,25 +141,70 @@
 
 @media (max-width: 992px) {
   .main-navbar {
-    padding: 15px 20px;
-  }
-  .navbar-links {
-    gap: 15px;
-  }
-  .nav-link {
-    font-size: 0.95em;
-  }
-  .navbar-icons {
-    gap: 15px;
-  }
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  
+  padding: 15px 20px;
+}
+
+.brand-name {
+  font-family: Georgia, serif;
+  font-size: 2em;
+  color: #8b4513;
+  font-weight: bold;
+}
+
+.nav-link,
+.icon-link {
+  color: #4a4a4a;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.nav-link:hover,
+.nav-link.active,
+.icon-link:hover {
+  color: #8b4513;
+}
+
+.cart-count.bg-brown {
+  background-color: #8b4513;
+  font-size: 0.7em;
+}
+
 }
 
 @media (max-width: 768px) {
-  .navbar-links,
-  .navbar-icons {
-    display: none;
-  }
   .main-navbar {
-    justify-content: center;
-  }
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  
+  padding: 15px 20px;
+}
+
+.brand-name {
+  font-family: Georgia, serif;
+  font-size: 2em;
+  color: #8b4513;
+  font-weight: bold;
+}
+
+.nav-link,
+.icon-link {
+  color: #4a4a4a;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.nav-link:hover,
+.nav-link.active,
+.icon-link:hover {
+  color: #8b4513;
+}
+
+.cart-count.bg-brown {
+  background-color: #8b4513;
+  font-size: 0.7em;
+}
+
 }

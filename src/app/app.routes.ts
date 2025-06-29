@@ -4,6 +4,7 @@ import { LoginFormComponent } from './auth/login-form/login-form.component';
 import { RegisterFormComponent } from './auth/register-form/register-form.component';
 import { ForgotPasswordFormComponent } from './auth/forgot-password-form/forgot-password-form.component';
 import { OtpFormComponent } from './auth/otp-form/otp-form.component';
+import { VerifyComponent } from './auth/verify/verify.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/auth', pathMatch: 'full' },
@@ -16,6 +17,7 @@ export const routes: Routes = [
             { path: 'register', component: RegisterFormComponent },
             { path: 'forgot', component: ForgotPasswordFormComponent },
             { path: 'otp', component: OtpFormComponent },
+            { path: 'verify', component: VerifyComponent },
             { path: '**', redirectTo: 'login', pathMatch: 'full' }
         ]
     },

@@ -1,1 +1,58 @@
-<p>register-form works!</p>
+<div class="login-header text-center mb-4">
+    <h2 class="fw-bold text-dark" style="font-family: 'Merriweather', serif;">Join the Readers' Club</h2>
+    <p class="slogan fs-6 text-muted">Create your account and start your journey.</p>
+</div>
+
+<div *ngIf="errorMessage" class="alert alert-danger text-center general-error-message">
+    {{ errorMessage }}
+</div>
+
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="login-form w-100" autocomplete="off">
+
+    <div class="form-group mb-4 text-start">
+        <label for="name" class="form-label">Name</label>
+        <input autocomplete="off" type="text" id="name" name="name" formControlName="name"
+            placeholder="Your full name" class="form-control"
+            [ngClass]="{'is-invalid': registerForm.get('name')?.invalid && registerForm.get('name')?.touched}">
+        <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
+            class="invalid-feedback validation-message">
+            <div *ngIf="registerForm.get('name')?.errors?.['required']">Name is required.</div>
+            <div *ngIf="registerForm.get('name')?.errors?.['minlength']">Name must be at least 3 characters.</div>
+        </div>
+    </div>
+
+    <div class="form-group mb-4 text-start">
+        <label for="email" class="form-label">Email</label>
+        <input autocomplete="off" type="email" id="email" name="email" formControlName="email"
+            placeholder="Your email address" class="form-control"
+            [ngClass]="{'is-invalid': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}">
+        <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+            class="invalid-feedback validation-message">
+            <div *ngIf="registerForm.get('email')?.errors?.['required']">Email is required.</div>
+            <div *ngIf="registerForm.get('email')?.errors?.['email']">Please enter a valid email address.</div>
+        </div>
+    </div>
+
+    <div class="form-group mb-4 text-start">
+        <label for="password" class="form-label">Password</label>
+        <input autocomplete="off" type="password" id="password" name="password" formControlName="password"
+            placeholder="Create a strong password" class="form-control"
+            [ngClass]="{'is-invalid': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}">
+        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+            class="invalid-feedback validation-message">
+            <div *ngIf="registerForm.get('password')?.errors?.['required']">Password is required.</div>
+            <div *ngIf="registerForm.get('password')?.errors?.['minlength']">At least 8 characters required.</div>
+            <div *ngIf="registerForm.get('password')?.errors?.['maxlength']">Cannot exceed 30 characters.</div>
+            <div *ngIf="registerForm.get('password')?.errors?.['pattern']">
+                Password: uppercase, lowercase, number, special ($!%*?&).
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100 fw-bold py-3 fs-5 login-btn"
+        [disabled]="registerForm.invalid">Register</button>
+
+    <div class="form-links d-flex justify-content-center align-items-center flex-wrap gap-2 mt-4">
+        <a routerLink="/auth/login" class="link text-secondary text-decoration-none small">Already have an account?</a>
+    </div>
+</form>
