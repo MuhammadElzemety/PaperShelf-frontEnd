@@ -1,0 +1,16 @@
+.offcanvas-custom {
+    width: 300px;         
+    max-width: 100%;
+    border-right: 1px solid #ddd;
+    background-color: var(--off-white);
+    z-index: 1050;
+  }
+  
+  @media (min-width: 768px) {
+    .offcanvas-custom {
+      position: static;   
+      transform: none;   
+      visibility: visible !important;
+    }
+  }
+  
