@@ -1,1 +1,44 @@
-<p>login-form works!</p>
+<div class="login-header mb-4">
+    <h2>Welcome to the Readers' Club</h2>
+    <p class="slogan">Discover worlds of knowledge and thought.</p>
+</div>
+
+<div *ngIf="errorMessage" class="alert alert-danger text-center">
+    {{ errorMessage }}
+</div>
+
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" autocomplete="off">
+    <div class="mb-3 text-start">
+        <label for="email" class="form-label">Email</label>
+        <input autocomplete="off" type="text" id="email" name="email" formControlName="email" class="form-control"
+            [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            placeholder="Enter your Email">
+        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="validation-message">
+            <div *ngIf="loginForm.get('email')?.errors?.['required']">Email is required.</div>
+            <div *ngIf="loginForm.get('email')?.errors?.['minlength']">Email must be at least 5 characters.</div>
+            <div *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email address.</div>
+        </div>
+    </div>
+
+    <div class="mb-3 text-start">
+        <label for="password" class="form-label">Password</label>
+        <input autocomplete="off" type="password" id="password" name="password" formControlName="password"
+            class="form-control"
+            [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            placeholder="Enter your secret password">
+        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            class="validation-message">
+            <div *ngIf="loginForm.get('password')?.errors?.['required']">Password is required.</div>
+            <div *ngIf="loginForm.get('password')?.errors?.['minlength']">must be at least 8 characters long.</div>
+            <div *ngIf="loginForm.get('password')?.errors?.['maxLength']">cannot exceed 30 characters.</div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn login-btn w-100" [disabled]="loginForm.invalid">Login</button>
+
+    <div class="form-links">
+        <a routerLink="/auth/forgot" class="link">?Forgot Password</a>
+        <span class="link-separator">|</span>
+        <a routerLink="/auth/register" class="link">Join Us Now</a>
+    </div>
+</form>

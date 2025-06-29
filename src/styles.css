@@ -1,5 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Lora:wght@400;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  margin: 0; 
-  padding: 0; 
-  box-sizing: border-box; 
+  font-family: 'Lora', serif;
+  background-color: var(--off-white);
+  color: var(--dark-gray);
+}
+
+:root {
+  --primary-gold: #e1b573;
+  --black: #000000;
+  --dark-gray: #222222;
+  --medium-gray: #555555;
+  --light-gray: #777777;
+  --very-light-gray: #cccccc;
+  --white: #ffffff;
+  --off-white: #f8f8f8;
+  /* ----------------------------------- */
+  --primary-rgba: rgba(44, 85, 48, 0.9);
+  --secondary-rgba: rgba(212, 165, 116, 0.9);
+  --accent-rgba: rgba(139, 69, 19, 0.9);
+  --overlay-rgba: rgba(0, 0, 0, 0.4);
+  --dark-rgba: rgba(44, 44, 44, 0.9);
+  --light--rgba: rgba(108, 117, 125, 0.9);
+  /* ----------------------------------- */
+  --gradient-start: #3A6073;
+  --gradient-end: #16222A;
+  --button-gradient-start: #084475;
+  --button-gradient-end: #1f649c;
+  --button-gradient-hover-start: #0c51ac;
+  --button-gradient-hover-end: #1518c9;
+  /* ----------------------------------- */
+  --error: #ac3d3d;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background-color: none;
+}
+
+img {
+  cursor: pointer;
+  display: block;
+  max-width: 100%;
 }

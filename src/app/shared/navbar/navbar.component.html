@@ -1,29 +1,51 @@
-<nav class="main-navbar">
-  <div class="navbar-brand">
-    <span class="brand-name">PaperShelf</span>
-  </div>
+<nav class="navbar navbar-expand-md main-navbar">
+  <div class="container-fluid">
+    <!-- Logo + Toggle Button -->
+    <a class="navbar-brand brand-name" href="#">PaperShelf</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+      aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-  <ul class="navbar-links">
-    <li><a href="#" class="nav-link active">HOME</a></li>
-    <li class="has-dropdown">
-      <a href="#" class="nav-link">PAGES <span class="dropdown-arrow">&#9662;</span></a>
-      <ul class="dropdown-menu">
-        <li><a href="#" class="dropdown-item">About Us</a></li>
-        <li><a href="#" class="dropdown-item">About Me</a></li>
-        <li><a href="#" class="dropdown-item">Cafe Menu</a></li>
-        <li><a href="#" class="dropdown-item">Membership</a></li>
+    <!-- Collapsible Content -->
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <!-- Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 navbar-links">
+        <li class="nav-item">
+          <a class="nav-link active" href="#">HOME</a>
+        </li>
+        <li class="nav-item dropdown has-dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            PAGES
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">About Us</a></li>
+            <li><a class="dropdown-item" href="#">About Me</a></li>
+            <li><a class="dropdown-item" href="#">Cafe Menu</a></li>
+            <li><a class="dropdown-item" href="#">Membership</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">BLOG</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">SHOP</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">CONTACT US</a>
+        </li>
       </ul>
-    </li>
-    <li><a href="#" class="nav-link">BLOG</a></li>
-    <li><a href="#" class="nav-link">SHOP</a></li>
-    <li><a href="#" class="nav-link">CONTACT US</a></li>
-  </ul>
 
-  <div class="navbar-icons">
-    <a href="#" class="icon-link"><i class="fas fa-search"></i></a>
-    <a href="#" class="icon-link shopping-cart">
-      <i class="fas fa-shopping-cart"></i>
-      <span class="cart-count">0</span>
-    </a>
+      <!-- Icons -->
+      <div class="d-flex navbar-icons">
+        <a href="#" class="icon-link me-3"><i class="fas fa-search"></i></a>
+        <a href="#" class="icon-link shopping-cart position-relative">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-brown">
+            0
+          </span>
+        </a>
+      </div>
+    </div>
   </div>
 </nav>
