@@ -1,6 +1,5 @@
 <div class="shop-header d-flex justify-content-end align-items-center gap-2 p-3 mb-3 shadow-sm rounded"
     style="background-color: var(--off-white);">
-
     <div class="position-relative">
         <button class="btn btn-outline-secondary" type="button" (click)="toggleSearch()">
             <i class="fas fa-search"></i>
@@ -25,33 +24,23 @@
             <li><a class="dropdown-item" href="#">Rating</a></li>
         </ul>
     </div>
-
 </div>
 
 <div class="shop-container d-flex gap-4 p-4">
     <app-filter (filtersApplied)="onFiltersApplied($event)"></app-filter>
 
     <main class="flex-grow-1">
-        <!-- <div class="products-grid row g-4">
+        <div class="products-grid row g-4">
             <div *ngFor="let book of books" class="col-sm-6 col-md-4 col-lg-3">
-                <div class="card h-100 shadow-sm border-0">
-                    <img [src]="book.image || 'https://via.placeholder.com/150'" class="card-img-top"
-                        alt="{{book.title}}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{book.title}}</h5>
-                        <p class="card-text">{{book.author}}</p>
-                        <p class="fw-bold text-primary">${{book.price}}</p>
-                        <p *ngIf="!book.inStock" class="text-danger">Out of Stock</p>
-                    </div>
-                </div>
+                <app-book-card [book]="book"></app-book-card>
             </div>
-        </div> -->
+        </div>
 
-        <!-- <div class="text-center mt-4">
+        <div class="text-center mt-4">
             <button class="btn btn-outline-primary me-2" (click)="onPageChanged(currentPage - 1)"
                 [disabled]="currentPage === 1">Prev</button>
             <span class="fw-bold">Page {{currentPage}}</span>
             <button class="btn btn-outline-primary ms-2" (click)="onPageChanged(currentPage + 1)">Next</button>
-        </div> -->
+        </div>
     </main>
 </div>
