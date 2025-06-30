@@ -2,28 +2,31 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BookService } from '../../services/book.service'; 
 import { FilterComponent } from '../filter/filter.component';
+import { BookCardComponent } from '../../shared/book-card/book-card.component';
+import { Book } from '../../interfaces/book';
 
 @Component({
   selector: 'app-main-shop',
   standalone: true,
-  imports: [CommonModule, FilterComponent],
+  imports: [CommonModule, FilterComponent, BookCardComponent],
   templateUrl: './main-shop.component.html',
   styleUrls: ['./main-shop.component.css']
 })
 export class MainShopComponent {
-  books: any[] = [];
+  books: Book[] = [];
   currentPage = 1;
   itemsPerPage = 8;
   currentFilters: any = {};
   showSearch: boolean = false;
 
-  toggleSearch() {
-    this.showSearch = !this.showSearch;
-  }
   constructor(private bookService: BookService) {}
 
   ngOnInit() {
     this.loadBooks();
+  }
+
+  toggleSearch() {
+    this.showSearch = !this.showSearch;
   }
 
   onFiltersApplied(filters: any) {
@@ -38,8 +41,8 @@ export class MainShopComponent {
   }
 
   loadBooks() {
-    this.bookService.getBooks(this.currentFilters, this.currentPage, this.itemsPerPage).subscribe(data => {
-      this.books = data;
+    this.bookService.getBooks(this.currentFilters, this.currentPage, this.itemsPerPage).subscribe(res => {
+      this.books = res.data.books;
     });
   }
 }
