@@ -6,6 +6,7 @@ import { ForgotPasswordFormComponent } from './auth/forgot-password-form/forgot-
 import { OtpFormComponent } from './auth/otp-form/otp-form.component';
 import { VerifyComponent } from './auth/verify/verify.component';
 import { MainShopComponent } from './shop/main-shop/main-shop.component';
+import { BookCatalogComponent } from './pages/book-catalog.component';
 import { WishlistComponent } from './wishlist/wishlist.component';
 
 export const routes: Routes = [
@@ -25,5 +26,4 @@ export const routes: Routes = [
   },
   { path: 'shop', component: MainShopComponent },
   { path: 'wishlist', component: WishlistComponent },
-  { path: '**', redirectTo: '/auth', pathMatch: 'full' },
-];
+  { path: '**', redirectTo: '/auth', pathMatch: 'full' }];
