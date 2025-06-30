@@ -7,6 +7,7 @@ import { OtpFormComponent } from './auth/otp-form/otp-form.component';
 import { VerifyComponent } from './auth/verify/verify.component';
 import { MainShopComponent } from './shop/main-shop/main-shop.component';
 import { BookCatalogComponent } from './pages/book-catalog.component';
+import { NotfoundComponent } from './shared/notfound/notfound.component';
 import { WishlistComponent } from './wishlist/wishlist.component';
 
 export const routes: Routes = [
@@ -20,10 +21,10 @@ export const routes: Routes = [
       { path: 'register', component: RegisterFormComponent },
       { path: 'forgot', component: ForgotPasswordFormComponent },
       { path: 'otp', component: OtpFormComponent },
-      { path: 'verify', component: VerifyComponent },
-      { path: '**', redirectTo: 'login', pathMatch: 'full' },
+      { path: 'verify', component: VerifyComponent }
     ],
   },
   { path: 'shop', component: MainShopComponent },
   { path: 'wishlist', component: WishlistComponent },
-  { path: '**', redirectTo: '/auth', pathMatch: 'full' }];
+  { path: "**", component: NotfoundComponent }
+]

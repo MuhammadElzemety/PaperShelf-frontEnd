@@ -40,7 +40,11 @@ export class LoginFormComponent {
       ]]
     });
   }
+  showPassword = false;
 
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
   onSubmit() {
     this.errorMessage = null;
     this.loginForm.markAllAsTouched();
@@ -52,7 +56,7 @@ export class LoginFormComponent {
         next: (response) => {
           localStorage.setItem('accessToken', response.accessToken);
           localStorage.setItem('refreshToken', response.refreshToken);
-          this.router.navigate(['/']);
+          this.router.navigate(['/shop']);
         },
         error: (err: any) => {
           this.errorMessage = err.error?.message || 'Login failed. Please try again.';

@@ -1,18 +1,10 @@
 
 .main-navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 15px 50px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  
+  padding: 15px 50px;  
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
-.navbar-brand {
-  display: flex;
-  align-items: center;
-}
 
 .brand-logo {
   height: 30px;
@@ -26,14 +18,9 @@
   font-weight: bold;
 }
 
-.navbar-links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 30px;
+.navbar-links{
+  gap: 20px;
 }
-
 .navbar-links li {
   position: relative;
 }
@@ -101,12 +88,6 @@
 .dropdown-arrow {
   margin-left: 5px;
   font-size: 0.8em;
-}
-
-.navbar-icons {
-  display: flex;
-  align-items: center;
-  gap: 25px;
 }
 
 .icon-link {
