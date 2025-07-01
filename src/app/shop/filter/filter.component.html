@@ -13,8 +13,9 @@
         <h6 class="fw-bold mb-2" style="color: var(--dark-gray);">Categories</h6>
         <div *ngFor="let category of displayedCategories">
             <div class="form-check">
-                <input type="checkbox" class="form-check-input" [id]="category" [value]="category"
-                    (change)="toggleCategory($event)">
+                <input type="checkbox" class="form-check-input" [id]="category"
+                    [(ngModel)]="isCategorySelected[category]"
+                    (ngModelChange)="onCategoryModelChange(category, $event)">
                 <label class="form-check-label" [for]="category">{{ category }}</label>
             </div>
         </div>
@@ -29,29 +30,13 @@
         <h6 class="fw-bold mb-2" style="color: var(--dark-gray);">Authors</h6>
         <div *ngFor="let author of displayedAuthors">
             <div class="form-check">
-                <input type="checkbox" class="form-check-input" [id]="author" [value]="author"
-                    (change)="toggleAuthor($event)">
+                <input type="checkbox" class="form-check-input" [id]="author" [(ngModel)]="isAuthorSelected[author]"
+                    (ngModelChange)="onAuthorModelChange(author, $event)">
                 <label class="form-check-label" [for]="author">{{ author }}</label>
             </div>
         </div>
         <button *ngIf="displayedAuthors.length < authors.length" class="btn btn-sm btn-outline-primary mt-2"
             (click)="loadMoreAuthors()">
-            Load More
-        </button>
-    </div>
-
-    <!-- Publishers -->
-    <div class="mb-4">
-        <h6 class="fw-bold mb-2" style="color: var(--dark-gray);">Publishers</h6>
-        <div *ngFor="let publisher of displayedPublishers">
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" [id]="publisher" [value]="publisher"
-                    (change)="togglePublisher($event)">
-                <label class="form-check-label" [for]="publisher">{{ publisher }}</label>
-            </div>
-        </div>
-        <button *ngIf="displayedPublishers.length < publishers.length" class="btn btn-sm btn-outline-primary mt-2"
-            (click)="loadMorePublishers()">
             Load More
         </button>
     </div>
@@ -62,33 +47,29 @@
         <div class="d-flex align-items-center gap-2">
             <div class="input-group">
                 <input type="number" class="form-control" [(ngModel)]="selectedPriceMin" [min]="priceFloor"
-                    [max]="priceCeil" placeholder="Min">
+                    [max]="priceCeil" (blur)="applyFilters()" placeholder="Min">
             </div>
             <span class="fw-bold">-</span>
             <div class="input-group">
                 <input type="number" class="form-control" [(ngModel)]="selectedPriceMax" [min]="priceFloor"
-                    [max]="priceCeil" placeholder="Max">
+                    [max]="priceCeil" (blur)="applyFilters()" placeholder="Max">
             </div>
         </div>
     </div>
 
     <!-- Rating -->
-    <div class="mb-4">
-        <h6 class="fw-bold mb-2" style="color: var(--dark-gray);">Rating</h6>
-        <div *ngFor="let rate of ratings">
-            <div class="form-check">
-                <input type="radio" name="rating" class="form-check-input" [id]="'rating' + rate" [value]="rate"
-                    (change)="changeRating(rate)">
-                <label class="form-check-label" [for]="'rating' + rate">
-                    <span [innerHTML]="getStars(rate)"></span> & Up
-                </label>
-            </div>
+    <div *ngFor="let rate of ratings">
+        <div class="form-check">
+            <input type="radio" name="rating" class="form-check-input" [id]="'rating' + rate" [value]="rate"
+                [(ngModel)]="selectedRating" (ngModelChange)="changeRating($event)">
+            <label class="form-check-label" [for]="'rating' + rate">
+                <span [innerHTML]="getStars(rate)"></span>
+            </label>
         </div>
     </div>
 
     <!-- Buttons -->
     <div class="d-flex justify-content-between mt-3">
         <button class="btn btn-outline-secondary btn-sm" (click)="clearAll()">Clear All</button>
-        <button class="btn btn-primary btn-sm" (click)="applyFilters()">Apply</button>
     </div>
 </div>
