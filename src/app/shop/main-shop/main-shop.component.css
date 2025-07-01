@@ -1,3 +1,24 @@
+
+.shop{
+      background: linear-gradient(135deg, #E8E1D1 0%, #FAF7F0 50%, #F4EEE0 100%);
+      font-family: "Open Sans", sans-serif;
+}
+.text-center {
+    text-align: center;
+  }
+  
+  .fancy-bookshop-title {
+    position: relative;
+    padding-bottom: 10px; 
+  }
+
+  .fancy-bookshop-title::after {
+    content: "";
+    display: block;
+    margin: 0 auto; 
+    width: 60px; 
+    border-bottom: 3px solid #000; 
+  }
 .pagination-container button:disabled {
     opacity: 0.6;
     cursor: not-allowed;

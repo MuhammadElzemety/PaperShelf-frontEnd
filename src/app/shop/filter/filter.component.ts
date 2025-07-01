@@ -14,6 +14,16 @@ const API_URL = environment.apiBaseUrl + '/books';
   styleUrl: './filter.component.css'
 })
 export class FilterComponent {
+   toggles = {
+    categories: true,
+    authors: true,
+    price: true,
+    rating: true
+  };
+
+  toggleSection(section: keyof typeof this.toggles) {
+    this.toggles[section] = !this.toggles[section];
+  }
   @Output() filtersApplied = new EventEmitter<any>();
 
   categories: string[] = [];
