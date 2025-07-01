@@ -2,7 +2,10 @@
 .main-navbar {
   padding: 15px 50px;  
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  z-index: 8000;
+  background-color: #FAF7F0;
+  position: sticky;
+  top: 0;
 }
 
 
@@ -122,9 +125,8 @@
 
 @media (max-width: 992px) {
   .main-navbar {
-  background: rgba(255, 255, 255, 0.05);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  
+  z-index: 8000;
   padding: 15px 20px;
 }
 

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { RoleService } from '../../services/role.service';
 
 
 @Component({
@@ -25,6 +26,7 @@ export class LoginFormComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private rolrserv : RoleService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -54,8 +56,14 @@ export class LoginFormComponent {
 
       this.authService.login({ email, password }).subscribe({
         next: (response) => {
-          localStorage.setItem('accessToken', response.accessToken);
-          localStorage.setItem('refreshToken', response.refreshToken);
+          localStorage.setItem('accessToken', response.data.accessToken);
+          localStorage.setItem('refreshToken', response.data.refreshToken);
+          this.rolrserv.setUser({
+            name: response.data.user.name,
+            email: response.data.user.email,
+            role: response.data.user.role,
+            token: response.data.accessToken
+          });
           this.router.navigate(['/shop']);
         },
         error: (err: any) => {
