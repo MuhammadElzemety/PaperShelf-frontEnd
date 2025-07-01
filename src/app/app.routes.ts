@@ -8,6 +8,9 @@ import { VerifyComponent } from './auth/verify/verify.component';
 import { MainShopComponent } from './shop/main-shop/main-shop.component';
 import { NotfoundComponent } from './shared/notfound/notfound.component';
 import { WishlistComponent } from './wishlist/wishlist.component';
+import { HomeComponent } from './home/home.component';
+import { roleGuard } from './guards/role.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/auth', pathMatch: 'full' },
@@ -23,7 +26,8 @@ export const routes: Routes = [
       { path: 'verify', component: VerifyComponent }
     ],
   },
-  { path: 'shop', component: MainShopComponent },
-  { path: 'wishlist', component: WishlistComponent },
-  { path: "**", component: NotfoundComponent }
+  { path: 'shop', component: MainShopComponent , canActivate:[AuthGuard]},
+  { path: 'wishlist', component: WishlistComponent , canActivate:[AuthGuard]},
+  { path: 'home', component: HomeComponent , canActivate:[AuthGuard]},
+  { path: "**", component: NotfoundComponent , canActivate:[AuthGuard]}
 ]
