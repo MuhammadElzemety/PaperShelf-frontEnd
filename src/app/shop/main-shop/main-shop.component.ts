@@ -20,8 +20,20 @@ export class MainShopComponent {
   itemsPerPage = 8;
   currentFilters: any = {};
   showSearch: boolean = false;
-
+  isLoading = false;
   searchQuery: string = '';
+
+  totalPages = 1;
+
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalBooks: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+    limit: number;
+  } | null = null;
+
   private searchSubject = new Subject<string>();
 
   constructor(private bookService: BookService) { }
@@ -29,7 +41,7 @@ export class MainShopComponent {
   ngOnInit() {
     this.loadBooks();
 
-    // اعمل سبسكرايب عشان نعمل debounce على البحث
+
     this.searchSubject.pipe(
       debounceTime(500)
     ).subscribe(query => {
@@ -59,6 +71,14 @@ export class MainShopComponent {
     });
   }
 
+  totalPagesArray(): number[] {
+    const pages: number[] = [];
+    for (let i = 1; i <= this.totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
   onFiltersApplied(filters: any) {
     this.currentFilters = filters;
     this.currentPage = 1;
@@ -71,8 +91,18 @@ export class MainShopComponent {
   }
 
   loadBooks() {
-    this.bookService.getBooks(this.currentFilters, this.currentPage, this.itemsPerPage).subscribe(res => {
-      this.books = res.data.books;
+    this.isLoading = true;
+    this.bookService.getBooks(this.currentFilters, this.currentPage, this.itemsPerPage).subscribe({
+      next: res => {
+        this.books = res.data.books;
+        this.pagination = res.data.pagination;
+      },
+      error: err => {
+        console.error('Error loading books:', err);
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
     });
   }
 }

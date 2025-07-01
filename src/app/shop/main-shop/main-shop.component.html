@@ -2,15 +2,15 @@
     style="background-color: var(--off-white);">
     <div class="position-relative">
         <button class="btn btn-outline-secondary" type="button" (click)="toggleSearch()">
-          <i class="fas fa-search"></i>
+            <i class="fas fa-search"></i>
         </button>
         <input *ngIf="showSearch" type="text" id="searchInput" class="form-control position-absolute end-0 top-0"
-               [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
-               style="width: 200px; z-index: 100;" placeholder="Search books...">
-      </div>
+            [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()" style="width: 200px; z-index: 100;"
+            placeholder="Search books...">
+    </div>
 
 
-    <button class="btn btn-outline-secondary d-md-none" type="button" data-bs-toggle="offcanvas"
+    <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas"
         data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas">
         <i class="fas fa-filter me-2"></i>
     </button>
@@ -28,21 +28,54 @@
     </div>
 </div>
 
+<div *ngIf="isLoading" class="position-fixed top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center bg-white bg-opacity-100 z-3">
+    <i class="fas fa-book fa-4x text-primary mb-3 spin-animation"></i>
+    <p class="fw-bold text-primary fs-5">Loading books...</p>
+  </div>
+
 <div class="shop-container d-flex gap-4 p-4">
     <app-filter (filtersApplied)="onFiltersApplied($event)"></app-filter>
 
-    <main class="flex-grow-1">
-        <div class="products-grid row g-4">
-            <div *ngFor="let book of books" class="col-sm-6 col-md-4 col-lg-3">
-                <app-book-card [book]="book"></app-book-card>
+    <main class="flex-grow-1 container-fluid d-flex flex-column justify-content-center align-items-center py-5">
+
+        <div class="d-flex flex-wrap gap-4 justify-content-center w-100">
+            <div *ngFor="let book of books" class="book-flex-card">
+              <app-book-card [book]="book"></app-book-card>
             </div>
+          </div>
+
+        <ng-template #noData>
+            <div class="text-center p-5">
+                <i class="fas fa-box-open fa-3x mb-3 text-muted"></i>
+                <h4 class="fw-bold text-muted">No books found</h4>
+            </div>
+        </ng-template>
+
+        <div class="pagination-container d-flex flex-wrap justify-content-center align-items-center gap-2 mt-4"
+            *ngIf="pagination && books.length > 0 && pagination.totalBooks > itemsPerPage">
+
+            <button class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-sm"
+                (click)="onPageChanged(pagination.currentPage - 1)" [disabled]="!pagination.hasPrevPage">
+                <i class="bi bi-chevron-left"></i> Prev
+            </button>
+
+            <span class="fw-semibold fs-6 text-primary-emphasis bg-light rounded-pill px-3 py-2 shadow-sm">
+                Page {{pagination.currentPage}} of {{pagination.totalPages}}
+            </span>
+
+            <button class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-sm"
+                (click)="onPageChanged(pagination.currentPage + 1)" [disabled]="!pagination.hasNextPage">
+                Next <i class="bi bi-chevron-right"></i>
+            </button>
         </div>
 
-        <div class="text-center mt-4">
-            <button class="btn btn-outline-primary me-2" (click)="onPageChanged(currentPage - 1)"
-                [disabled]="currentPage === 1">Prev</button>
-            <span class="fw-bold">Page {{currentPage}}</span>
-            <button class="btn btn-outline-primary ms-2" (click)="onPageChanged(currentPage + 1)">Next</button>
+        <div class="text-center mt-2 text-muted"
+            *ngIf="pagination && books.length > 0 && pagination.totalBooks > itemsPerPage">
+            <small class="bg-light rounded-pill px-3 py-1 shadow-sm d-inline-block">
+                Showing {{pagination.limit}} books per page • Total Books: {{pagination.totalBooks}}
+            </small>
         </div>
+
     </main>
+
 </div>

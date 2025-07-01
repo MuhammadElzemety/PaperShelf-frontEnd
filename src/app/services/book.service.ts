@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Book } from '../interfaces/book';
+import { Book, BookPagination } from '../interfaces/book';
 import { environment } from '../../environments/environment';
 import { map } from 'rxjs/operators';
 
@@ -16,27 +16,20 @@ export class BookService {
 
   constructor(private http: HttpClient) {}
 
-  getBooks(filters: any, page: number, limit: number): Observable<{ data: { books: Book[] } }> {
+  getBooks(filters: any, page: number, limit: number): Observable<{ data: { books: Book[], pagination: BookPagination } }> {
     let params = new HttpParams()
       .set('page', page)
       .set('limit', limit);
   
-    // Categories
     if (filters.categories?.length) {
       params = params.set('category', filters.categories.join(','));
     }
-  
-    // Authors
     if (filters.authors?.length) {
       params = params.set('author', filters.authors.join(','));
     }
-    
-    // Rating
     if (filters.rating) {
       params = params.set('rating', filters.rating.toString());
     }
-  
-    // Price Range
     if (filters.priceRange) {
       if (filters.priceRange.min !== undefined) {
         params = params.set('minPrice', filters.priceRange.min.toString());
@@ -70,10 +63,11 @@ export class BookService {
           createdAt: book.createdAt,
           updatedAt: book.updatedAt,
         }));
-        return { data: { books: mappedBooks } };
+        return { data: { books: mappedBooks, pagination: res.data.pagination } };
       })
     );
   }
+  
   searchBooks(query: string, page: number = 1, limit: number = 20): Observable<{ data: { books: Book[], pagination: any } }> {
     const params = new HttpParams()
       .set('q', query)

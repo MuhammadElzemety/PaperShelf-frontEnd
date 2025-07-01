@@ -1,0 +1,59 @@
+.pagination-container button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.pagination-container button,
+.pagination-container span {
+    transition: transform 0.2s ease;
+}
+
+.pagination-container button:hover:not(:disabled),
+.pagination-container span:hover {
+    transform: scale(1.05);
+}
+
+
+.spin-animation {
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+.book-flex-card {
+    flex: 1 1 calc(20% - 1rem);
+    min-width: 220px;
+}
+
+@media (max-width: 1600px) {
+    .book-flex-card {
+        flex: 1 1 calc(25% - 1rem);
+    }
+}
+
+@media (max-width: 1200px) {
+    .book-flex-card {
+        flex: 1 1 calc(33.33% - 1rem);
+    }
+}
+
+@media (max-width: 992px) {
+    .book-flex-card {
+        flex: 1 1 calc(50% - 1rem);
+    }
+}
+
+@media (max-width: 576px) {
+    .book-flex-card {
+        flex: 1 1 100%;
+    }
+}
