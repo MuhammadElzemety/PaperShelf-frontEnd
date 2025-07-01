@@ -11,6 +11,7 @@ import { WishlistComponent } from './wishlist/wishlist.component';
 import { HomeComponent } from './home/home.component';
 import { roleGuard } from './guards/role.guard';
 import { AuthGuard } from './guards/auth.guard';
+import { BookSliderComponent } from './book-slider/book-slider.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/auth', pathMatch: 'full' },
@@ -29,5 +30,6 @@ export const routes: Routes = [
   { path: 'shop', component: MainShopComponent , canActivate:[AuthGuard]},
   { path: 'wishlist', component: WishlistComponent , canActivate:[AuthGuard]},
   { path: 'home', component: HomeComponent , canActivate:[AuthGuard]},
+  { path: 'book', component: BookSliderComponent , canActivate:[AuthGuard]},
   { path: "**", component: NotfoundComponent , canActivate:[AuthGuard]}
 ]
