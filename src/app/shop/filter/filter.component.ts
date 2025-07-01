@@ -2,6 +2,9 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../environments/environment';
+
+const API_URL = environment.apiBaseUrl + '/books';
 
 @Component({
   selector: 'app-filter',
@@ -15,27 +18,25 @@ export class FilterComponent {
 
   categories: string[] = [];
   authors: string[] = [];
-  publishers: string[] = [];
   displayedCategories: string[] = [];
   displayedAuthors: string[] = [];
-  displayedPublishers: string[] = [];
   ratings = [5, 4, 3, 2, 1];
 
   selectedCategories: string[] = [];
   selectedAuthors: string[] = [];
-  selectedPublishers: string[] = [];
   selectedRating: number | null = null;
 
   itemsPerPage = 5;
   currentCategoryPage = 1;
   currentAuthorPage = 1;
-  currentPublisherPage = 1;
 
   priceFloor: number = 0;
   priceCeil: number = 5000;
   selectedPriceMin: number = 0;
   selectedPriceMax: number = 5000;
 
+  isCategorySelected: { [key: string]: boolean } = {};
+  isAuthorSelected: { [key: string]: boolean } = {};
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
@@ -43,17 +44,18 @@ export class FilterComponent {
   }
 
   loadFilters() {
-    this.http.get<string[]>('http://localhost:3000/categories').subscribe(data => {
-      this.categories = data;
-      this.loadMoreCategories();
+    this.http.get<any>(`${API_URL}/categories`).subscribe(res => {
+      if (res.success && res.data?.categories) {
+        this.categories = res.data.categories.map((c: any) => c.name);
+        this.loadMoreCategories();
+      }
     });
-    this.http.get<string[]>('http://localhost:3000/authors').subscribe(data => {
-      this.authors = data;
-      this.loadMoreAuthors();
-    });
-    this.http.get<string[]>('http://localhost:3000/publishers').subscribe(data => {
-      this.publishers = data;
-      this.loadMorePublishers();
+
+    this.http.get<any>(`${API_URL}/authors`).subscribe(res => {
+      if (res.success && res.data?.authors) {
+        this.authors = res.data.authors.map((a: any) => a.name);
+        this.loadMoreAuthors();
+      }
     });
   }
 
@@ -71,13 +73,6 @@ export class FilterComponent {
     this.currentAuthorPage++;
   }
 
-  loadMorePublishers() {
-    const start = (this.currentPublisherPage - 1) * this.itemsPerPage;
-    const end = start + this.itemsPerPage;
-    this.displayedPublishers.push(...this.publishers.slice(start, end));
-    this.currentPublisherPage++;
-  }
-
   toggleSelection(array: string[], value: string, checked: boolean) {
     if (checked) {
       array.push(value);
@@ -90,40 +85,49 @@ export class FilterComponent {
   toggleCategory(event: Event) {
     const target = event.target as HTMLInputElement;
     this.toggleSelection(this.selectedCategories, target.value, target.checked);
+    this.applyFilters();
   }
 
   toggleAuthor(event: Event) {
     const target = event.target as HTMLInputElement;
     this.toggleSelection(this.selectedAuthors, target.value, target.checked);
-  }
-
-  togglePublisher(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.toggleSelection(this.selectedPublishers, target.value, target.checked);
+    this.applyFilters();
   }
 
   changeRating(rate: number) {
     this.selectedRating = rate;
+    this.applyFilters();
+  }
+  onCategoryModelChange(category: string, checked: boolean) {
+    this.toggleSelection(this.selectedCategories, category, checked);
+    this.applyFilters();
   }
 
+  onAuthorModelChange(author: string, checked: boolean) {
+    this.toggleSelection(this.selectedAuthors, author, checked);
+    this.applyFilters();
+  }
   getStars(rate: number): string {
-    return '★'.repeat(rate) + '☆'.repeat(5 - rate);
+    return '⭐'.repeat(rate) + '☆'.repeat(5 - rate);
   }
 
   clearAll() {
     this.selectedCategories = [];
     this.selectedAuthors = [];
-    this.selectedPublishers = [];
     this.selectedRating = null;
     this.selectedPriceMin = 0;
-    this.selectedPriceMax = 1000;
+    this.selectedPriceMax = 5000;
+
+    this.isCategorySelected = {};
+    this.isAuthorSelected = {};
+
+    this.applyFilters();
   }
 
   applyFilters() {
     this.filtersApplied.emit({
       categories: this.selectedCategories,
       authors: this.selectedAuthors,
-      publishers: this.selectedPublishers,
       rating: this.selectedRating,
       priceRange: {
         min: this.selectedPriceMin,
