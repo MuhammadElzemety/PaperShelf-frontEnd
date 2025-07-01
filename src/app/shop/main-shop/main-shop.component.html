@@ -2,11 +2,13 @@
     style="background-color: var(--off-white);">
     <div class="position-relative">
         <button class="btn btn-outline-secondary" type="button" (click)="toggleSearch()">
-            <i class="fas fa-search"></i>
+          <i class="fas fa-search"></i>
         </button>
-        <input *ngIf="showSearch" type="text" class="form-control position-absolute end-0 top-0"
-            style="width: 200px; z-index: 100;" placeholder="Search books...">
-    </div>
+        <input *ngIf="showSearch" type="text" id="searchInput" class="form-control position-absolute end-0 top-0"
+               [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
+               style="width: 200px; z-index: 100;" placeholder="Search books...">
+      </div>
+
 
     <button class="btn btn-outline-secondary d-md-none" type="button" data-bs-toggle="offcanvas"
         data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas">
