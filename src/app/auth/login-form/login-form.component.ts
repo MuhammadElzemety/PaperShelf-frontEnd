@@ -12,7 +12,7 @@ import { RoleService } from '../../services/role.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink, 
+    RouterLink,
     RouterLinkActive
   ],
   templateUrl: './login-form.component.html',
@@ -26,7 +26,7 @@ export class LoginFormComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private rolrserv : RoleService,
+    private rolrserv: RoleService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -64,7 +64,14 @@ export class LoginFormComponent {
             role: response.data.user.role,
             token: response.data.accessToken
           });
-          this.router.navigate(['/shop']);
+          const userRole = response.data.user.role;
+          console.log(userRole);
+
+          if (userRole === 'admin') {
+            this.router.navigate(['/dashboard']);
+          } else {
+            this.router.navigate(['/home']);
+          }
         },
         error: (err: any) => {
           this.errorMessage = err.error?.message || 'Login failed. Please try again.';

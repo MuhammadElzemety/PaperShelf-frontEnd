@@ -12,9 +12,14 @@ import { HomeComponent } from './home/home.component';
 import { roleGuard } from './guards/role.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { BookSliderComponent } from './book-slider/book-slider.component';
+import { DashboardGuard } from './guards/admin.guard';
+import { DashboardComponent } from './admin/dashboard/dashboard.component';
+import { NotFoundDashboardComponent } from './admin/not-found-dashboard/not-found-dashboard.component';
+import { HomeDashboardComponent } from './admin/home-dashboard/home-dashboard.component';
+import { ListUsersDashboardComponent } from './admin/users/list-users-dashboard/list-users-dashboard.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/auth', pathMatch: 'full' },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
     path: 'auth',
     component: AuthComponent,
@@ -27,9 +32,21 @@ export const routes: Routes = [
       { path: 'verify', component: VerifyComponent }
     ],
   },
-  { path: 'shop', component: MainShopComponent , canActivate:[AuthGuard]},
+  { path: 'shop', component: MainShopComponent},
   { path: 'wishlist', component: WishlistComponent , canActivate:[AuthGuard]},
-  { path: 'home', component: HomeComponent , canActivate:[AuthGuard]},
+  { path: 'home', component: HomeComponent},
   { path: 'book', component: BookSliderComponent , canActivate:[AuthGuard]},
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [DashboardGuard],
+    children: [
+      { path: '', component: HomeDashboardComponent },
+      { path: 'users', component: ListUsersDashboardComponent },
+      { path: 'users/authors', component: ListUsersDashboardComponent },
+      { path: 'users/admins', component: ListUsersDashboardComponent },
+      { path: '**', component: NotFoundDashboardComponent }
+    ]
+  },
   { path: "**", component: NotfoundComponent , canActivate:[AuthGuard]}
 ]
