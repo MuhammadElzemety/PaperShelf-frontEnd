@@ -27,12 +27,12 @@ export class WishlistComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    this.productService.getProducts().subscribe({
-      next: (products) => {
+    this.productService.getWishlist().subscribe({
+      next: (products: WishlistItem[]) => {
         this.wishlistItems = products;
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading products:', error);
         this.error = 'Failed to load products. Please try again later.';
         this.loading = false;
@@ -44,7 +44,7 @@ export class WishlistComponent implements OnInit {
   private loadFallbackData(): void {
     this.wishlistItems = [
       {
-        id: 1,
+        id: '1',
         name: 'A Crooked Tree',
         price: 26.0,
         image: 'assets/images/crooked-tree.jpg',
@@ -52,7 +52,7 @@ export class WishlistComponent implements OnInit {
         selected: false,
       },
       {
-        id: 2,
+        id: '2',
         name: 'White Cat, Black Dog',
         price: 34.0,
         image: 'assets/images/white-cat-black-dog.jpg',
@@ -60,7 +60,7 @@ export class WishlistComponent implements OnInit {
         selected: false,
       },
       {
-        id: 3,
+        id: '3',
         name: 'Black Door',
         price: 46.0,
         image: 'assets/images/black-door.jpg',
@@ -85,6 +85,7 @@ export class WishlistComponent implements OnInit {
       alert(`${item.name} is currently out of stock.`);
       return;
     }
+    // Logic to add item to cart can go here
   }
 
   addSelectedToCart(): void {
@@ -94,6 +95,7 @@ export class WishlistComponent implements OnInit {
       return;
     }
     console.log('Adding selected items to cart:', selectedItems);
+    // Add logic to handle adding to cart
   }
 
   addAllToCart(): void {
@@ -114,6 +116,7 @@ export class WishlistComponent implements OnInit {
 
   readMore(item: WishlistItem): void {
     console.log(`Reading more about ${item.name}`);
+    // You can navigate to a detail page here
   }
 
   retryLoading(): void {
@@ -124,6 +127,7 @@ export class WishlistComponent implements OnInit {
     const target = event.target as HTMLImageElement;
     target.src = 'assets/images/placeholder.jpg';
   }
+
   deleteItem(item: WishlistItem): void {
     console.log(`Deleting ${item.name} from wishlist`);
     this.wishlistItems = this.wishlistItems.filter(
