@@ -10,7 +10,8 @@
     <!-- Collapsible Content -->
     <div class="collapse navbar-collapse" id="mainNavbar">
       <!-- Links -->
-    <ul *ngIf="linkserv.isLoggedIn()" class="navbar-nav mx-auto mb-2 mb-lg-0 navbar-links">
+    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 navbar-links">
+    <!-- <ul *ngIf="linkserv.isLoggedIn()" class="navbar-nav mx-auto mb-2 mb-lg-0 navbar-links"> -->
         <li class="nav-item">
           <a class="nav-link active" routerLinkActive="active" routerLink="/home">HOME</a>
         </li>
@@ -37,6 +38,11 @@
       </ul>
 
       <!-- Icons -->
+      <div class="d-flex navbar-icons" *ngIf="!linkserv.isLoggedIn()">
+        <a routerLinkActive="active" routerLink="/auth/" href="#" class="nav-link">
+          <button class="btn btn-dark">Login</button>
+        </a>
+      </div>
       <div class="d-flex navbar-icons" *ngIf="linkserv.isLoggedIn()">
         <a href="#" class="icon-link me-3"><i class="fas fa-search"></i></a>
         <a href="#" class="icon-link shopping-cart position-relative">
