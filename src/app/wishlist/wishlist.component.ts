@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService, WishlistItem } from '../services/product.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-wishlist',
@@ -17,7 +18,7 @@ export class WishlistComponent implements OnInit {
   loading: boolean = true;
   error: string = '';
 
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService, private route: Router) {}
 
   ngOnInit(): void {
     this.loadProducts();
@@ -115,8 +116,7 @@ export class WishlistComponent implements OnInit {
   }
 
   readMore(item: WishlistItem): void {
-    console.log(`Reading more about ${item.name}`);
-    // You can navigate to a detail page here
+    this.route.navigate(['/product', item.id]);
   }
 
   retryLoading(): void {
@@ -129,10 +129,16 @@ export class WishlistComponent implements OnInit {
   }
 
   deleteItem(item: WishlistItem): void {
-    console.log(`Deleting ${item.name} from wishlist`);
-    this.wishlistItems = this.wishlistItems.filter(
-      (wishlistItem) => wishlistItem.id !== item.id
-    );
-    this.updateSelectAll();
+    this.productService.removeFromWishlist(item.id).subscribe({
+      next: () => {
+        this.wishlistItems = this.wishlistItems.filter(
+          (wishlistItem) => wishlistItem.id !== item.id
+        );
+        this.updateSelectAll();
+      },
+      error: (err) => {
+        console.error('Failed to delete from wishlist:', err);
+      },
+    });
   }
 }
