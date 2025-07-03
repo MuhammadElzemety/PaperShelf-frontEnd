@@ -31,4 +31,22 @@ export class AuthService {
   resetPassword(data: { otp: string, newPassword: string }): Observable<any> {
     return this._HttpClient.post(`${API_URL}/reset-password`, data);
   }
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('accessToken');
+
+  }
+  isAdmin(): boolean {
+    const userJson = localStorage.getItem('user');
+    if (userJson) {
+      const user = JSON.parse(userJson);
+      return user.role === 'admin';
+    }
+    return false;
+  }
+  
+  logout(): void {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+  }
 }

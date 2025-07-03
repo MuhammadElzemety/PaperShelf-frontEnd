@@ -1,17 +1,17 @@
 <div class="book-card">
   <a [routerLink]="['/book', book.id]" class="book-click-area"></a>
 
-  <img [src]="book.image" [alt]="book.title" class="book-image" />
+  <img [src]="book.coverImage || 'assets/placeholder.jpg'" [alt]="book.title" class="book-image" />
 
   <div class="book-info">
     <h3 class="book-title">{{ book.title }}</h3>
     <p class="book-author">{{ book.author }}</p>
 
     <div class="book-price">
-      <ng-container *ngIf="book.discountPercentage; else normalPrice">
+      <ng-container *ngIf="book.discount; else normalPrice">
         <span class="original-price">${{ book.price.toFixed(2) }}</span>
         <span class="discounted-price">
-          ${{ getDiscountedPrice(book.price, book.discountPercentage!).toFixed(2) }}
+          ${{ getDiscountedPrice(book.price, book.discount).toFixed(2) }}
         </span>
       </ng-container>
 

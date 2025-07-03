@@ -10,34 +10,40 @@
     <!-- Collapsible Content -->
     <div class="collapse navbar-collapse" id="mainNavbar">
       <!-- Links -->
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0 navbar-links">
+    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 navbar-links">
+    <!-- <ul *ngIf="linkserv.isLoggedIn()" class="navbar-nav mx-auto mb-2 mb-lg-0 navbar-links"> -->
         <li class="nav-item">
-          <a class="nav-link active" href="#">HOME</a>
+          <a class="nav-link active" routerLinkActive="active" routerLink="/home">HOME</a>
         </li>
         <li class="nav-item dropdown has-dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             PAGES
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">About Us</a></li>
-            <li><a class="dropdown-item" href="#">About Me</a></li>
-            <li><a class="dropdown-item" href="#">Cafe Menu</a></li>
-            <li><a class="dropdown-item" href="#">Membership</a></li>
+            <li><a class="dropdown-item" routerLinkActive="active" href="#">About Us</a></li>
+            <li><a class="dropdown-item" routerLinkActive="active" href="#">About Me</a></li>
+            <li><a class="dropdown-item" routerLinkActive="active" href="#">Cafe Menu</a></li>
+            <li><a class="dropdown-item" routerLinkActive="active" href="#">Membership</a></li>
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">BLOG</a>
+          <a class="nav-link" routerLinkActive="active" href="#">BLOG</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">SHOP</a>
+          <a class="nav-link" routerLinkActive="active" routerLink="/shop">SHOP</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">CONTACT US</a>
+          <a class="nav-link" routerLinkActive="active" href="#">CONTACT US</a>
         </li>
       </ul>
 
       <!-- Icons -->
-      <div class="d-flex navbar-icons">
+      <div class="d-flex navbar-icons" *ngIf="!linkserv.isLoggedIn()">
+        <a routerLinkActive="active" routerLink="/auth/" href="#" class="nav-link">
+          <button class="btn btn-dark">Login</button>
+        </a>
+      </div>
+      <div class="d-flex navbar-icons" *ngIf="linkserv.isLoggedIn()">
         <a href="#" class="icon-link me-3"><i class="fas fa-search"></i></a>
         <a href="#" class="icon-link shopping-cart position-relative">
           <i class="fas fa-shopping-cart"></i>
@@ -45,6 +51,7 @@
             0
           </span>
         </a>
+        <a href="" class="icon-link mx-3 outicon" (click)="logout()"><i class="fas fa-sign-out-alt"></i></a>
       </div>
     </div>
   </div>

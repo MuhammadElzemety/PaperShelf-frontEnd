@@ -1,16 +1,57 @@
+* {
+  font-family: "Open Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
 .offcanvas-custom {
-    width: 300px;         
-    max-width: 100%;
-    border-right: 1px solid #ddd;
-    background-color: var(--off-white);
-    z-index: 1050;
+  width: 300px;
+  max-width: 100%;
+  border-right: 1px solid #ddd;
+  background-color: var(--off-white);
+  z-index: 1050;
+  height: auto !important;
+  overflow-y: visible !important;
+  padding-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .offcanvas-custom {
+    position: static;
+    transform: none !important;
+    visibility: visible !important;
+
+    height: auto !important;
+    overflow-y: visible !important;
   }
-  
-  @media (min-width: 768px) {
-    .offcanvas-custom {
-      position: static;   
-      transform: none;   
-      visibility: visible !important;
-    }
-  }
-  
+}
+
+
+
+.toggle-section {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.toggle-section.open {
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.form-check-input {
+  background-color: #b1a999;
+}
+
+
+.form-check-input {
+  background-color: #b1a999;
+}
+
+
+.d-md-none button {
+  margin-bottom: 1rem;
+}
