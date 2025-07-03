@@ -16,9 +16,10 @@ export class AuthService {
     return this._HttpClient.post(`${API_URL}/login`, data);
   }
 
-  register(data: { name: string, email: string, password: string }): Observable<any> {
-    return this._HttpClient.post(`${API_URL}/register`, data);
-  }
+  register(data: { name: string, email: string, password: string, role: 'author' | 'user' }): Observable<any> {
+  return this._HttpClient.post(`${API_URL}/register`, data);
+}
+
 
   verifyEmail(data: { otp: string }): Observable<any> {
     return this._HttpClient.post(`${API_URL}/verify-email`, data);
