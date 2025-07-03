@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { HomebookService } from '../services/homebook.service';
 import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
@@ -17,8 +18,11 @@ export class HomeComponent implements OnInit {
   error = '';
   selectedCategory: string = 'all';
 
-  constructor(private bookService: HomebookService) {}
+  constructor(private bookService: HomebookService, private router: Router) {}
 
+  goToDetails(bookId: string) {
+    this.router.navigate(['/product', bookId]);
+  }
   ngOnInit(): void {
     // Load books
     this.bookService.getBooks().subscribe({
@@ -50,10 +54,11 @@ export class HomeComponent implements OnInit {
   // Return all books if "all" is selected, else filter by category
   getFilteredBooks() {
     if (this.selectedCategory === 'all') {
-      return this.books.slice(1,9);
+      return this.books.slice(1, 9);
     }
     return this.books.filter(
-      (book) => book.category?.toLowerCase() === this.selectedCategory.toLowerCase()
+      (book) =>
+        book.category?.toLowerCase() === this.selectedCategory.toLowerCase()
     );
   }
 
