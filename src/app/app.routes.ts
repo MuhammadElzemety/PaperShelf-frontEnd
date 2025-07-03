@@ -30,15 +30,15 @@ export const routes: Routes = [
       { path: 'register', component: RegisterFormComponent },
       { path: 'forgot', component: ForgotPasswordFormComponent },
       { path: 'otp', component: OtpFormComponent },
-      { path: 'verify', component: VerifyComponent }
+      { path: 'verify', component: VerifyComponent },
     ],
   },
 
-  { path: 'shop', component: MainShopComponent},
-  { path: 'wishlist', component: WishlistComponent , canActivate:[AuthGuard]},
+  { path: 'shop', component: MainShopComponent },
+  { path: 'wishlist', component: WishlistComponent, canActivate: [AuthGuard] },
   { path: 'product/:id', component: ProductDetailsComponent },
-  { path: 'home', component: HomeComponent},
-  { path: 'book', component: BookSliderComponent , canActivate:[AuthGuard]},
+  { path: 'home', component: HomeComponent },
+  { path: 'book', component: BookSliderComponent, canActivate: [AuthGuard] },
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -48,8 +48,8 @@ export const routes: Routes = [
       { path: 'users', component: ListUsersDashboardComponent },
       { path: 'users/authors', component: ListUsersDashboardComponent },
       { path: 'users/admins', component: ListUsersDashboardComponent },
-      { path: '**', component: NotFoundDashboardComponent }
-    ]
+      { path: '**', component: NotFoundDashboardComponent },
+    ],
   },
-  { path: "**", component: NotfoundComponent , canActivate:[AuthGuard]}
-]
+  { path: '**', component: NotfoundComponent, canActivate: [AuthGuard] },
+];

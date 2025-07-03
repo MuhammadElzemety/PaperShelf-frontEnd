@@ -1,7 +1,11 @@
 <div class="book-card">
-  <a [routerLink]="['/book', book.id]" class="book-click-area"></a>
+  <a [routerLink]="['/product', book.id]" class="book-click-area"></a>
 
-  <img [src]="book.coverImage || 'assets/placeholder.jpg'" [alt]="book.title" class="book-image" />
+  <img
+    [src]="book.coverImage || 'assets/placeholder.jpg'"
+    [alt]="book.title"
+    class="book-image"
+  />
 
   <div class="book-info">
     <h3 class="book-title">{{ book.title }}</h3>

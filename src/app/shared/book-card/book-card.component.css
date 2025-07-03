@@ -1,9 +1,10 @@
 .book-card {
+  position: relative;
   background-color: var(--off-white);
   border-radius: 8px;
   overflow: hidden;
   text-align: center;
-  font-family: 'Lora', serif;
+  font-family: "Lora", serif;
   color: var(--dark-gray);
   width: 300px;
   margin: auto;
@@ -12,8 +13,7 @@
 .book-card:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transform: translateY(-5px);
-  transition: transform 0.3s ease, box-shadow 0.3s ease
-
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .book-image {
   width: 80%;
@@ -82,4 +82,10 @@
   color: var(--primary-gold);
   font-weight: bold;
   font-size: 1.1rem;
+}
+
+.book-click-area {
+  position: absolute;
+  inset: 0; /* ✅ top: 0; right: 0; bottom: 0; left: 0 */
+  z-index: 2; /* ✅ لازم يكون أعلى من أي عنصر تاني */
 }
