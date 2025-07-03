@@ -10,7 +10,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink, 
+    RouterLink,
     RouterLinkActive
   ],
   templateUrl: './register-form.component.html',
@@ -27,20 +27,15 @@ export class RegisterFormComponent {
     private router: Router
   ) {
     this.registerForm = this.fb.group({
-      name: ['', [
-        Validators.required,
-        Validators.minLength(3)
-      ]],
-      email: ['', [
-        Validators.required,
-        Validators.email
-      ]],
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [
         Validators.required,
         Validators.minLength(8),
         Validators.maxLength(30),
         Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/)
-      ]]
+      ]],
+      role: ['', Validators.required] // ✅ Added role field
     });
   }
 
@@ -49,12 +44,10 @@ export class RegisterFormComponent {
     this.registerForm.markAllAsTouched();
 
     if (this.registerForm.valid) {
-      const { name, email, password } = this.registerForm.value;
+      const { name, email, password, role } = this.registerForm.value;
 
-      this.authService.register({ name, email, password }).subscribe({
-        next: (response) => {
-          this.router.navigate(['/auth/verify']);
-        },
+      this.authService.register({ name, email, password, role }).subscribe({
+        next: () => this.router.navigate(['/auth/verify']),
         error: (err: any) => {
           this.errorMessage = err.error?.message || 'Registration failed. Please try again.';
         }
