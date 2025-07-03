@@ -9,7 +9,7 @@
       <div class="d-flex gap-2">
         <img
           *ngFor="let img of product.images"
-          [src]="img"
+          [src]="selectedImage"
           (click)="changeImage(img)"
           class="img-thumbnail thumb-image"
           [class.border-primary]="img === selectedImage"
@@ -19,7 +19,7 @@
 
     <!-- Right: Product Info -->
     <div class="col-md-6">
-      <h2>{{ product.name }}</h2>
+      <h2>{{ product.title }}</h2>
 
       <!-- Ratings -->
       <div class="mb-2">
@@ -27,20 +27,20 @@
           <i
             class="bi"
             [ngClass]="
-              star <= product.rating
+              star <= product.averageRating
                 ? 'bi-star-fill text-warning'
                 : 'bi-star text-muted'
             "
           ></i>
         </ng-container>
-        <span class="text-muted">({{ product.reviewsCount }} reviews)</span>
+        <span class="text-muted">({{ product.totalReviews }} reviews)</span>
       </div>
 
       <!-- Price -->
       <p class="fs-4 text-danger mb-1">${{ product.price }}</p>
-      <p class="text-muted">
-        <del>${{ product.oldPrice }}</del>
-      </p>
+      <!-- <p class="text-muted">
+        <del>${{ product.discount }}</del>
+      </p> -->
 
       <!-- Quantity Selector -->
       <div class="mb-3">
@@ -67,7 +67,19 @@
 
         <img src="assets/imgs/Paypal.png" alt="PayPal" class="payment-icon" />
       </div>
-
+      <p><strong>Author: </strong> {{ product.author }}</p>
+      <p>
+        <strong>Category: </strong>
+        {{ product.category }}
+      </p>
+      <p><strong>ISBN: </strong> {{ product.isbn }}</p>
+      <p><strong>Pages: </strong> {{ product.pages }}</p>
+      <p>
+        <strong>Status:</strong>
+        <span [ngClass]="product.stock ? 'text-success' : 'text-danger'">
+          {{ product.stock ? "In Stock" : "Out of Stock" }}
+        </span>
+      </p>
       <!-- Tabs -->
       <ul class="nav nav-tabs mt-4">
         <li class="nav-item">
@@ -78,14 +90,14 @@
             >Description</a
           >
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a
             class="nav-link"
             [class.active]="tab === 'info'"
             (click)="tab = 'info'"
             >Additional Info</a
           >
-        </li>
+        </li> -->
         <li class="nav-item">
           <a
             class="nav-link"
@@ -96,8 +108,8 @@
         </li>
       </ul>
       <div class="border border-top-0 p-3">
-        <div *ngIf="tab === 'description'">{{ product.description }}</div>
-        <div *ngIf="tab === 'info'">{{ product.additionalInfo }}</div>
+        <div *ngIf="tab === 'description'">{{ product.title }}</div>
+        <!-- <div *ngIf="tab === 'info'">{{ product.additionalInfo }}</div> -->
         <div *ngIf="tab === 'reviews'">No reviews yet.</div>
       </div>
     </div>
@@ -110,13 +122,17 @@
       <div class="col-md-3" *ngFor="let related of relatedProducts">
         <div class="card h-100">
           <img
-            [src]="related.images[0]"
+            [src]="
+              related.coverImage?.startsWith('http')
+                ? related.coverImage
+                : 'http://localhost:3000/' + related.coverImage
+            "
             class="card-img-top"
             alt="..."
             style="height: 180px; object-fit: cover"
           />
           <div class="card-body">
-            <h6 class="card-title">{{ related.name }}</h6>
+            <h6 class="card-title">{{ related.title }}</h6>
             <p class="text-danger mb-0">${{ related.price }}</p>
             <a
               [routerLink]="['/product', related._id]"

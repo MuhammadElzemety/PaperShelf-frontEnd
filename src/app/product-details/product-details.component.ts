@@ -26,9 +26,14 @@ export class ProductDetailsComponent implements OnInit {
       this.http
         .get(`http://localhost:3000/api/v1/books/${id}`)
         .subscribe((data: any) => {
-          this.product = data;
-          this.selectedImage = data.images?.[0];
-          this.loadRelated(data.category);
+          console.log(data);
+          this.product = data.data.book;
+          console.log('product:', this.product);
+          // this.selectedImage = this.product.images?.[0];
+          this.selectedImage = this.product.coverImage.startsWith('http')
+            ? this.product.coverImage
+            : `http://localhost:3000/${this.product.coverImage}`;
+          this.loadRelated(this.product.category);
         });
     }
   }
@@ -39,23 +44,38 @@ export class ProductDetailsComponent implements OnInit {
 
   buyNow() {
     alert(
-      `✅ You are buying ${this.quantity} × "${this.product.name}" for $${
+      `✅ You are buying ${this.quantity} × "${this.product.title}" for $${
         this.product.price * this.quantity
       }`
     );
   }
 
   addToWishlist() {
-    alert(`❤️ "${this.product.name}" has been added to your wishlist!`);
+    alert(`❤️ "${this.product.title}" has been added to your wishlist!`);
   }
 
   loadRelated(category: string) {
     this.http
       .get(`http://localhost:3000/api/v1/books?category=${category}&limit=4`)
       .subscribe((res: any) => {
-        this.relatedProducts = res.filter(
-          (p: any) => p._id !== this.product._id
-        );
+        // this.relatedProducts = res.data.filter(
+        //   (p: any) => p._id !== this.product._id
+        // );
+        //   if (Array.isArray(res.data)) {
+        //     this.relatedProducts = res.data.filter(
+        //       (p: any) => p._id !== this.product._id
+        //     );
+        //   } else {
+        //     this.relatedProducts = [];
+        //   }
+        // });
+        if (Array.isArray(res.data.books)) {
+          this.relatedProducts = res.data.books.filter(
+            (p: any) => p._id !== this.product._id
+          );
+        } else {
+          this.relatedProducts = [];
+        }
       });
   }
 }
