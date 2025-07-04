@@ -57,4 +57,12 @@ export class ProductService {
   removeFromWishlist(bookId: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${bookId}`, this.getAuthHeaders());
   }
+
+  submitReview(bookId: string, review: any): Observable<any> {
+    return this.http.post(
+      `http://localhost:3000/api/reviews/${bookId}`,
+      review,
+      this.getAuthHeaders()
+    );
+  }
 }

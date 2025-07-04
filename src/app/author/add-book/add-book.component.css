@@ -1,0 +1,111 @@
+/* تنسيق الحاوية العامة */
+.container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+/* العنوان */
+h2 {
+  text-align: center;
+  color: #333;
+  font-size: 26px;
+  margin-bottom: 30px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* اللابلز */
+form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #555;
+}
+
+/* الحقول */
+form input[type="text"],
+form input[type="number"],
+form input[type="file"],
+form textarea {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  background-color: #fafafa;
+  transition: border-color 0.2s ease;
+}
+
+form input:focus,
+form textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  background-color: #fff;
+}
+
+/* textarea خاص */
+form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* رسائل الخطأ */
+.text-danger {
+  font-size: 13px;
+  color: #dc3545;
+  margin-top: -15px;
+  margin-bottom: 15px;
+}
+
+/* صور المعاينة */
+.img-thumbnail {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+/* صور متعددة */
+.d-flex.flex-wrap img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 10px;
+}
+
+/* الزر */
+button[type="submit"] {
+  background: linear-gradient(to right, #007bff, #0056b3);
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background: linear-gradient(to right, #0056b3, #003f7f);
+}
+
+/* responsive شاشات صغيرة */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+    margin: 20px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+}

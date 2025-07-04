@@ -5,6 +5,13 @@
       <img
         [src]="selectedImage"
         class="img-fluid rounded border mb-3 main-image"
+        style="
+          width: 350px;
+          height: 520px;
+          object-fit: fit;
+          display: block;
+          margin: 0 auto;
+        "
       />
       <div class="d-flex gap-2">
         <img
@@ -55,9 +62,24 @@
 
       <!-- Actions -->
       <div class="d-flex gap-2 mb-3">
-        <button class="btn btn-dark" (click)="addToCart()">Buy Now</button>
-        <button class="btn btn-outline-danger" (click)="addToWishlist()">
-          <i class="fa-regular fa-heart"></i>
+
+      <button class="btn btn-dark" (click)="buyNow()">Buy Now</button>
+        <button class="btn btn-primary" (click)="addToCart()">
+          Add to Cart
+        </button>
+      
+        <button
+          class="btn"
+          [ngClass]="isInWishlist ? 'btn-danger' : 'btn-outline-danger'"
+          (click)="addToWishlist()"
+          [disabled]="isInWishlist"
+        >
+          <i
+            class="fa-heart"
+            [ngClass]="isInWishlist ? 'fas text-white' : 'far'"
+          ></i>
+          <span *ngIf="isInWishlist"></span>
+          <span *ngIf="!isInWishlist"></span>
         </button>
       </div>
 
@@ -80,6 +102,17 @@
           {{ product.stock ? "In Stock" : "Out of Stock" }}
         </span>
       </p>
+      <!-- <p>
+        <strong>Stock:</strong>
+        {{ product.stock || 0 }}
+      </p> -->
+      <div
+        *ngIf="product.stock < 5 && product.stock > 0"
+        class="alert alert-warning py-1 px-2 mb-2"
+      >
+        Hurry! Only {{ product.stock }} item{{ product.stock === 1 ? "" : "s" }}
+        left in stock.
+      </div>
       <!-- Tabs -->
       <ul class="nav nav-tabs mt-4">
         <li class="nav-item">
@@ -110,8 +143,78 @@
       <div class="border border-top-0 p-3">
         <div *ngIf="tab === 'description'">{{ product.title }}</div>
         <!-- <div *ngIf="tab === 'info'">{{ product.additionalInfo }}</div> -->
-        <div *ngIf="tab === 'reviews'">No reviews yet.</div>
+        <div *ngIf="tab === 'reviews'">
+          Rating: {{ newReview.rating }}<br />
+          Comment: {{ newReview.comment }}
+        </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Reviews Section -->
+  <div *ngIf="tab === 'reviews'">
+    <div class="mb-4">
+      <h5 class="mb-3">Add Your Review</h5>
+      <form (ngSubmit)="submitReview()" #reviewForm="ngForm" class="mb-3">
+        <div class="mb-2">
+          <label class="form-label">Rating:</label>
+          <span *ngFor="let star of [1, 2, 3, 4, 5]">
+            <i
+              class="fa-star"
+              [class.far]="star > (hoveredStar || newReview.rating)"
+              [class.fas]="star <= (hoveredStar || newReview.rating)"
+              [class.text-warning]="star <= (hoveredStar || newReview.rating)"
+              [class.text-muted]="star > (hoveredStar || newReview.rating)"
+              style="cursor: pointer; font-size: 1.5rem"
+              (mouseenter)="hoveredStar = star"
+              (mouseleave)="hoveredStar = 0"
+              (click)="newReview.rating = star"
+            ></i>
+          </span>
+        </div>
+        <div class="mb-2">
+          <textarea
+            class="form-control"
+            rows="3"
+            placeholder="Write your review..."
+            required
+            [(ngModel)]="newReview.comment"
+            name="comment"
+          ></textarea>
+        </div>
+        <button
+          class="btn btn-primary btn-sm"
+          type="submit"
+          [disabled]="reviewForm.invalid"
+        >
+          Submit Review
+        </button>
+      </form>
+      <div *ngIf="userReviewSubmitted" class="alert alert-success py-2">
+        Thank you for your review!
+      </div>
+    </div>
+    <div>
+      <h6 class="mb-2">All Reviews</h6>
+      <div *ngIf="product.reviews?.length; else noReviews">
+        <div
+          *ngFor="let review of product.reviews"
+          class="border-bottom pb-2 mb-2"
+        >
+          <span class="text-warning">
+            <ng-container *ngFor="let star of [].constructor(review.rating)"
+              >★</ng-container
+            >
+            <ng-container *ngFor="let star of [].constructor(5 - review.rating)"
+              >☆</ng-container
+            >
+          </span>
+          <span class="ms-2">{{ review.comment }}</span>
+        </div>
+      </div>
+      <ng-template #noReviews>
+        <div class="text-muted">No reviews yet.</div>
+      </ng-template>
     </div>
   </div>
 

@@ -1,0 +1,105 @@
+<div class="container">
+  <h2>{{ isEditMode ? 'Edit Book' : 'Add New Book' }}</h2>
+  <form [formGroup]="addBookForm" (ngSubmit)="onSubmit()">
+
+    <!-- Title -->
+    <div class="mb-3">
+      <label>Book Title</label>
+      <input type="text" class="form-control" formControlName="title" />
+      <div class="text-danger" *ngIf="addBookForm.get('title')?.touched && addBookForm.get('title')?.invalid">
+        Title is required.
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label>Description</label>
+      <textarea class="form-control" formControlName="description"></textarea>
+    </div>
+
+    <!-- ISBN -->
+    <div class="mb-3">
+      <label>ISBN</label>
+      <input type="text" class="form-control" formControlName="isbn" />
+      <div class="text-danger" *ngIf="addBookForm.get('isbn')?.touched && addBookForm.get('isbn')?.invalid">
+        ISBN is required.
+      </div>
+    </div>
+
+    <!-- Price -->
+    <div class="mb-3">
+      <label>Price</label>
+      <input type="number" class="form-control" formControlName="price" />
+    </div>
+
+    <!-- Discount -->
+    <div class="mb-3">
+      <label>Discount (%)</label>
+      <input type="number" class="form-control" formControlName="discount" />
+    </div>
+
+    <!-- Pages -->
+    <div class="mb-3">
+      <label>Pages</label>
+      <input type="number" class="form-control" formControlName="pages" />
+    </div>
+
+    <!-- ✅ Category Dropdown -->
+    <div class="mb-3">
+      <label>Category</label>
+      <select
+        class="form-control"
+        formControlName="category"
+        (change)="onCategoryChange($event)">
+        <option value="" disabled>Select category</option>
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+    </div>
+
+    <!-- ✅ يظهر فقط لو المستخدم اختار Other -->
+    <div class="mb-3" *ngIf="addBookForm.get('category')?.value === 'Other'">
+      <label>New Category</label>
+      <input
+        type="text"
+        class="form-control"
+        [value]="customCategory"
+        (input)="customCategory = $any($event.target).value"
+        placeholder="Enter new category"
+      />
+    </div>
+
+    <!-- Cover Image -->
+    <div class="mb-3">
+      <label>Cover Image</label>
+      <input type="file" accept="image/*" class="form-control" (change)="onCoverImageSelected($event)" />
+      <div *ngIf="coverImagePreview" class="mt-2 text-center">
+        <img [src]="coverImagePreview" alt="Cover Preview" class="img-thumbnail" style="max-width: 200px;" />
+      </div>
+    </div>
+    
+
+    <!-- Additional Images -->
+    <div class="mb-3">
+      <label>Additional Images</label>
+      <input type="file" accept="image/*" class="form-control" multiple (change)="onImagesSelected($event)" />
+      <div class="d-flex flex-wrap gap-2 mt-2" *ngIf="additionalImagePreviews.length > 0">
+        <img *ngFor="let img of additionalImagePreviews" [src]="img" class="img-thumbnail" style="width: 100px; height: 100px;" />
+      </div>
+    </div>
+
+    <!-- Stock -->
+    <div class="mb-3">
+      <label>Stock</label>
+      <input type="number" class="form-control" formControlName="stock" />
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="btn btn-primary w-100">
+      {{ isEditMode ? 'Update Book' : 'Add Book' }}
+    </button>
+
+    <!-- Success & Error Messages -->
+    <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+  </form>
+</div>

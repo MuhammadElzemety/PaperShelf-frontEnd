@@ -19,8 +19,12 @@ import { NotFoundDashboardComponent } from './admin/not-found-dashboard/not-foun
 import { HomeDashboardComponent } from './admin/home-dashboard/home-dashboard.component';
 import { ListUsersDashboardComponent } from './admin/users/list-users-dashboard/list-users-dashboard.component';
 
+import { AddBookComponent } from './author/add-book/add-book.component';
+import { MyBooksComponent } from './author/my-books/my-books.component';
+
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
+
   {
     path: 'auth',
     component: AuthComponent,
@@ -39,6 +43,11 @@ export const routes: Routes = [
   { path: 'product/:id', component: ProductDetailsComponent },
   { path: 'home', component: HomeComponent },
   { path: 'book', component: BookSliderComponent, canActivate: [AuthGuard] },
+
+  { path: 'author/add-book', component: AddBookComponent, canActivate: [AuthGuard] },
+  { path: 'author/my-books', component: MyBooksComponent, canActivate: [AuthGuard] },
+  { path: 'author/edit-book/:id', component: AddBookComponent, canActivate: [AuthGuard] },
+
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -51,5 +60,6 @@ export const routes: Routes = [
       { path: '**', component: NotFoundDashboardComponent },
     ],
   },
+
   { path: '**', component: NotfoundComponent, canActivate: [AuthGuard] },
 ];
