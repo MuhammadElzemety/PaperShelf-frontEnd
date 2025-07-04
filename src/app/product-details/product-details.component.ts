@@ -3,8 +3,12 @@ import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
+import { CartService } from '../services/cart.service';
+
 import { ProductService } from '../services/product.service';
 import { ToastrService } from 'ngx-toastr';
+
 
 @Component({
   selector: 'app-product-details',
@@ -19,6 +23,20 @@ export class ProductDetailsComponent implements OnInit {
   tab: 'description' | 'info' | 'reviews' = 'description';
   quantity: number = 1;
   relatedProducts: any[] = [];
+
+
+  constructor(private route: ActivatedRoute, private http: HttpClient , private _cartserv : CartService) {}
+  addToCart() {
+    this._cartserv.addToCart(this.product.id).subscribe({
+      next: (response) => {
+        console.log('Added to cart:', this.product.id, response);
+      },
+      error: (error) => {
+        console.error('Failed to add to cart', error);
+      }
+    });
+  }
+
   isInWishlist = false;
   constructor(
     private route: ActivatedRoute,
@@ -28,6 +46,7 @@ export class ProductDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.http
