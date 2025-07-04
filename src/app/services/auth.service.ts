@@ -9,17 +9,15 @@ const API_URL = `${environment.apiBaseUrl}/auth`;
   providedIn: 'root'
 })
 export class AuthService {
-
-  constructor(private _HttpClient: HttpClient) { }
+  constructor(private _HttpClient: HttpClient) {}
 
   login(data: { email: string, password: string }): Observable<any> {
     return this._HttpClient.post(`${API_URL}/login`, data);
   }
 
   register(data: { name: string, email: string, password: string, role: 'author' | 'user' }): Observable<any> {
-  return this._HttpClient.post(`${API_URL}/register`, data);
-}
-
+    return this._HttpClient.post(`${API_URL}/register`, data);
+  }
 
   verifyEmail(data: { otp: string }): Observable<any> {
     return this._HttpClient.post(`${API_URL}/verify-email`, data);
@@ -32,22 +30,27 @@ export class AuthService {
   resetPassword(data: { otp: string, newPassword: string }): Observable<any> {
     return this._HttpClient.post(`${API_URL}/reset-password`, data);
   }
+
   isLoggedIn(): boolean {
     return !!localStorage.getItem('accessToken');
+  }
 
-  }
-  isAdmin(): boolean {
-    const userJson = localStorage.getItem('user');
-    if (userJson) {
-      const user = JSON.parse(userJson);
-      return user.role === 'admin';
-    }
-    return false;
-  }
-  
   logout(): void {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
+  }
+
+  getCurrentUser(): any {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  }
+
+  isAuthor(): boolean {
+    return this.getCurrentUser()?.role === 'author';
+  }
+
+  isAdmin(): boolean {
+    return this.getCurrentUser()?.role === 'admin';
   }
 }
