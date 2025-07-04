@@ -17,6 +17,8 @@ export interface Book {
   isNew: boolean;
   isBestseller: boolean;
   isFeatured: boolean;
+  isApproved: boolean;
+  pendingDelete?: boolean;
   createdAt: string;
   updatedAt: string;
 }
