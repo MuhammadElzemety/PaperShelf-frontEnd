@@ -1,3 +1,5 @@
+/* ...existing code... */
+
 .book-card {
   position: relative;
   background-color: var(--off-white);
@@ -9,60 +11,46 @@
   width: 300px;
   margin: auto;
   padding-top: 2px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: box-shadow 0.3s, transform 0.3s;
 }
+
 .book-card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(-5px);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+  transform: translateY(-6px) scale(1.02);
 }
+
+.book-click-area {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  position: static; /* Remove absolute positioning */
+  z-index: auto;
+}
+
 .book-image {
   width: 80%;
-  height: 280px;
+  height: 220px;
   object-fit: cover;
-  margin: auto;
+  margin: 1rem auto 0.5rem auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
 
 .book-info {
-  padding: 0.8rem;
+  padding: 0.8rem 1rem 0.5rem 1rem;
 }
 
 .book-title {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 0.2rem;
 }
 
 .book-author {
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   color: var(--light-gray);
   margin-bottom: 0.4rem;
-}
-
-.book-price {
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: var(--primary-gold);
-}
-
-.book-rating {
-  color: var(--primary-gold);
-  font-size: 0.85rem;
-  margin-top: 0.3rem;
-}
-
-.book-actions {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-}
-
-.book-actions button {
-  background: transparent;
-  border: 1px solid var(--very-light-gray);
-  border-radius: 4px;
-  padding: 4px 6px;
-  font-size: 1rem;
 }
 
 .book-price {
@@ -70,22 +58,74 @@
   gap: 10px;
   align-items: center;
   margin: 8px 0;
+  font-size: 1rem;
+  justify-content: center;
 }
 
 .original-price {
   text-decoration: line-through;
   color: var(--light-gray);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .discounted-price {
   color: var(--primary-gold);
   font-weight: bold;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
 }
 
-.book-click-area {
-  position: absolute;
-  inset: 0; /* ✅ top: 0; right: 0; bottom: 0; left: 0 */
-  z-index: 2; /* ✅ لازم يكون أعلى من أي عنصر تاني */
+.book-rating {
+  color: var(--primary-gold);
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+}
+
+.book-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1rem 0 0.7rem 0;
+  border-top: 1px solid var(--very-light-gray);
+  background: #faf9f6;
+  margin-top: 0.5rem;
+}
+
+.book-actions button {
+  background: #fff;
+  border: 2px solid var(--primary-gold);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s, box-shadow 0.2s, color 0.2s;
+  color: var(--primary-gold);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.book-actions button:hover {
+  background: var(--primary-gold);
+  color: #fff;
+  border-color: var(--primary-gold);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+}
+
+.book-actions i {
+  pointer-events: none;
+  font-size: .8em;
+}
+
+/* Responsive */
+@media (max-width: 400px) {
+  .book-card {
+    width: 98vw;
+    min-width: 0;
+  }
+  .book-image {
+    width: 95%;
+    height: 160px;
+  }
 }

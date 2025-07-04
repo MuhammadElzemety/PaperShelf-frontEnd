@@ -78,7 +78,7 @@
 
     <div class="btn-group mt-2" role="group">
       <button class="btn btn-outline-secondary btn-sm" (click)="decreaseQuantity(cart)">−</button>
-      <input type="number" [value]="cart.quantity" (change)="updateQuantity(cart, $event)" class="quantity-input" />
+      <input type="number" [(ngModel)]="cart.quantity" (change)="updateQuantity(cart, $event)" class="quantity-input" min="1" max="10" />
       <button class="btn btn-outline-secondary btn-sm" (click)="increaseQuantity(cart)">+</button>
       <button class="btn btn-outline-danger btn-sm ms-2 delete-btn" (click)="deleteItem(cart._id)" title="Delete item">
         🗑️
@@ -94,12 +94,13 @@
 
 
 <div class="mt-auto border-top pt-3" *ngIf="getcart.totalAmount">
+  <p class="fw-bold">❗Note : Max Items in Cart Is 10</p>
   <div class="d-flex justify-content-between mb-3">
     <strong>Subtotal:</strong>
     <strong>${{ getcart.totalAmount }}</strong>
   </div>
 
-  <button class="btn btn-light w-100 mb-2 fw-semibold rounded-3">Continue shopping</button>
+  <a routerLink="/shop"><button class="btn btn-light w-100 mb-2 fw-semibold rounded-3" >Continue shopping</button></a>
   <button class="btn btn-primary w-100 fw-semibold rounded-3">Proceed to checkout</button>
 </div>
   <!-- Empty Cart Message -->

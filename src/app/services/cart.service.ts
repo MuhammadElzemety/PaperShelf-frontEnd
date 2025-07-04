@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class CartService {
   private apiUrl = 'http://localhost:3000/api/cart';
-
+  
   constructor(private http: HttpClient) {}
 
   addToCart(bookId: string) {
@@ -14,9 +14,20 @@ export class CartService {
   }
 
   getCart() {
-    const token = localStorage.getItem('token'); // أو حسب مكان تخزين التوكن عندك
+    const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get('http://localhost:3000/api/cart', { headers });
+    return this.http.get(`${this.apiUrl}`, { headers });
   }
 
+  updateCartItemQuantity(itemId: string, quantity: number) {
+  const token = localStorage.getItem('token') || '';
+  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  return this.http.put(`${this.apiUrl}/update`, { itemId, quantity }, { headers });
+}
+
+
+
+  removeCartItem(itemId: string) {
+    return this.http.delete(`${this.apiUrl}/remove/${itemId}`);
+  }
 }
