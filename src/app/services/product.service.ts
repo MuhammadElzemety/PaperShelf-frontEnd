@@ -20,7 +20,7 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
-  // ✅ دالة بتجيب الهيدر اللي فيه التوكن
+  //  دالة بتجيب الهيدر اللي فيه التوكن
   private getAuthHeaders() {
     const token = localStorage.getItem('accessToken'); // تأكد إنه محفوظ عند الـ login
     return {
@@ -30,7 +30,7 @@ export class ProductService {
     };
   }
 
-  // ✅ جلب قائمة الـ wishlist من الباك إند
+  //  جلب قائمة الـ wishlist من الباك إند
   getWishlist(): Observable<WishlistItem[]> {
     return this.http.get<any>(this.baseUrl, this.getAuthHeaders()).pipe(
       map((response) =>
@@ -48,12 +48,12 @@ export class ProductService {
     );
   }
 
-  // ✅ إضافة كتاب للـ wishlist
+  //  إضافة كتاب للـ wishlist
   addToWishlist(bookId: string): Observable<any> {
     return this.http.post(this.baseUrl, { bookId }, this.getAuthHeaders());
   }
 
-  // ✅ حذف كتاب من الـ wishlist
+  //  حذف كتاب من الـ wishlist
   removeFromWishlist(bookId: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${bookId}`, this.getAuthHeaders());
   }
@@ -65,4 +65,16 @@ export class ProductService {
       this.getAuthHeaders()
     );
   }
+
+  //  Define a method to get the AI summary for a book
+    getAISummary(bookId: string): Observable<string> {
+      return this.http
+        .get<{ summary: string }>(
+          `http://localhost:3000/api/v1/books/${bookId}/formatted-summary`
+        )
+        .pipe(map((res) => res.summary || ''));
+    }
+
+
+
 }

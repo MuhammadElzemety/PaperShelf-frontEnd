@@ -151,6 +151,22 @@
     </div>
   </div>
 
+<!--  AI Summary Section -->
+
+<div class="mt-4">
+  <h5>📘 AI Summary</h5>
+
+  <p *ngIf="isStreaming" class="text-muted">Loading summary...</p>
+
+  <pre *ngIf="aiSummary" style="white-space: pre-wrap; font-family: inherit;">
+    {{ aiSummary }}
+  </pre>
+
+  <p *ngIf="!isStreaming && !aiSummary" class="text-muted">No summary available.</p>
+</div>
+
+
+
   <!-- Reviews Section -->
   <div *ngIf="tab === 'reviews'">
     <div class="mb-4">
