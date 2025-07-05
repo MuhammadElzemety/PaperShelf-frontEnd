@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { CartService } from '../services/cart.service';
-
 import { ProductService } from '../services/product.service';
 import { ToastrService } from 'ngx-toastr';
-
 
 @Component({
   selector: 'app-product-details',
@@ -21,48 +19,77 @@ export class ProductDetailsComponent implements OnInit {
   product: any = {};
   selectedImage = '';
   tab: 'description' | 'info' | 'reviews' = 'description';
-  quantity: number = 1;
+  quantity = 1;
   relatedProducts: any[] = [];
+  isInWishlist = false;
+  newReview = { rating: 5, comment: '' };
+  userReviewSubmitted = false;
+  hoveredStar = 0;
 
+  //  AI Summary Variables
+  aiSummary: string = '';
+  fullAISummary: string = '';
+  streamIndex = 0;
+  streamTimer: any;
+isStreaming: boolean = false;
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private productService: ProductService,
+    private toastr: ToastrService,
+    private cartService: CartService
+  ) {}
 
-  constructor(private route: ActivatedRoute, private http: HttpClient , private _cartserv : CartService) {}
-  addToCart() {
-    this._cartserv.addToCart(this.product.id).subscribe({
-      next: (response) => {
-        console.log('Added to cart:', this.product.id, response);
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.loadProductDetails(id);
+    }
+  }
+
+  loadProductDetails(id: string) {
+    this.http.get(`http://localhost:3000/api/v1/books/${id}`).subscribe((data: any) => {
+      this.product = data.data.book;
+      this.selectedImage = this.product.coverImage.startsWith('http')
+        ? this.product.coverImage
+        : `http://localhost:3000/${this.product.coverImage}`;
+
+      this.loadRelated(this.product.category);
+      this.loadReviews();
+      this.loadAISummary(id);
+    });
+  }
+
+  //  AI Summary Streaming
+  loadAISummary(bookId: string) {
+    this.productService.getAISummary(bookId).subscribe({
+      next: (summary: string) => {
+        if (!summary || summary.trim() === '') {
+          this.aiSummary = '📘 AI Summary not available for this book.';
+          return;
+        }
+        this.fullAISummary = summary;
+        this.aiSummary = '';
+        this.streamIndex = 0;
+        this.startStreaming();
       },
-      error: (error) => {
-        console.error('Failed to add to cart', error);
+      error: (err) => {
+        console.error(' Failed to load AI summary:', err);
+        this.aiSummary = '📘 AI Summary not available for this book.';
       }
     });
   }
 
-  isInWishlist = false;
-  constructor(
-    private route: ActivatedRoute,
-    private http: HttpClient,
-    private ProductService: ProductService,
-    private toastr: ToastrService // <-- add this
-  ) {}
-
-  ngOnInit(): void {
-    
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.http
-        .get(`http://localhost:3000/api/v1/books/${id}`)
-        .subscribe((data: any) => {
-          console.log(data);
-          this.product = data.data.book;
-          console.log('product:', this.product);
-          // this.selectedImage = this.product.images?.[0];
-          this.selectedImage = this.product.coverImage.startsWith('http')
-            ? this.product.coverImage
-            : `http://localhost:3000/${this.product.coverImage}`;
-          this.loadRelated(this.product.category);
-          this.loadReviews();
-        });
-    }
+  startStreaming() {
+    if (this.streamTimer) clearInterval(this.streamTimer);
+    this.streamTimer = setInterval(() => {
+      if (this.streamIndex < this.fullAISummary.length) {
+        this.aiSummary += this.fullAISummary[this.streamIndex];
+        this.streamIndex++;
+      } else {
+        clearInterval(this.streamTimer);
+      }
+    }, 30); // Adjust speed as needed
   }
 
   changeImage(img: string) {
@@ -70,20 +97,13 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   buyNow() {
-    alert(
-      `✅ You are buying ${this.quantity} × "${this.product.title}" for $${
-        this.product.price * this.quantity
-      }`
-    );
+    alert(` You are buying ${this.quantity} × "${this.product.title}" for $${this.product.price * this.quantity}`);
   }
 
   addToWishlist() {
-    this.ProductService.addToWishlist(this.product._id).subscribe({
+    this.productService.addToWishlist(this.product._id).subscribe({
       next: () => {
-        this.toastr.success(
-          `"${this.product.title}" has been added to your wishlist!`,
-          'Added to Wishlist'
-        );
+        this.toastr.success(`"${this.product.title}" has been added to your wishlist!`, 'Added to Wishlist');
         this.isInWishlist = true;
       },
       error: () => {
@@ -92,18 +112,23 @@ export class ProductDetailsComponent implements OnInit {
     });
   }
 
-  newReview = { rating: 5, comment: '' };
-  userReviewSubmitted = false;
-  hoveredStar = 0;
+  addToCart() {
+    this.cartService.addToCart(this.product.id).subscribe({
+      next: (response) => {
+        this.toastr.success(`"${this.product.title}" added to cart!`, 'Added to Cart');
+        console.log('Added to cart:', this.product.id, response);
+      },
+      error: (error) => {
+        this.toastr.error('Failed to add to cart!', 'Error');
+        console.error('Failed to add to cart', error);
+      },
+    });
+  }
 
   submitReview() {
     if (!this.product._id) return;
 
-    // استخدم السيرفس بدلاً من http مباشرة
-    this.ProductService.submitReview(
-      this.product._id,
-      this.newReview
-    ).subscribe({
+    this.productService.submitReview(this.product._id, this.newReview).subscribe({
       next: (res: any) => {
         if (res.data && res.data.review) {
           this.product.reviews = this.product.reviews || [];
@@ -122,54 +147,19 @@ export class ProductDetailsComponent implements OnInit {
     });
   }
 
-  // Helper to reload all reviews for this book
   loadReviews() {
-    this.http
-      .get(`http://localhost:3000/api/v1/reviews/${this.product._id}`)
-      .subscribe((res: any) => {
-        this.product.reviews = res.data.reviews || [];
-      });
-  }
-
-  addToCart() {
-    // You can replace this with your real cart service logic
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    cart.push({
-      productId: this.product._id,
-      title: this.product.title,
-      price: this.product.price,
-      quantity: this.quantity,
-      image: this.selectedImage,
+    this.http.get(`http://localhost:3000/api/v1/reviews/${this.product._id}`).subscribe((res: any) => {
+      this.product.reviews = res.data.reviews || [];
     });
-    localStorage.setItem('cart', JSON.stringify(cart));
-    this.toastr.success(
-      `"${this.product.title}" added to cart!`,
-      'Added to Cart'
-    );
   }
 
   loadRelated(category: string) {
-    this.http
-      .get(`http://localhost:3000/api/v1/books?category=${category}&limit=4`)
-      .subscribe((res: any) => {
-        // this.relatedProducts = res.data.filter(
-        //   (p: any) => p._id !== this.product._id
-        // );
-        //   if (Array.isArray(res.data)) {
-        //     this.relatedProducts = res.data.filter(
-        //       (p: any) => p._id !== this.product._id
-        //     );
-        //   } else {
-        //     this.relatedProducts = [];
-        //   }
-        // });
-        if (Array.isArray(res.data.books)) {
-          this.relatedProducts = res.data.books.filter(
-            (p: any) => p._id !== this.product._id
-          );
-        } else {
-          this.relatedProducts = [];
-        }
-      });
+    this.http.get(`http://localhost:3000/api/v1/books?category=${category}&limit=4`).subscribe((res: any) => {
+      if (Array.isArray(res.data.books)) {
+        this.relatedProducts = res.data.books.filter((p: any) => p._id !== this.product._id);
+      } else {
+        this.relatedProducts = [];
+      }
+    });
   }
 }
