@@ -1,95 +1,155 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { UserAdminService } from '../../../services/user-admin.service';
 import { CommonModule } from '@angular/common';
-UserAdminService
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { UserAdminService } from '../../../services/user-admin.service';
+
 @Component({
   selector: 'app-list-users-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive],
   templateUrl: './list-users-dashboard.component.html',
   styleUrls: ['./list-users-dashboard.component.css']
 })
 export class ListUsersDashboardComponent implements OnInit {
   users: any[] = [];
-  filter: string | null = null;
-  loading = true;
+  pagination: any;
+  searchControl = new FormControl('');
+  isLoading = false;
   currentPage = 1;
-  pageSize = 20;
-  totalUsers = 0;
-  totalPages = 0;
+
+  roleFilterControl = new FormControl(null);
+  verifyFilterControl = new FormControl(null);
+  activeFilterControl = new FormControl(null);
+
+
+  alert = {
+    type: '',
+    message: '',
+    show: false
+  };
 
   constructor(
-    private route: ActivatedRoute,
-    private UserAdminService: UserAdminService
+    private userAdminService: UserAdminService
   ) { }
 
   ngOnInit(): void {
-    console.log('[ngOnInit] Component initialized');
+    console.log('[ngOnInit] UsersDashboard initialized');
+    this.loadUsers();
 
-    this.route.url.subscribe(urlSegments => {
-      console.log('[Route URL] urlSegments:', urlSegments);
+    this.searchControl.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(() => this.performSearch());
 
-      if (urlSegments.length > 0) {
-        const lastSegment = urlSegments[urlSegments.length - 1].path;
-        console.log('[Route URL] lastSegment:', lastSegment);
-
-        if (lastSegment === 'authors') {
-          this.filter = 'author';
-        } else if (lastSegment === 'admins') {
-          this.filter = 'admin';
-        } else {
-          this.filter = null;
-        }
-      } else {
-        this.filter = null;
-      }
-
-      console.log('[Filter] Current filter:', this.filter);
-      this.loadUsers();
-    });
+    this.roleFilterControl.valueChanges.subscribe(() => this.performSearch());
+    this.verifyFilterControl.valueChanges.subscribe(() => this.performSearch());
+    this.activeFilterControl.valueChanges.subscribe(() => this.performSearch());
   }
 
-  loadUsers() {
-    console.log(`[loadUsers] Loading users with filter=${this.filter}, page=${this.currentPage}, limit=${this.pageSize}`);
+  loadUsers(): void {
+    this.isLoading = true;
+    const page = this.currentPage;
+    const limit = 10;
 
-    this.loading = true;
-    this.UserAdminService.getUsers(this.filter ?? undefined, this.currentPage, this.pageSize).subscribe({
+    const role = this.roleFilterControl.value;
+
+    this.userAdminService.getUsers(undefined,           // search
+      role ?? undefined,   // role
+      this.verifyFilterControl.value ?? undefined,  // verify
+      this.activeFilterControl.value ?? undefined,  // active
+      page,
+      limit).subscribe({
+        next: (res) => {
+          console.log('[API] Loaded users:', res);
+          this.users = res.data?.users ?? res.users;
+          this.pagination = res.data?.pagination ?? res.pagination;
+        },
+        error: (err) => console.error('[API Error] Load users failed:', err),
+        complete: () => this.isLoading = false
+      });
+  }
+
+  loadPage(page: number): void {
+    if (!this.pagination) return;
+    const totalPages = this.pagination.totalPages || 1;
+    if (page < 1) page = 1;
+    if (page > totalPages) page = totalPages;
+
+    this.isLoading = true;
+    const trimmedQuery = (this.searchControl.value ?? '').trim();
+    const limit = 10;
+
+    const role = this.roleFilterControl.value;
+
+    const request$ = trimmedQuery
+      ? this.userAdminService.getUsersWithSearch(trimmedQuery, page, limit)
+      : this.userAdminService.getUsers(undefined,           // search
+        role ?? undefined,   // role
+        this.verifyFilterControl.value ?? undefined,  // verify
+        this.activeFilterControl.value ?? undefined,  // active
+        page,
+        limit);
+
+    request$.subscribe({
       next: (res) => {
-        console.log('[API Response] Users loaded:', res);
-        this.users = res.users; 
-        this.totalUsers = res.total || 0;
-        this.totalPages = Math.ceil(this.totalUsers / this.pageSize);
-        this.loading = false;
-        console.log(`[Users] Updated users list: ${this.users.length} users loaded. Total users: ${this.totalUsers}, Pages: ${this.totalPages}`);
+        this.users = res.data?.users ?? res.users;
+        this.pagination = res.data?.pagination ?? res.pagination;
+        this.currentPage = page;
       },
-      error: (err) => {
-        console.error('[API Error] Failed to load users:', err);
-        this.loading = false;
-      }
+      error: (err) => console.error('[API Error] Load page failed:', err),
+      complete: () => this.isLoading = false
     });
   }
 
-  changePage(page: number) {
-    if (page < 1 || page > this.totalPages) return;
-    this.currentPage = page;
-    console.log(`[Pagination] Changing to page ${page}`);
+
+  performSearch(): void {
+    const searchQuery = (this.searchControl.value ?? '').trim();
+    const role = this.roleFilterControl.value;
+    const verify = this.verifyFilterControl.value;
+    const active = this.activeFilterControl.value;
+  
+    console.log('[Search Params]', { searchQuery, role, verify, active });
+  
+    this.isLoading = true;
+  
+    this.userAdminService.getUsers(
+      searchQuery || undefined,
+      role || undefined,
+      verify !== null ? verify : undefined,
+      active !== null ? active : undefined,
+      this.currentPage,
+      10
+    ).subscribe({
+      next: (res) => {
+        this.users = res.data?.users ?? res.users;
+        this.pagination = res.data?.pagination ?? res.pagination;
+      },
+      error: (err) => console.error('[API Error] Search failed:', err),
+      complete: () => this.isLoading = false
+    });
+  }
+  
+
+  resetFilters(): void {
+    this.searchControl.setValue('');
+    this.roleFilterControl.setValue(null);
+    this.verifyFilterControl.setValue(null);
+    this.activeFilterControl.setValue(null);
+    this.currentPage = 1;
     this.loadUsers();
   }
 
-  changePageSize(size: number) {
-    this.pageSize = size;
-    this.currentPage = 1;
-    console.log(`[Pagination] Changing page size to ${size}`);
-    this.loadUsers();
+
+  onSearch(): void {
+    this.performSearch();
   }
-  onPageSizeChange(event: Event) {
-    const target = event.target as HTMLSelectElement; // ✅ التصحيح هنا
-    const pageSize = target.value;
-    console.log('[Pagination] Selected page size:', pageSize);
-    // هنا ممكن تستخدم pageSize عشان تطبق pagination لو بتدعمه من الـ backend
+
+  showAlert(type: 'success' | 'error', message: string): void {
+    this.alert.type = type;
+    this.alert.message = message;
+    this.alert.show = true;
+    setTimeout(() => this.alert.show = false, 3000);
   }
-  viewUser(user: any) { console.log('[Action] View user:', user); }
-  editUser(user: any) { console.log('[Action] Edit user:', user); }
-  deleteUser(user: any) { console.log('[Action] Delete user:', user); }
 }

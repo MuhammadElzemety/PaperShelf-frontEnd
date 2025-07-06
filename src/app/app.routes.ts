@@ -10,7 +10,6 @@ import { NotfoundComponent } from './shared/notfound/notfound.component';
 import { WishlistComponent } from './wishlist/wishlist.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 import { HomeComponent } from './home/home.component';
-import { roleGuard } from './guards/role.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { BookSliderComponent } from './book-slider/book-slider.component';
 import { DashboardGuard } from './guards/admin.guard';
@@ -18,6 +17,12 @@ import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { NotFoundDashboardComponent } from './admin/not-found-dashboard/not-found-dashboard.component';
 import { HomeDashboardComponent } from './admin/home-dashboard/home-dashboard.component';
 import { ListUsersDashboardComponent } from './admin/users/list-users-dashboard/list-users-dashboard.component';
+import { EditUserComponent } from './admin/users/edit-user/edit-user.component';
+import { BooksDashboardComponent } from './admin/books-dashboard/books-dashboard.component';
+import { ViewBookComponent } from './admin/books-dashboard/view-book/view-book.component';
+import { EditBookComponent } from './admin/books-dashboard/edit-book/edit-book.component';
+import { ApprovedComponent } from './admin/reviews/approved/approved.component';
+import { PendingComponent } from './admin/reviews/pending/pending.component';
 
 import { AddBookComponent } from './author/add-book/add-book.component';
 import { MyBooksComponent } from './author/my-books/my-books.component';
@@ -58,10 +63,14 @@ export const routes: Routes = [
     children: [
       { path: '', component: HomeDashboardComponent },
       { path: 'users', component: ListUsersDashboardComponent },
-      { path: 'users/authors', component: ListUsersDashboardComponent },
-      { path: 'users/admins', component: ListUsersDashboardComponent },
-      { path: '**', component: NotFoundDashboardComponent },
-    ],
+      { path: 'users/edit/:id', component: EditUserComponent },
+      { path: 'books', component: BooksDashboardComponent },
+      { path: 'books/view/:id', component: ViewBookComponent },
+      { path: 'books/edit/:id', component: EditBookComponent },
+      { path: 'reviews/approve', component: ApprovedComponent },
+      { path: 'reviews/pending', component: PendingComponent },
+      { path: '**', component: NotFoundDashboardComponent }
+    ]
   },
 
   { path: '**', component: NotfoundComponent, canActivate: [AuthGuard] },

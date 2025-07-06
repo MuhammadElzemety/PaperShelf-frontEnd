@@ -12,6 +12,7 @@ export interface Book {
   images: string[];
   stock: number;
   rating: number;
+  averageRating: number;
   totalReviews: number;
   totalSales: number;
   isNew: boolean;
@@ -21,7 +22,9 @@ export interface Book {
   pendingDelete?: boolean;
   createdAt: string;
   updatedAt: string;
+  reviews: any[];
 }
+
 export interface BookPagination {
   currentPage: number;
   totalPages: number;

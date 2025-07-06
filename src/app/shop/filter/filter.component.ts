@@ -60,8 +60,7 @@ export class FilterComponent {
         this.loadMoreCategories();
       }
     });
-
-    this.http.get<any>(`${API_URL}/authors`).subscribe(res => {
+    this.http.get<any>(`${API_URL}/users/authors`).subscribe(res => {
       if (res.success && res.data?.authors) {
         this.authors = res.data.authors.map((a: any) => a.name);
         this.loadMoreAuthors();

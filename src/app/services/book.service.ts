@@ -14,7 +14,35 @@ const IMG_URL = `${environment.apiUrlForImgs}`;
 export class BookService {
   private apiUrl = API_URL;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
+  private mapBook(book: any): Book {
+    return {
+      id: book._id,
+      title: book.title,
+      author: book.author,
+      description: book.description,
+      isbn: book.isbn,
+      price: book.price,
+      discount: book.discount,
+      pages: book.pages,
+      category: book.category,
+      coverImage: IMG_URL + (book.coverImage || book.coverImageUrl),
+      images: book.images,
+      stock: book.stock,
+      rating: book.averageRating,
+      averageRating: book.averageRating,
+      totalReviews: book.totalReviews,
+      totalSales: book.totalSales,
+      isNew: book.isNew,
+      isBestseller: book.isBestseller,
+      isFeatured: book.isFeatured,
+      isApproved: book.isApproved,
+      pendingDelete: book.pendingDelete || false,
+      createdAt: book.createdAt,
+      updatedAt: book.updatedAt,
+      reviews: book.reviews || []
+    };
+  }
 
   getBooks(filters: any, page: number, limit: number): Observable<{ data: { books: Book[], pagination: BookPagination } }> {
     let params = new HttpParams()
@@ -41,29 +69,7 @@ export class BookService {
 
     return this.http.get<any>(`${this.apiUrl}`, { params }).pipe(
       map(res => {
-        const mappedBooks: Book[] = res.data.books.map((book: any) => ({
-          id: book._id,
-          title: book.title,
-          author: book.author,
-          description: book.description,
-          isbn: book.isbn,
-          price: book.price,
-          discount: book.discount,
-          pages: book.pages,
-          category: book.category,
-          coverImage: IMG_URL + (book.coverImage || book.coverImageUrl),
-          images: book.images,
-          stock: book.stock,
-          rating: book.averageRating,
-          totalReviews: book.totalReviews,
-          totalSales: book.totalSales,
-          isNew: book.isNew,
-          isBestseller: book.isBestseller,
-          isFeatured: book.isFeatured,
-          createdAt: book.createdAt,
-          updatedAt: book.updatedAt,
-          pendingDelete: book.pendingDelete || false
-        }));
+        const mappedBooks: Book[] = res.data.books.map((book: any) => this.mapBook(book));
         return { data: { books: mappedBooks, pagination: res.data.pagination } };
       })
     );
@@ -77,32 +83,14 @@ export class BookService {
 
     return this.http.get<any>(`${this.apiUrl}/search`, { params }).pipe(
       map(res => {
-        const mappedBooks: Book[] = res.data.books.map((book: any) => ({
-          id: book._id,
-          title: book.title,
-          author: book.author,
-          description: book.description,
-          isbn: book.isbn,
-          price: book.price,
-          discount: book.discount,
-          pages: book.pages,
-          category: book.category,
-          coverImage: IMG_URL + (book.coverImage || book.coverImageUrl),
-          images: book.images,
-          stock: book.stock,
-          rating: book.averageRating,
-          totalReviews: book.totalReviews,
-          totalSales: book.totalSales,
-          isNew: book.isNew,
-          isBestseller: book.isBestseller,
-          isFeatured: book.isFeatured,
-          createdAt: book.createdAt,
-          updatedAt: book.updatedAt,
-          pendingDelete: book.pendingDelete || false
-        }));
+        const mappedBooks: Book[] = res.data.books.map((book: any) => this.mapBook(book));
         return { data: { books: mappedBooks, pagination: res.data.pagination } };
       })
     );
+  }
+
+  createBook(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}`, formData);
   }
 
   //  Add new book (form data)
@@ -128,34 +116,11 @@ export class BookService {
 
   //  Get books by logged-in author
   getMyBooks(): Observable<Book[]> {
-    return this.http.get<{ success: boolean; data: any[] }>(`${environment.apiBaseUrl}/author/books`).pipe(
-      map(res => {
-        return res.data.map((book: any) => ({
-          id: book._id,
-          title: book.title,
-          author: book.author,
-          description: book.description,
-          isbn: book.isbn,
-          price: book.price,
-          discount: book.discount,
-          pages: book.pages,
-          category: book.category,
-          coverImage: IMG_URL + (book.coverImage || book.coverImageUrl),
-          images: book.images,
-          stock: book.stock,
-          rating: book.averageRating,
-          totalReviews: book.totalReviews,
-          totalSales: book.totalSales,
-          isNew: book.isNew,
-          isBestseller: book.isBestseller,
-          isFeatured: book.isFeatured,
-          createdAt: book.createdAt,
-          updatedAt: book.updatedAt,
-          isApproved: book.isApproved,
-          pendingDelete: book.pendingDelete || false
-        }));
-      })
-    );
+    return this.http
+      .get<{ success: boolean; data: any[] }>(`${environment.apiBaseUrl}/author/books`)
+      .pipe(
+        map(res => res.data.map(book => this.mapBook(book)))
+      );
   }
 
   //  Get book by ID
