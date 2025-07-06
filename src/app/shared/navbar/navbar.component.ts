@@ -1,12 +1,13 @@
 import { Component, ElementRef, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { CartService } from '../../services/cart.service';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { RoleService } from '../../services/role.service';
-import { Subscription } from 'rxjs';
-import { CartService } from '../../services/cart.service';
 import { FormsModule } from '@angular/forms';
 declare var bootstrap: any;
+
 
 @Component({
   selector: 'app-navbar',
@@ -18,20 +19,27 @@ declare var bootstrap: any;
 export class NavbarComponent implements OnInit, OnDestroy {
   role: string | null = null;
   name: string | null = null;
-  getcart: any = { items: [], totalAmount: 0 };
   private userSub!: Subscription;
+  getcart: any = { items: [], totalAmount: 0 };
+  private cartSub!: Subscription;
   private cartInstance: any;
 
   @ViewChild('cartSidebar') cartSidebar!: ElementRef;
 
-  constructor(
+constructor(
     public linkserv: AuthService,
     private logoutserv: RoleService,
     private _roleser: RoleService,
     private _getcart: CartService,
   ) {}
-
+  private cartToggleSub!: Subscription;
   ngOnInit(): void {
+    this.cartSub = this._getcart.cart$.subscribe(cart => {
+      this.getcart = cart;
+      this.updateCartTotal();
+    });
+
+    this._getcart.refreshCart();
     this.userSub = this._roleser.userChanged.subscribe(user => {
       if (user) {
         this.role = user.role;
@@ -49,38 +57,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.name = user.name;
     }
 
-    this.loadCart();
-  }
-
-  ngOnDestroy(): void {
-    if (this.userSub) {
-      this.userSub.unsubscribe();
-    }
-  }
-
-  loadCart() {
-    this._getcart.getCart().subscribe(
-      (response: any) => {
-        this.getcart = response.data || { items: [], totalAmount: 0 };
-        this.updateCartTotal();
-        console.log('Cart items:', this.getcart);
-      },
-      (error) => {
-        console.error('Error fetching cart items:', error);
-        this.getcart = { items: [], totalAmount: 0 };
-      }
-    );
+    this.cartToggleSub = this._getcart.toggleCart$.subscribe(() => {
+      this.toggleCart();
+    });
   }
 
   toggleCart() {
-    if (!this.cartInstance) {
-      this.cartInstance = new bootstrap.Offcanvas(this.cartSidebar.nativeElement);
-    }
+    const cartSidebar = document.getElementById('cartSidebar');
+    if (!cartSidebar) return;
+    const offcanvas = bootstrap.Offcanvas.getInstance(cartSidebar) || new bootstrap.Offcanvas(cartSidebar);
+    offcanvas.toggle();
+  }
 
-    if (this.cartSidebar.nativeElement.classList.contains('show')) {
-      this.cartInstance.hide();
-    } else {
-      this.cartInstance.show();
+  ngOnDestroy(): void {
+    if (this.cartToggleSub) {
+      this.cartToggleSub.unsubscribe();
     }
   }
 
@@ -111,10 +102,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this._getcart.updateCartItemQuantity(cartItem._id, cartItem.quantity).subscribe({
       next: () => {
         this.updateCartTotal();
+        this._getcart.refreshCart();
       },
       error: (err) => {
         console.error('Error updating cart item:', err);
-        this.loadCart();
+        this._getcart.refreshCart();
       }
     });
   }
@@ -124,7 +116,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
       (sum: number, item: any) => sum + (item.priceAtTime * item.quantity),
       0
     );
-    // تحديث الكائن لجعل Angular يعيد التحقق من التغييرات
     this.getcart = { ...this.getcart, items: [...this.getcart.items] };
   }
 
@@ -132,14 +123,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this._getcart.removeCartItem(itemId).subscribe({
       next: () => {
         this.getcart.items = this.getcart.items.filter((item: any) => item._id !== itemId);
-        this.loadCart();
+        this._getcart.refreshCart();
       },
       error: (err) => {
         console.error('Error deleting item:', err);
       }
     });
   }
-
   logout() {
     this.logoutserv.logout();
   }

@@ -60,55 +60,46 @@
     </div>
   </div>
 </nav>
+
 <div #cartSidebar class="offcanvas offcanvas-end" tabindex="-1" id="cartSidebar" aria-labelledby="cartSidebarLabel">
   <div class="offcanvas-header border-bottom">
-  <h5 class="offcanvas-title fw-bold">Cart</h5>
-  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-</div>
+    <h5 class="offcanvas-title fw-bold">Cart</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
 
-<div class="offcanvas-body d-flex flex-column cart-body">
+  <div class="offcanvas-body d-flex flex-column cart-body">
+    <div *ngIf="getcart?.items?.length > 0">
+      <div class="cart-item d-flex mb-4" *ngFor="let cart of getcart.items">
+        <img [src]="'http://localhost:3000/' + cart.book.coverImage" alt="Book" class="cart-img me-3" />
+        <div class="flex-grow-1">
+          <div class="fw-bold">{{ cart.book.title }}</div>
+          <div class="text-muted small">by {{ cart.book.author }}</div>
+          <div class="fw-semibold mt-1">${{ cart.priceAtTime }} × {{ cart.quantity }}</div>
 
-  <div *ngIf="getcart && getcart.items && getcart.items.length > 0; else emptyCart">
-  <div class="cart-item d-flex mb-4" *ngFor="let cart of getcart.items; let i = index">
-  <img [src]="'http://localhost:3000/' + cart.book.coverImage" alt="Book" class="cart-img me-3" />
-  <div class="flex-grow-1">
-    <div class="fw-bold">{{ cart.book.title }}</div>
-    <div class="text-muted small">by {{ cart.book.author }}</div>
-    <div class="fw-semibold mt-1">${{ cart.priceAtTime }} × {{ cart.quantity }}</div>
+          <div class="btn-group mt-2" role="group">
+            <button class="btn btn-outline-secondary btn-sm" (click)="decreaseQuantity(cart)">−</button>
+            <input type="number" [(ngModel)]="cart.quantity" (change)="updateQuantity(cart, $event)" class="quantity-input" min="1" max="10" />
+            <button class="btn btn-outline-secondary btn-sm" (click)="increaseQuantity(cart)">+</button>
+            <button class="btn btn-outline-danger btn-sm ms-2 delete-btn" (click)="deleteItem(cart._id)" title="Delete item">🗑️</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <div class="btn-group mt-2" role="group">
-      <button class="btn btn-outline-secondary btn-sm" (click)="decreaseQuantity(cart)">−</button>
-      <input type="number" [(ngModel)]="cart.quantity" (change)="updateQuantity(cart, $event)" class="quantity-input" min="1" max="10" />
-      <button class="btn btn-outline-secondary btn-sm" (click)="increaseQuantity(cart)">+</button>
-      <button class="btn btn-outline-danger btn-sm ms-2 delete-btn" (click)="deleteItem(cart._id)" title="Delete item">
-        🗑️
-      </button>
+    <div class="mt-auto border-top pt-3" *ngIf="getcart.totalAmount">
+      <p class="fw-bold">❗Note : Max Items in Cart Is 10</p>
+      <div class="d-flex justify-content-between mb-3">
+        <strong>Subtotal:</strong>
+        <strong>${{ getcart.totalAmount }}</strong>
+      </div>
+
+      <a routerLink="/shop"><button class="btn btn-light w-100 mb-2 fw-semibold rounded-3">Continue shopping</button></a>
+       <a routerLink="/order"><button class="btn btn-primary w-100 fw-semibold rounded-3">Proceed to checkout</button></a>
+    </div>
+
+    <div class="text-center" *ngIf="getcart.items.length === 0">
+      <p class="text-muted">Your cart is empty.</p>
+      <a routerLink="/shop"><button class="btn btn-light w-100 mb-2 fw-semibold rounded-3">Continue shopping</button></a>
     </div>
   </div>
-  </div>
 </div>
-  <ng-template #emptyCart>
-  <p>السلة فارغة</p>
-</ng-template>
-  
-
-
-<div class="mt-auto border-top pt-3" *ngIf="getcart.totalAmount">
-  <p class="fw-bold">❗Note : Max Items in Cart Is 10</p>
-  <div class="d-flex justify-content-between mb-3">
-    <strong>Subtotal:</strong>
-    <strong>${{ getcart.totalAmount }}</strong>
-  </div>
-
-  <a routerLink="/shop"><button class="btn btn-light w-100 mb-2 fw-semibold rounded-3" >Continue shopping</button></a>
-  <button class="btn btn-primary w-100 fw-semibold rounded-3">Proceed to checkout</button>
-</div>
-  <!-- Empty Cart Message -->
-  <div class="text-center" *ngIf="getcart.items.length === 0">
-    <p class="text-muted">Your cart is empty.</p>
-    <button class="btn btn-primary" data-bs-dismiss="offcanvas">Continue Shopping</button>
-  </div>
-</div>
-
-</div>
-
