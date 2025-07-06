@@ -29,7 +29,7 @@
     <button class="wishlist-btn" (click)="addToWishlist(); $event.stopPropagation()">
       <i class="fas fa-heart"></i>
     </button>
-    <button class="cart-btn" (click)="addToCart(); $event.stopPropagation()">
+    <button class="cart-btn" (click)="addToCart(); openCart() ; $event.stopPropagation()">
       <i class="fas fa-shopping-cart"></i>
     </button>
   </div>

@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Book } from '../../interfaces/book';
 import { RouterModule } from '@angular/router';
 import { CartService } from '../../services/cart.service';
+import { Book } from '../../interfaces/book';
 
 @Component({
   selector: 'app-book-card',
@@ -13,34 +13,22 @@ import { CartService } from '../../services/cart.service';
 })
 export class BookCardComponent {
   @Input() book!: Book;
-    getcart: any = { items: [], totalAmount: 0 };
+
   constructor(private cartService: CartService) {}
-   loadCart() {
-    this.cartService.getCart().subscribe(
-      (response: any) => {
-        this.getcart = response.data || { items: [], totalAmount: 0 };
-      },
-      (error) => {
-        console.error('Error fetching cart items:', error);
-        this.getcart = { items: [], totalAmount: 0 };
-      }
-    );
-  }
-  addToWishlist() {
-    console.log('Added to wishlist:', this.book.id);
-    // Add your wishlist logic here
-  }
 
   addToCart() {
     this.cartService.addToCart(this.book.id).subscribe({
-      next: (response) => {
-        console.log('Added to cart:', this.book.id, response);
-        this.loadCart(); // Reload the cart after adding an item
+      next: () => {
+        this.cartService.refreshCart();
       },
       error: (error) => {
         console.error('Failed to add to cart', error);
       }
     });
+  }
+
+  addToWishlist() {
+    console.log('Added to wishlist:', this.book.id);
   }
 
   getStars(rating: number): number[] {
@@ -49,5 +37,8 @@ export class BookCardComponent {
 
   getDiscountedPrice(price: number, discount: number): number {
     return price - (price * discount / 100);
+  }
+  openCart() {
+    this.cartService.toggleCart();
   }
 }

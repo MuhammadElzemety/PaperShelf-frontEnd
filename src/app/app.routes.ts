@@ -21,6 +21,7 @@ import { ListUsersDashboardComponent } from './admin/users/list-users-dashboard/
 
 import { AddBookComponent } from './author/add-book/add-book.component';
 import { MyBooksComponent } from './author/my-books/my-books.component';
+import { OrderComponent } from './order/order.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -47,6 +48,8 @@ export const routes: Routes = [
   { path: 'author/add-book', component: AddBookComponent, canActivate: [AuthGuard] },
   { path: 'author/my-books', component: MyBooksComponent, canActivate: [AuthGuard] },
   { path: 'author/edit-book/:id', component: AddBookComponent, canActivate: [AuthGuard] },
+  { path: 'order', component: OrderComponent },
+
 
   {
     path: 'dashboard',

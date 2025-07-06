@@ -1,0 +1,81 @@
+<div class="checkout-container">
+  <div class="billing-details">
+    <h2>Billing details</h2>
+    <form>
+  <div class="form-group">
+    <label for="country">Country / Region *</label>
+    <select id="country" name="country">
+      <option value="US">United States (US)</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="street-address">Street address *</label>
+    <input type="text" id="street-address" name="street-address" placeholder="House number and street name">
+    <input type="text" id="apartment" name="apartment" placeholder="Apartment, suite, unit, etc. (optional)" class="mt-2">
+  </div>
+
+  <div class="form-group">
+    <label for="city">Town / City *</label>
+    <input type="text" id="city" name="city">
+  </div>
+
+  <div class="form-group">
+    <label for="state">State *</label>
+    <select id="state" name="state">
+      <option value="NY">New York</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="zip-code">ZIP Code *</label>
+    <input type="text" id="zip-code" name="zip-code">
+  </div>
+</form>
+  </div>
+
+  <div class="order-summary">
+    <div class="order-box">
+  <h2>Your order</h2>
+
+  <ng-container *ngIf="cartData && cartData.items.length > 0; else emptyCart">
+    
+    <div class="order-item" *ngFor="let item of cartData.items">
+      <span>{{ item.book.title }} × {{ item.quantity }}</span>
+      <span>${{ (item.priceAtTime * item.quantity).toFixed(2) }}</span>
+    </div>
+ 
+    
+    <div class="order-subtotal">
+      <span>Subtotal</span>
+      <span>${{ cartData.totalAmount.toFixed(2) }}</span>
+    </div>
+
+    <div class="order-total">
+      <span>Total</span>
+      <span><strong>${{ cartData.totalAmount.toFixed(2) }}</strong></span>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyCart>
+    <p class="text-center p-3">Your cart is empty.</p>
+  </ng-template>
+
+</div>
+
+    <div class="payment-box">
+      <h2>Payment</h2>
+      <div class="payment-option">
+        <input type="radio" id="cash" name="payment" value="cash" checked>
+        <label for="cash">Cash on delivery</label>
+        <p>Pay with cash upon delivery.</p>
+      </div>
+      <div class="payment-option">
+        <input type="radio" id="paypal" name="payment" value="paypal">
+        <label for="paypal">PayPal</label>
+        <img src="../../assets/imgs/AM_mc_vs_dc_ae.jpg" alt="PayPal" class="paypal-logo">
+      </div>
+      <button type="submit" class="place-order-btn">Place order</button>
+    </div>
+  </div>
+</div>

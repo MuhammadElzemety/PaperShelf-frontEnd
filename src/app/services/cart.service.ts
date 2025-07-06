@@ -1,12 +1,16 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
   private apiUrl = 'http://localhost:3000/api/cart';
-  
+
+  private cartSubject = new BehaviorSubject<any>({ items: [], totalAmount: 0 });
+  cart$ = this.cartSubject.asObservable();
+
   constructor(private http: HttpClient) {}
 
   addToCart(bookId: string) {
@@ -19,15 +23,34 @@ export class CartService {
     return this.http.get(`${this.apiUrl}`, { headers });
   }
 
+  refreshCart() {
+    this.getCart().subscribe({
+      next: (response: any) => {
+        this.cartSubject.next(response.data || { items: [], totalAmount: 0 });
+      },
+      error: () => {
+        this.cartSubject.next({ items: [], totalAmount: 0 });
+      }
+    });
+  }
+
   updateCartItemQuantity(itemId: string, quantity: number) {
-  const token = localStorage.getItem('token') || '';
-  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-  return this.http.put(`${this.apiUrl}/update`, { itemId, quantity }, { headers });
-}
-
-
+    const token = localStorage.getItem('token') || '';
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.put(`${this.apiUrl}/update`, { itemId, quantity }, { headers });
+  }
 
   removeCartItem(itemId: string) {
-    return this.http.delete(`${this.apiUrl}/remove/${itemId}`);
+    const token = localStorage.getItem('token') || '';
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.delete(`${this.apiUrl}/remove/${itemId}`, { headers });
+  }
+
+  private toggleCartSource = new Subject<void>();
+
+  toggleCart$ = this.toggleCartSource.asObservable();
+
+  toggleCart() {
+    this.toggleCartSource.next();
   }
 }
