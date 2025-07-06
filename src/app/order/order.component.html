@@ -1,81 +1,120 @@
 <div class="checkout-container">
-  <div class="billing-details">
-    <h2>Billing details</h2>
-    <form>
-  <div class="form-group">
-    <label for="country">Country / Region *</label>
-    <select id="country" name="country">
-      <option value="US">United States (US)</option>
-    </select>
-  </div>
+  <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="billing-details">
+      <h2>Billing details</h2>
 
-  <div class="form-group">
-    <label for="street-address">Street address *</label>
-    <input type="text" id="street-address" name="street-address" placeholder="House number and street name">
-    <input type="text" id="apartment" name="apartment" placeholder="Apartment, suite, unit, etc. (optional)" class="mt-2">
-  </div>
+      <ng-container *ngIf="shippingAddress" [formGroup]="shippingAddress">
 
-  <div class="form-group">
-    <label for="city">Town / City *</label>
-    <input type="text" id="city" name="city">
-  </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="first-name">First name *</label>
+                <input type="text" id="first-name" formControlName="firstName" class="form-control">
+                <small *ngIf="shippingAddress.get('firstName')?.invalid && shippingAddress.get('firstName')?.touched" class="text-danger">
+                    First name is required (2-50 characters).
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="last-name">Last name *</label>
+                <input type="text" id="last-name" formControlName="lastName" class="form-control">
+                <small *ngIf="shippingAddress.get('lastName')?.invalid && shippingAddress.get('lastName')?.touched" class="text-danger">
+                    Last name is required (2-50 characters).
+                </small>
+            </div>
+        </div>
 
-  <div class="form-group">
-    <label for="state">State *</label>
-    <select id="state" name="state">
-      <option value="NY">New York</option>
-    </select>
-  </div>
+        <div class="form-group">
+            <label for="email">Email address *</label>
+            <input type="email" id="email" formControlName="email" class="form-control">
+            <small *ngIf="shippingAddress.get('email')?.invalid && shippingAddress.get('email')?.touched" class="text-danger">
+                Please enter a valid email.
+            </small>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone *</label>
+            <input type="tel" id="phone" formControlName="phone" class="form-control">
+             <small *ngIf="shippingAddress.get('phone')?.invalid && shippingAddress.get('phone')?.touched" class="text-danger">
+                Phone number is required (10-15 digits).
+            </small>
+        </div>
 
-  <div class="form-group">
-    <label for="zip-code">ZIP Code *</label>
-    <input type="text" id="zip-code" name="zip-code">
-  </div>
-</form>
-  </div>
+        <div class="form-group">
+          <label for="country">Country / Region *</label>
+          <select id="country" formControlName="country" class="form-control">
+            <option value="Egypt">Egypt</option>
+            <option value="US">United States (US)</option>
+          </select>
+        </div>
 
-  <div class="order-summary">
-    <div class="order-box">
-  <h2>Your order</h2>
+        <div class="form-group">
+          <label for="address">Address *</label>
+          <textarea id="address" formControlName="address" placeholder="Street address, building, apartment, etc." rows="3" class="form-control"></textarea>
+           <small *ngIf="shippingAddress.get('address')?.invalid && shippingAddress.get('address')?.touched" class="text-danger">
+                Full address is required (10-200 characters).
+            </small>
+        </div>
 
-  <ng-container *ngIf="cartData && cartData.items.length > 0; else emptyCart">
-    
-    <div class="order-item" *ngFor="let item of cartData.items">
-      <span>{{ item.book.title }} × {{ item.quantity }}</span>
-      <span>${{ (item.priceAtTime * item.quantity).toFixed(2) }}</span>
-    </div>
- 
-    
-    <div class="order-subtotal">
-      <span>Subtotal</span>
-      <span>${{ cartData.totalAmount.toFixed(2) }}</span>
-    </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="city">Town / City *</label>
+                <input type="text" id="city" formControlName="city" class="form-control">
+                 <small *ngIf="shippingAddress.get('city')?.invalid && shippingAddress.get('city')?.touched" class="text-danger">
+                    City is required.
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="state">State / Governorate *</label>
+                <input type="text" id="state" formControlName="state" class="form-control">
+                <small *ngIf="shippingAddress.get('state')?.invalid && shippingAddress.get('state')?.touched" class="text-danger">
+                    State is required.
+                </small>
+            </div>
+        </div>
+      </ng-container>
 
-    <div class="order-total">
-      <span>Total</span>
-      <span><strong>${{ cartData.totalAmount.toFixed(2) }}</strong></span>
-    </div>
-  </ng-container>
-
-  <ng-template #emptyCart>
-    <p class="text-center p-3">Your cart is empty.</p>
-  </ng-template>
-
-</div>
-
-    <div class="payment-box">
-      <h2>Payment</h2>
-      <div class="payment-option">
-        <input type="radio" id="cash" name="payment" value="cash" checked>
-        <label for="cash">Cash on delivery</label>
-        <p>Pay with cash upon delivery.</p>
+      <div class="form-group">
+        <label for="notes">Order notes (optional)</label>
+        <textarea id="notes" formControlName="notes" rows="3" placeholder="Notes about your order, e.g. special notes for delivery." class="form-control"></textarea>
       </div>
-      <div class="payment-option">
-        <input type="radio" id="paypal" name="payment" value="paypal">
-        <label for="paypal">PayPal</label>
-        <img src="../../assets/imgs/AM_mc_vs_dc_ae.jpg" alt="PayPal" class="paypal-logo">
-      </div>
-      <button type="submit" class="place-order-btn">Place order</button>
     </div>
-  </div>
+
+    <div class="order-summary">
+      <div class="order-box">
+        <h2>Your order</h2>
+        <ng-container *ngIf="cartData && cartData.items.length > 0; else emptyCart">
+          <div class="order-item" *ngFor="let item of cartData.items">
+            <span>{{ item.book.title }} × {{ item.quantity }}</span>
+            <span>${{ (item.priceAtTime * item.quantity).toFixed(2) }}</span>
+          </div>
+          <div class="order-total">
+            <span>Total</span>
+            <span><strong>${{ cartData.totalAmount.toFixed(2) }}</strong></span>
+          </div>
+        </ng-container>
+        <ng-template #emptyCart>
+          <p class="text-center p-3">Your cart is empty.</p>
+        </ng-template>
+      </div>
+
+      <div class="payment-box">
+        <h2>Payment</h2>
+        <div class="payment-option">
+          <input type="radio" id="cash" formControlName="paymentMethod" value="cash_on_delivery">
+          <label for="cash">Cash on delivery</label>
+          <p>Pay with cash upon delivery.</p>
+        </div>
+        <div class="payment-option">
+          <input type="radio" id="paypal" formControlName="paymentMethod" value="paypal">
+          <label for="paypal">PayPal</label>
+          <img src="../../assets/imgs/AM_mc_vs_dc_ae.jpg" alt="PayPal" class="paypal-logo">
+        </div>
+
+        <button *ngIf="selectedPaymentMethod !== 'paypal'" type="submit" class="place-order-btn">
+          Place order
+        </button>
+        <button *ngIf="selectedPaymentMethod === 'paypal'" type="button" (click)="proceedToPayPal()" class="place-order-btn paypal-btn">
+          Proceed to PayPal
+        </button>
+      </div>
+    </div>
+  </form>
 </div>
