@@ -12,10 +12,10 @@ body {
   color: var(--text-color);
 }
 
-.checkout-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
+form {
+  display: flex;
+  flex-direction: row;
+  gap: 200px;
   max-width: 1200px;
   margin: 0 auto;
   margin-top: 40px;
@@ -145,8 +145,8 @@ h2 {
 
 /* Responsive adjustments */
 @media (max-width: 992px) {
-  .checkout-container {
-    grid-template-columns: 1fr;
+  form {
+    flex-direction: column;
   }
 }
 .order-item{
