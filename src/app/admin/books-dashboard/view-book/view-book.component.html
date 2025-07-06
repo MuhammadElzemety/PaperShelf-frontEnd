@@ -1,0 +1,167 @@
+<div class="container-fluid" *ngIf="isLoading">
+    <div class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3">Loading book details...</p>
+    </div>
+</div>
+
+<div class="container-fluid" *ngIf="!isLoading && book">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="shop-breadcrumb">
+                <div class="breadcrumb-main">
+                    <h4 class="text-capitalize breadcrumb-title">Book Details</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="products mb-30">
+        <div class="container-fluid">
+            <div class="card product-details h-100">
+                <div class="product-item d-flex p-sm-40 p-20">
+                    <div class="row w-100">
+                        <div class="col-lg-5 text-center">
+                            <div class="carousel-item active">
+                                <img class="img-fluid d-flex bg-opacity-primary mx-auto"
+                                    [src]="getImageUrl(book.coverImage)" alt="Book Cover"
+                                    style="max-width: 400px; height: auto;" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-7">
+                            <div class="border-bottom mb-25 pb-sm-30 pb-15 mt-lg-0 mt-15">
+                                <div class="product-item__body">
+                                    <div *ngIf="!isLoading && error" style="max-width:500px;">
+                                        <div class="alert alert-danger text-center mt-4">{{ error }}</div>
+                                    </div>
+                                    <div class="product-item__title">
+                                        <h2 class="card-title fw-500">
+                                            <p>{{ book.title }}</p>
+                                        </h2>
+                                    </div>
+                                    <div class="stars-rating d-flex align-items-center">
+                                        <span>⭐</span>
+                                        <span class="stars-rating__point">{{book.averageRating}}</span>
+                                        <span class="stars-rating__review"><span>{{book.totalReviews}}</span> Reviews</span>
+                                    </div>
+                                    <div class="product-item__content text-capitalize">
+                                        <span class="product-desc-price">${{ (book.price * (1 - book.discount /
+                                            100)).toFixed(2) }}</span>
+
+                                        <div class="d-flex align-items-center mb-2" *ngIf="book.discount > 0">
+                                            <span class="product-price me-2 text-danger fw-bold">
+                                                ${{ book.price }}
+                                            </span>
+                                            <span class="product-discount text-success fw-bold">{{ book.discount }}%
+                                                Off</span>
+                                        </div>
+
+                                        <p class="product-deatils-pera">
+                                            {{ book.description || 'No description provided.' }}
+                                        </p>
+
+                                        <div class="product-details__availability">
+                                            <div class="title">
+                                                <p>Stock:</p>
+                                                <span class="stock">{{ book.stock }}</span>
+                                            </div>
+                                            <div class="title">
+                                                <p>Sales:</p>
+                                                <span class="stock">{{ book.totalSales || 0 }}</span>
+                                            </div>
+                                            <div class="title">
+                                                <p>Status:</p>
+                                                <span
+                                                    class="rounded-pill userDatatable-content-status text-center w-90px"
+                                                    [ngClass]="{'bg-opacity-success': book.isApproved, 'bg-opacity-warning': !book.isApproved}">
+                                                    {{ book.isApproved ? 'Approved' : 'Pending' }}
+                                                </span>
+                                                <span *ngIf="book.isBestseller"
+                                                    class="rounded-pill userDatatable-content-status text-center w-90px bg-opacity-success">
+                                                    Best Seller
+                                                </span>
+                                                <span *ngIf="book.isFeatured"
+                                                    class="rounded-pill userDatatable-content-status text-center w-90px bg-opacity-success">
+                                                    Featured
+                                                </span>
+                                                <span *ngIf="book.isNew"
+                                                    class="rounded-pill userDatatable-content-status text-center w-90px bg-opacity-success">
+                                                    Newest
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="product-details__availability mb-4">
+                                <div class="title">
+                                    <p>Category:</p>
+                                    <span class="free">{{ book.category }}</span>
+                                </div>
+                                <div class="title">
+                                    <p>Author:</p>
+                                    <span class="free">{{ book.author }}</span>
+                                </div>
+                                <div class="title">
+                                    <p>ISBN:</p>
+                                    <span class="free">{{ book.isbn }}</span>
+                                </div>
+                                <div class="title">
+                                    <p>Pages:</p>
+                                    <span class="free">{{ book.pages }}</span>
+                                </div>
+                                <div class="title">
+                                    <p>Added:</p>
+                                    <span class="stock">{{ book.createdAt | date:'yyyy-MM-dd' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="product-item__button mt-lg-30 mt-sm-25 mt-20 d-flex flex-wrap">
+                                <div class="d-flex flex-wrap product-item__action align-items-center">
+                                    <button [routerLink]="'/dashboard/books/edit/' + book._id" routerLinkActive="active"
+                                        class="btn btn-primary btn-default btn-squared border-0 mr-10 my-sm-0 my-2">
+                                        Edit Book
+                                    </button>
+                                    <button data-toggle="modal" data-target="#modal-info-delete" class="btn btn-danger btn-default btn-squared border-0 mr-10 my-sm-0 my-2">
+                                        Delete Book
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- delete modal -->
+<div class="modal-info-delete modal fade show" id="modal-info-delete" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-info" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="modal-info-body d-flex">
+                    <div class="modal-info-icon warning">
+                        <span data-feather="info"></span>
+                    </div>
+                    <div class="modal-info-text">
+                        <h6>Are Sure Delete?</h6>
+                        <h6>{{book.title}}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-outlined btn-sm" data-dismiss="modal" (click)="deleteBook()">Yes</button>
+                <button type="button" class="btn btn-success btn-outlined btn-sm" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>

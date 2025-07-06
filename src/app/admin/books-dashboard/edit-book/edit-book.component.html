@@ -1,0 +1,203 @@
+<div class="container-fluid">
+    <div *ngIf="alert.show" [ngClass]="{
+      'alert': true,
+      'alert-success': alert.type === 'success',
+      'alert-danger': alert.type === 'error'
+    }" class="position-fixed top-20 start-50 translate-middle-x mt-3" style="z-index: 99999;" role="alert">
+        <div class="alert-content">
+            <p>{{ alert.message }}</p>
+        </div>
+    </div>
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content radius-xl">
+            <div class="modal-header">
+                <h6 class="modal-title fw-500">Edit Book</h6>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span data-feather="x"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="new-member-modal">
+                    <form [formGroup]="editBookForm" (ngSubmit)="onUpdateBook()" novalidate>
+                        <div class="card-body pb-md-40">
+                            <div *ngIf="imagePreviewUrl"
+                                class="d-flex justify-content-center align-items-center flex-column">
+                                <img [src]="imagePreviewUrl" alt="Preview"
+                                    style="max-width: 200px; max-height: 200px; border-radius: 8px; object-fit: cover;">
+                                <p class="text-success fs-14 mt-2 text-center">{{ selectedFileName }}</p>
+                            </div>
+                            <div class="custom-file">
+                                <label for="formFile" class="form-label">Cover Image <span
+                                        class="text-danger">*</span></label>
+                                <input #fileInput class="form-control" type="file" id="formFile"
+                                    (change)="onFileSelected($event)">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Title <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" placeholder="Title" formControlName="title">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="editBookForm.get('title')?.invalid && (editBookForm.get('title')?.touched || editBookForm.get('title')?.dirty)">
+                                    <span *ngIf="editBookForm.get('title')?.errors?.['required']">Title is
+                                        required.</span>
+                                    <span *ngIf="editBookForm.get('title')?.errors?.['minlength']">Title must be at
+                                        least 3 characters.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Author <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" placeholder="Author" formControlName="author">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="editBookForm.get('author')?.invalid && (editBookForm.get('author')?.touched || editBookForm.get('author')?.dirty)">
+                                    <span *ngIf="editBookForm.get('author')?.errors?.['required']">Author is
+                                        required.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>ISBN <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" placeholder="ISBN" formControlName="isbn">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="editBookForm.get('isbn')?.invalid && (editBookForm.get('isbn')?.touched || editBookForm.get('isbn')?.dirty)">
+                                    <span *ngIf="editBookForm.get('isbn')?.errors?.['required']">ISBN is
+                                        required.</span>
+                                    <span
+                                        *ngIf="editBookForm.get('isbn')?.errors?.['minlength'] || editBookForm.get('isbn')?.errors?.['maxlength']">ISBN
+                                        must be exactly 13 characters.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Pages <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" placeholder="Pages" formControlName="pages">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="editBookForm.get('pages')?.invalid && (editBookForm.get('pages')?.touched || editBookForm.get('pages')?.dirty)">
+                                    <span *ngIf="editBookForm.get('pages')?.errors?.['required']">Pages is
+                                        required.</span>
+                                    <span *ngIf="editBookForm.get('pages')?.errors?.['min']">Pages must be at least
+                                        1.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Price <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" class="form-control" placeholder="Price"
+                                    formControlName="price">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="editBookForm.get('price')?.invalid && (editBookForm.get('price')?.touched || editBookForm.get('price')?.dirty)">
+                                    <span *ngIf="editBookForm.get('price')?.errors?.['required']">Price is
+                                        required.</span>
+                                    <span *ngIf="editBookForm.get('price')?.errors?.['min']">Price cannot be
+                                        negative.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Discount (%) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" placeholder="Discount"
+                                    formControlName="discount">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="editBookForm.get('discount')?.invalid && (editBookForm.get('discount')?.touched || editBookForm.get('discount')?.dirty)">
+                                    <span *ngIf="editBookForm.get('discount')?.errors?.['min']">Discount cannot be
+                                        negative.</span>
+                                    <span *ngIf="editBookForm.get('discount')?.errors?.['max']">Discount cannot exceed
+                                        100%.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Stock <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" placeholder="Stock" formControlName="stock">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="editBookForm.get('stock')?.invalid && (editBookForm.get('stock')?.touched || editBookForm.get('stock')?.dirty)">
+                                    <span *ngIf="editBookForm.get('stock')?.errors?.['required']">Stock is
+                                        required.</span>
+                                    <span *ngIf="editBookForm.get('stock')?.errors?.['min']">Stock cannot be
+                                        negative.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Category <span class="text-danger">*</span></label>
+                                <select class="form-control" formControlName="category">
+                                    <option value="">Select category</option>
+                                    <option value="Programming">Programming</option>
+                                    <option value="Design">Design</option>
+                                    <option value="Business">Business</option>
+                                </select>
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="editBookForm.get('category')?.invalid && (editBookForm.get('category')?.touched || editBookForm.get('category')?.dirty)">
+                                    <span *ngIf="editBookForm.get('category')?.errors?.['required']">Category is
+                                        required.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-20">
+                            <label>Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control mb-4" placeholder="Description"
+                                formControlName="description"></textarea>
+                            <div class="text-danger mt-1 fs-13"
+                                *ngIf="editBookForm.get('description')?.invalid && (editBookForm.get('description')?.touched || editBookForm.get('description')?.dirty)">
+                                <span *ngIf="editBookForm.get('description')?.errors?.['maxlength']">Description cannot
+                                    exceed 300 characters.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group textarea-group">
+                            <label class="mb-15">Book Status</label>
+                            <div class="d-flex flex-wrap">
+                                <div class="checkbox-group d-flex mr-50 pr-10">
+                                    <div class="checkbox-theme-default custom-checkbox checkbox-group__single d-flex">
+                                        <input class="checkbox" type="checkbox" id="isBestseller"
+                                            formControlName="isBestseller">
+                                        <label for="isBestseller">Bestseller</label>
+                                    </div>
+                                </div>
+                                <div class="checkbox-group d-flex mr-50 pr-10">
+                                    <div class="checkbox-theme-default custom-checkbox checkbox-group__single d-flex">
+                                        <input class="checkbox" type="checkbox" id="isFeatured"
+                                            formControlName="isFeatured">
+                                        <label for="isFeatured">Featured</label>
+                                    </div>
+                                </div>
+                                <div class="checkbox-group d-flex mr-50 pr-10">
+                                    <div class="checkbox-theme-default custom-checkbox checkbox-group__single d-flex">
+                                        <input class="checkbox" type="checkbox" id="isNew" formControlName="isNew">
+                                        <label for="isNew">New Arrival</label>
+                                    </div>
+                                </div>
+                                <div class="checkbox-group d-flex">
+                                    <div class="checkbox-theme-default custom-checkbox checkbox-group__single d-flex">
+                                        <input class="checkbox" type="checkbox" id="isApproved" formControlName="isApproved">
+                                        <label for="isApproved">Approved</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="isApproved" value="true">
+                        <div class="button-group d-flex pt-25">
+                            <button type="submit"
+                                class="btn btn-primary btn-default btn-squared text-capitalize d-flex align-items-center"
+                                [disabled]="editBookForm.invalid || loading">
+                                <span *ngIf="!loading">Update Book</span>
+                                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"
+                                    aria-hidden="true"></span>
+                                <span *ngIf="loading">Updating...</span>
+                            </button>
+                            <button type="button"
+                                class="btn btn-light btn-default btn-squared fw-400 text-capitalize b-light color-light ml-15"
+                                data-bs-dismiss="modal"
+                                (click)="router.navigate(['/dashboard/books/view', bookId])">Back To Book</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

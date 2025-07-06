@@ -40,7 +40,7 @@ export class VerifyComponent {
       this.authService.verifyEmail({otp}).subscribe({
         next: (response) => {
           console.log('✅ Email verified successfully!', response);
-          this.router.navigate(['/']);
+          this.router.navigate(['/login']);
         },
         error: (err: any) => {
           console.error('❌ OTP verification failed:', err);

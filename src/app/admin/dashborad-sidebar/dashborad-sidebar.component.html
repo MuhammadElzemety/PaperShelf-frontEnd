@@ -6,35 +6,53 @@
                     <span>Paper Shelf</span>
                 </li>
                 <li class="has-child">
-                    <a class="">
+                    <a routerLinkActive="active" routerLink="/dashboard" class="">
                         <span data-feather="home" class="nav-icon"></span>
                         <span class="menu-text">Dashboard</span>
                         <span class="toggle-icon"></span>
                     </a>
-                    <ul>
-                        <li>
-                            <a routerLinkActive="active" routerLink="/dashboard">Dashboard</a>
-                        </li>
-                    </ul>
                 </li>
                 <li class="has-child">
-                    <a class="">
+                    <a routerLink="/dashboard/users" routerLinkActive="active" class="">
                         <span data-feather="folder" class="nav-icon"></span>
                         <span class="menu-text">Users</span>
                         <span class="toggle-icon"></span>
                     </a>
+                </li>
+                <li class="has-child">
+                    <a routerLink="/dashboard/books" routerLinkActive="active" class="">
+                        <span data-feather="book-open" class="nav-icon"></span>
+                        <span class="menu-text">Books</span>
+                        <span class="toggle-icon"></span>
+                    </a>
+                </li>
+                <li class="has-child">
+                    <a href="#" class="">
+                        <span data-feather="cpu" class="nav-icon"></span>
+                        <span class="menu-text">Reviews</span>
+                        <span class="toggle-icon"></span>
+                    </a>
                     <ul>
                         <li>
-                            <a routerLink="/dashboard/users" routerLinkActive="active">All Users</a>
+                            <a routerLink="/dashboard/reviews/approve" routerLinkActive="active" class="">Approved</a>
                         </li>
                         <li>
-                            <a routerLink="/dashboard/users" routerLinkActive="active">Authors</a>
+                            <a routerLink="/dashboard/reviews/pending" routerLinkActive="active" class="">Pending</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="has-child">
+                    <a href="#" class="">
+                        <span data-feather="cpu" class="nav-icon"></span>
+                        <span class="menu-text">Orders</span>
+                        <span class="toggle-icon"></span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="basic-table.html" class="">List Orders</a>
                         </li>
                         <li>
-                            <a routerLink="/dashboard/users" routerLinkActive="active">Admins</a>
-                        </li>
-                        <li>
-                            <a data-layout="side">Manage Roles</a>
+                            <a href="datatable.html" class="">Manage</a>
                         </li>
                     </ul>
                 </li>

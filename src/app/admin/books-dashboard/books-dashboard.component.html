@@ -1,0 +1,350 @@
+<div class="container-fluid">
+    <div *ngIf="alert.show" [ngClass]="{
+       'alert': true,
+       'alert-success': alert.type === 'success',
+       'alert-danger': alert.type === 'error'
+    }" class="position-fixed top-20 start-50 translate-middle-x mt-3" style="z-index: 99999;" role="alert">
+        <div class="alert-content">
+            <p>{{ alert.message }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="breadcrumb-main user-member justify-content-sm-between ">
+                <div class="d-flex flex-wrap justify-content-center breadcrumb-main__wrapper">
+                    <div class="d-flex align-items-center user-member__title justify-content-center mr-sm-25">
+                        <h4 class="text-capitalize fw-500 breadcrumb-title">Books</h4>
+                    </div>
+                    <form class="d-flex align-items-center user-member__form my-sm-0 my-2"
+                        (submit)="onSearch(); $event.preventDefault()">
+                        <span data-feather="search"></span>
+                        <input class="form-control mr-sm-2 border-0 box-shadow-none" type="search"
+                            placeholder="Search....." aria-label="Search" [formControl]="searchControl">
+                    </form>
+                </div>
+                <div class="action-btn">
+                    <a href="#" class="btn px-15 btn-primary" data-toggle="modal" data-target="#new-member">
+                        <i class="las la-plus fs-16"></i>Add New Book
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="userDatatable global-shadow border p-30 bg-white radius-xl w-100 mb-30">
+                <div class="table-responsive text-center" *ngIf="isLoading">
+                    <div class="py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive text-center" *ngIf="!isLoading && books.length === 0">
+                    <div class="py-5 text-danger">
+                        No books found.
+                    </div>
+                </div>
+
+                <div class="table-responsive" *ngIf="!isLoading && books.length > 0">
+                    <table class="table mb-0 table-borderless">
+                        <thead>
+                            <tr class="userDatatable-header text-center">
+                                <th><span class="userDatatable-title">Book</span></th>
+                                <th><span class="userDatatable-title">Description</span></th>
+                                <th><span class="userDatatable-title">ISBN</span></th>
+                                <th><span class="userDatatable-title">Category</span></th>
+                                <th><span class="userDatatable-title">Price</span></th>
+                                <th><span class="userDatatable-title">Rating</span></th>
+                                <th><span class="userDatatable-title">Stock</span></th>
+                                <th><span class="userDatatable-title">Status</span></th>
+                                <th><span class="userDatatable-title">Best</span></th>
+                                <th><span class="userDatatable-title">Featured</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let book of books;">
+                                <td>
+                                    <div class="d-flex">
+                                        <div class="userDatatable__imgWrapper d-flex align-items-center">
+                                            <a routerLinkActive="active" [routerLink]="'/dashboard/books/view/' + book.id" class="profile-image rounded-circle d-block m-0 wh-38"
+                                                [style.background-image]="'url(' + book.coverImage + ')'"
+                                                style="background-size: cover;"></a>
+                                        </div>
+                                        <div class="userDatatable-inline-title">
+                                            <a routerLinkActive="active" [routerLink]="'/dashboard/books/view/' + book.id" class="text-dark fw-500">
+                                                <h6 class="text-truncate" style="max-width: 200px;">{{ book.title }}
+                                                </h6>
+                                            </a>
+                                            <p class="d-block mb-0 text-truncate" style="max-width: 150px;">{{
+                                                book.author }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="userDatatable-content text-truncate" style="max-width: 200px;">{{
+                                        book.description }}</div>
+                                </td>
+                                <td>
+                                    <div class="userDatatable-content">{{ book.isbn }}</div>
+                                </td>
+                                <td>
+                                    <div class="userDatatable-content">{{ book.category }}</div>
+                                </td>
+                                <td>
+                                    <div class="userDatatable-content">{{ book.price | currency:'USD':true }}</div>
+                                </td>
+                                <td>
+                                    <div class="userDatatable-content">⭐ ({{ book.rating || 0 }})</div>
+                                </td>
+                                <td>
+                                    <div class="userDatatable-content d-inline-block">
+                                        <span
+                                            class="rounded-pill userDatatable-content-status active text-center w-100px"
+                                            [ngClass]="book.stock > 5 ? 'bg-opacity-success' : book.stock > 0 ? 'bg-opacity-warning' : 'bg-opacity-danger'">
+                                            {{ book.stock }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="userDatatable-content d-inline-block">
+                                        <span
+                                            class="rounded-pill userDatatable-content-status active text-center w-100px"
+                                            [ngClass]="book.isApproved ? 'bg-opacity-success' : 'bg-opacity-warning'">
+                                            {{ book.isApproved ? 'Approved' : 'Pending' }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-center userDatatable-content">
+                                        <input type="checkbox" [checked]="book.isBestseller"
+                                            (change)="toggleBestseller(book, getCheckedValue($event))">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-center userDatatable-content">
+                                        <input type="checkbox" [checked]="book.isFeatured"
+                                            (change)="toggleFeatured(book, getCheckedValue($event))">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-end pt-30">
+                    <nav class="atbd-page">
+                        <ul class="atbd-pagination d-flex">
+                            <li class="atbd-pagination__item" [class.disabled]="currentPage === 1">
+                                <a href="#" class="atbd-pagination__link pagination-control"
+                                    (click)="loadPage(currentPage - 1); $event.preventDefault()">
+                                    <span class="la la-angle-left"></span>
+                                </a>
+                            </li>
+
+                            <li class="atbd-pagination__item"
+                                *ngFor="let page of [].constructor(pagination?.totalPages); let i = index">
+                                <a href="#" class="atbd-pagination__link" [class.active]="(i + 1) === currentPage"
+                                    (click)="loadPage(i + 1); $event.preventDefault()">
+                                    <span class="page-number">{{ i + 1 }}</span>
+                                </a>
+                            </li>
+
+                            <li class="atbd-pagination__item" [class.disabled]="currentPage === pagination?.totalPages">
+                                <a href="#" class="atbd-pagination__link pagination-control"
+                                    (click)="loadPage(currentPage + 1); $event.preventDefault()">
+                                    <span class="la la-angle-right"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<section class="modal fade new-member" id="new-member" role="dialog" tabindex="-1" aria-labelledby="staticBackdropLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content radius-xl">
+            <div class="modal-header">
+                <h6 class="modal-title fw-500" id="staticBackdropLabel">Add New Book</h6>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span data-feather="x"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="new-member-modal">
+                    <form [formGroup]="addBookForm" (ngSubmit)="onAddBook()" novalidate>
+
+                        <div class="card-body pb-md-40 pt-md-30">
+                            <div *ngIf="imagePreviewUrl"
+                                class="d-flex justify-content-center align-items-center flex-column mt-3">
+                                <img [src]="imagePreviewUrl" alt="Preview"
+                                    style="max-width: 120px; max-height: 120px; border-radius: 8px; object-fit: cover;">
+                                <p class="text-success fs-14 mt-2 text-center">{{ selectedFileName }}</p>
+                            </div>
+                            <div class="custom-file">
+                                <label for="formFile" class="form-label">Cover Image <span
+                                        class="text-danger">*</span></label>
+                                <input #fileInput class="form-control" type="file" id="formFile"
+                                    (change)="onFileSelected($event)">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Title <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" placeholder="Title" formControlName="title">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="addBookForm.get('title')?.invalid && (addBookForm.get('title')?.touched || addBookForm.get('title')?.dirty)">
+                                    <span *ngIf="addBookForm.get('title')?.errors?.['required']">Title is
+                                        required.</span>
+                                    <span *ngIf="addBookForm.get('title')?.errors?.['minlength']">Title must be at least
+                                        3 characters.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Author <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" placeholder="Author" formControlName="author">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="addBookForm.get('author')?.invalid && (addBookForm.get('author')?.touched || addBookForm.get('author')?.dirty)">
+                                    <span *ngIf="addBookForm.get('author')?.errors?.['required']">Author is
+                                        required.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>ISBN <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" placeholder="ISBN" formControlName="isbn">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="addBookForm.get('isbn')?.invalid && (addBookForm.get('isbn')?.touched || addBookForm.get('isbn')?.dirty)">
+                                    <span *ngIf="addBookForm.get('isbn')?.errors?.['required']">ISBN is required.</span>
+                                    <span
+                                        *ngIf="addBookForm.get('isbn')?.errors?.['minlength'] || addBookForm.get('isbn')?.errors?.['maxlength']">ISBN
+                                        must be exactly 13 characters.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Pages <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" placeholder="Pages" formControlName="pages">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="addBookForm.get('pages')?.invalid && (addBookForm.get('pages')?.touched || addBookForm.get('pages')?.dirty)">
+                                    <span *ngIf="addBookForm.get('pages')?.errors?.['required']">Pages is
+                                        required.</span>
+                                    <span *ngIf="addBookForm.get('pages')?.errors?.['min']">Pages must be at least
+                                        1.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Price <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" class="form-control" placeholder="Price"
+                                    formControlName="price">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="addBookForm.get('price')?.invalid && (addBookForm.get('price')?.touched || addBookForm.get('price')?.dirty)">
+                                    <span *ngIf="addBookForm.get('price')?.errors?.['required']">Price is
+                                        required.</span>
+                                    <span *ngIf="addBookForm.get('price')?.errors?.['min']">Price cannot be
+                                        negative.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Discount (%) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" placeholder="Discount"
+                                    formControlName="discount">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="addBookForm.get('discount')?.invalid && (addBookForm.get('discount')?.touched || addBookForm.get('discount')?.dirty)">
+                                    <span *ngIf="addBookForm.get('discount')?.errors?.['min']">Discount cannot be
+                                        negative.</span>
+                                    <span *ngIf="addBookForm.get('discount')?.errors?.['max']">Discount cannot exceed
+                                        100%.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Stock <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" placeholder="Stock" formControlName="stock">
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="addBookForm.get('stock')?.invalid && (addBookForm.get('stock')?.touched || addBookForm.get('stock')?.dirty)">
+                                    <span *ngIf="addBookForm.get('stock')?.errors?.['required']">Stock is
+                                        required.</span>
+                                    <span *ngIf="addBookForm.get('stock')?.errors?.['min']">Stock cannot be
+                                        negative.</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3 px-15">
+                                <label>Category <span class="text-danger">*</span></label>
+                                <select class="form-control" formControlName="category">
+                                    <option value="">Select category</option>
+                                    <option value="Programming">Programming</option>
+                                    <option value="Design">Design</option>
+                                    <option value="Business">Business</option>
+                                </select>
+                                <div class="text-danger mt-1 fs-13"
+                                    *ngIf="addBookForm.get('category')?.invalid && (addBookForm.get('category')?.touched || addBookForm.get('category')?.dirty)">
+                                    <span *ngIf="addBookForm.get('category')?.errors?.['required']">Category is
+                                        required.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-20">
+                            <label>Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control mb-4" placeholder="Description"
+                                formControlName="description"></textarea>
+                            <div class="text-danger mt-1 fs-13"
+                                *ngIf="addBookForm.get('description')?.invalid && (addBookForm.get('description')?.touched || addBookForm.get('description')?.dirty)">
+                                <span *ngIf="addBookForm.get('description')?.errors?.['maxlength']">Description cannot
+                                    exceed 300 characters.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group textarea-group">
+                            <label class="mb-15">Book Status</label>
+                            <div class="d-flex flex-wrap">
+                                <div class="checkbox-group d-flex mr-50 pr-10">
+                                    <div class="checkbox-theme-default custom-checkbox checkbox-group__single d-flex">
+                                        <input class="checkbox" type="checkbox" id="isBestseller"
+                                            formControlName="isBestseller">
+                                        <label for="isBestseller">Bestseller</label>
+                                    </div>
+                                </div>
+                                <div class="checkbox-group d-flex mr-50 pr-10">
+                                    <div class="checkbox-theme-default custom-checkbox checkbox-group__single d-flex">
+                                        <input class="checkbox" type="checkbox" id="isFeatured"
+                                            formControlName="isFeatured">
+                                        <label for="isFeatured">Featured</label>
+                                    </div>
+                                </div>
+                                <div class="checkbox-group d-flex">
+                                    <div class="checkbox-theme-default custom-checkbox checkbox-group__single d-flex">
+                                        <input class="checkbox" type="checkbox" id="isNew" formControlName="isNew">
+                                        <label for="isNew">New Arrival</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="isApproved" value="true">
+                        <div class="button-group d-flex pt-25">
+                            <button type="submit" class="btn btn-primary btn-default btn-squared text-capitalize"
+                                [disabled]="addBookForm.invalid">Add Book</button>
+                            <button type="button"
+                                class="btn btn-light btn-default btn-squared fw-400 text-capitalize b-light color-light ml-15"
+                                data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { switchMap, throwError, Observable, of } from 'rxjs';
 
 const API_URL = `${environment.apiBaseUrl}/auth`;
 
@@ -11,6 +11,22 @@ const API_URL = `${environment.apiBaseUrl}/auth`;
 export class AuthService {
   constructor(private _HttpClient: HttpClient) {}
 
+  refreshAccessToken() {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token'));
+    }
+    return this._HttpClient.post<{ accessToken: string }>(
+      `${API_URL}/refresh-token`,
+      { refreshToken }
+    ).pipe(
+      switchMap((response) => {
+        localStorage.setItem('accessToken', response.accessToken);
+        return of(true);
+      })
+    );
+  }
+  
   login(data: { email: string, password: string }): Observable<any> {
     return this._HttpClient.post(`${API_URL}/login`, data);
   }

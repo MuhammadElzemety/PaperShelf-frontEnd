@@ -1,42 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { Book } from '../interfaces/book';
 
-interface Book {
-  _id: string;
-  title: string;
-  author: string;
-  description: string;
-  isbn: string;
-  price: number;
-  discount: number;
-  pages: number;
-  category: string;
-  coverImage: string;
-  stock: number;
-  averageRating: number;
-  totalReviews: number;
-  totalSales: number;
-  isNew: boolean;
-  isBestseller: boolean;
-  isFeatured: boolean;
-  isApproved: boolean;
-  createdAt: string;
-  updatedAt: string;
-  reviews: any[];
-}
+const API_URL = `${environment.apiBaseUrl}`;
 
 @Injectable({
   providedIn: 'root'
 })
 export class HomebookService {
-  private apiUrl = 'http://localhost:3000/api/v1/books';
-   private baseUrl = 'http://localhost:3000/api/v1/books';
-   private authorurl = 'http://localhost:3000/api/v1/users/authors'
-  constructor(private http: HttpClient) {}
+  private apiUrl = `${API_URL}/books`;
+  private baseUrl = `${API_URL}/books`;
+  private authorurl = `${API_URL}/users/authors`;
+  constructor(private http: HttpClient) { }
 
-  getBooks(): Observable<{success: boolean, data: {books: Book[]}}> {
-    return this.http.get<{success: boolean, data: {books: Book[]}}>(this.apiUrl);
+  getBooks(): Observable<{ success: boolean, data: { books: Book[] } }> {
+    return this.http.get<{ success: boolean, data: { books: Book[] } }>(this.apiUrl);
   }
   getCategories(): Observable<any> {
     return this.http.get(`${this.baseUrl}/categories/`);
