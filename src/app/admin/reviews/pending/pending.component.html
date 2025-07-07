@@ -1,112 +1,206 @@
 <div class="container-fluid">
-    <div *ngIf="alert.show" [ngClass]="{
-         'alert': true,
-         'alert-success': alert.type === 'success',
-         'alert-danger': alert.type === 'error'
-      }" class="position-fixed top-20 start-50 translate-middle-x mt-3" style="z-index: 99999;" role="alert">
+  <div *ngIf="alert.show" [ngClass]="{
+       'alert': true,
+       'alert-success': alert.type === 'success',
+       'alert-danger': alert.type === 'error'
+    }" class="position-fixed top-20 start-50 translate-middle-x mt-3" style="z-index: 99999;" role="alert">
       <div class="alert-content">
-        <p>{{ alert.message }}</p>
+          <p>{{ alert.message }}</p>
       </div>
-    </div>
-  
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="breadcrumb-main user-member justify-content-sm-between ">
-          <div class="d-flex flex-wrap justify-content-center breadcrumb-main__wrapper">
-            <div class="d-flex align-items-center user-member__title justify-content-center mr-sm-25">
-              <h4 class="text-capitalize fw-500 breadcrumb-title">Pending Reviews</h4>
-            </div>
-            <form class="d-flex align-items-center user-member__form my-sm-0 my-2"
-                  (submit)="onSearch(); $event.preventDefault()">
-              <span data-feather="search"></span>
-              <input class="form-control mr-sm-2 border-0 box-shadow-none" type="search"
-                     placeholder="Search by book title or user..." aria-label="Search" [formControl]="searchControl">
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="userDatatable global-shadow border p-30 bg-white radius-xl w-100 mb-30">
-          
-          <div class="table-responsive text-center" *ngIf="isLoading">
-            <div class="py-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="sr-only">Loading...</span>
-              </div>
-            </div>
-          </div>
-  
-          <div class="table-responsive text-center" *ngIf="!isLoading && reviews.length === 0">
-            <div class="py-5 text-danger">
-              No pending reviews found.
-            </div>
-          </div>
-  
-          <div class="table-responsive" *ngIf="!isLoading && reviews.length > 0">
-            <table class="table mb-0 table-borderless">
-              <thead>
-                <tr class="userDatatable-header text-center">
-                  <th><span class="userDatatable-title">Book</span></th>
-                  <th><span class="userDatatable-title">User</span></th>
-                  <th><span class="userDatatable-title">Rating</span></th>
-                  <th><span class="userDatatable-title">Review Text</span></th>
-                  <th><span class="userDatatable-title">Date</span></th>
-                  <th><span class="userDatatable-title">Actions</span></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let review of reviews">
-                  <td class="text-truncate" style="max-width: 150px;">{{ review.bookTitle }}</td>
-                  <td>{{ review.user.name || 'Unknown' }}</td>
-                  <td>⭐ {{ review.rating }}</td>
-                  <td class="text-truncate" style="max-width: 300px;">{{ review.text }}</td>
-                  <td>{{ review.createdAt | date:'medium' }}</td>
-                  <td>
-                    <button class="btn btn-success btn-sm me-2" (click)="approveReview(review.bookId, review.reviewId, true)">
-                      Approve
-                    </button>
-                    <button class="btn btn-danger btn-sm" (click)="approveReview(review.bookId, review.reviewId, false)">
-                      Reject
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-  
-          <div class="d-flex justify-content-end pt-30">
-            <nav class="atbd-page">
-              <ul class="atbd-pagination d-flex">
-                <li class="atbd-pagination__item" [class.disabled]="currentPage === 1">
-                  <a href="#" class="atbd-pagination__link pagination-control"
-                     (click)="loadPage(currentPage - 1); $event.preventDefault()">
-                    <span class="la la-angle-left"></span>
-                  </a>
-                </li>
-  
-                <li class="atbd-pagination__item"
-                    *ngFor="let page of [].constructor(pagination?.totalPages); let i = index">
-                  <a href="#" class="atbd-pagination__link" [class.active]="(i + 1) === currentPage"
-                     (click)="loadPage(i + 1); $event.preventDefault()">
-                    <span class="page-number">{{ i + 1 }}</span>
-                  </a>
-                </li>
-  
-                <li class="atbd-pagination__item" [class.disabled]="currentPage === pagination?.totalPages">
-                  <a href="#" class="atbd-pagination__link pagination-control"
-                     (click)="loadPage(currentPage + 1); $event.preventDefault()">
-                    <span class="la la-angle-right"></span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-  
-        </div>
-      </div>
-    </div>
   </div>
-  
+
+  <div class="row">
+      <div class="col-lg-12">
+          <div class="breadcrumb-main user-member justify-content-sm-between ">
+              <div class="d-flex flex-wrap justify-content-center breadcrumb-main__wrapper">
+                  <div class="d-flex align-items-center user-member__title justify-content-center mr-sm-25">
+                      <h4 class="text-capitalize fw-500 breadcrumb-title">Pending Reviews</h4>
+                  </div>
+                  <form class="d-flex align-items-center user-member__form my-sm-0 my-2"
+                      (submit)="onSearch(); $event.preventDefault()" style="max-width: 250px;">
+                      <span data-feather="search"></span>
+                      <input class="form-control mr-sm-2 border-0 box-shadow-none" type="search"
+                          placeholder="Search by book title or user..." aria-label="Search"
+                          [formControl]="searchControl">
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="row">
+      <div class="col-lg-12">
+          <div class="userDatatable global-shadow border p-30 bg-white radius-xl w-100 mb-30">
+
+              <div class="table-responsive text-center" *ngIf="isLoading">
+                  <div class="py-5">
+                      <div class="spinner-border text-primary" role="status">
+                          <span class="sr-only">Loading...</span>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="table-responsive text-center" *ngIf="!isLoading && reviews.length === 0">
+                  <div class="py-5 text-danger">
+                      No Reviews Found.
+                  </div>
+              </div>
+
+              <div class="table-responsive" *ngIf="!isLoading && reviews.length > 0">
+                  <table class="table mb-0 table-borderless">
+                      <thead>
+                          <tr class="userDatatable-header">
+                              <th><span class="userDatatable-title">Book</span></th>
+                              <th><span class="userDatatable-title">User</span></th>
+                              <th><span class="userDatatable-title">Rating</span></th>
+                              <th><span class="userDatatable-title">Review Text</span></th>
+                              <th><span class="userDatatable-title">Date</span></th>
+
+                              <th class="text-center"><span class="userDatatable-title">view</span></th>
+                              <th class="text-center"><span class="userDatatable-title">Approve</span></th>
+                              <th class="text-center"><span class="userDatatable-title">Delete</span></th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr *ngFor="let review of reviews">
+                              <td>
+                                  <div class="d-flex">
+                                      <div class="userDatatable__imgWrapper d-flex align-items-center">
+                                          <a routerLinkActive="active"
+                                              [routerLink]="'/dashboard/books/view/' + review.bookId"
+                                              class="profile-image rounded-circle d-block m-0 wh-38"
+                                              [style.background-image]="'url(' + img_url + review.coverImage + ')'"
+                                              style="background-size: cover;"></a>
+                                      </div>
+                                      <div class="userDatatable-inline-title">
+                                          <a routerLinkActive="active"
+                                              [routerLink]="'/dashboard/books/view/' + review.bookId"
+                                              class="text-dark fw-500">
+                                              <h6 class="text-truncate" style="max-width: 200px;">{{ review.bookTitle
+                                                  }}
+                                              </h6>
+                                          </a>
+                                          <p class="d-block mb-0 text-truncate" style="max-width: 150px;">{{
+                                              review.author }}</p>
+                                      </div>
+                                  </div>
+                              </td>
+                              <td>{{ review.user.name || 'Unknown' }}</td>
+                              <td>⭐ ({{ review.rating }})</td>
+                              <td class="text-truncate" style="max-width: 300px;">{{ review.text }}</td>
+                              <td>{{ review.createdAt | date:'medium' }}</td>
+                              <td class="text-center">
+                                  <a href="javascript:void(0);" (click)="onViewReview(review)" data-bs-toggle="modal"
+                                      data-bs-target="#reviewModal">
+                                      <i class="fa-solid fa-eye"></i>
+                                  </a>
+                              </td>
+                              <td class="text-center">
+                                  <a href="javascript:void(0);" (click)="approveReview(review)">
+                                    <i class="text-success fa-solid fa-circle-check"></i>
+                                  </a>
+                              </td>
+                              <td class="text-center">
+                                  <a data-bs-toggle="modal" data-bs-target="#modal-delete-review"
+                                      (click)="onPrepareDelete(review)">
+                                      <i class="text-danger fa-solid fa-trash"></i>
+                                  </a>
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+
+              <div class="d-flex justify-content-end pt-30">
+                  <nav class="atbd-page">
+                      <ul class="atbd-pagination d-flex">
+                          <li class="atbd-pagination__item" [class.disabled]="currentPage === 1">
+                              <a href="#" class="atbd-pagination__link pagination-control"
+                                  (click)="loadPage(currentPage - 1); $event.preventDefault()">
+                                  <span class="la la-angle-left"></span>
+                              </a>
+                          </li>
+
+                          <li class="atbd-pagination__item"
+                              *ngFor="let page of [].constructor(pagination?.totalPages); let i = index">
+                              <a href="#" class="atbd-pagination__link" [class.active]="(i + 1) === currentPage"
+                                  (click)="loadPage(i + 1); $event.preventDefault()">
+                                  <span class="page-number">{{ i + 1 }}</span>
+                              </a>
+                          </li>
+
+                          <li class="atbd-pagination__item" [class.disabled]="currentPage === pagination?.totalPages">
+                              <a href="#" class="atbd-pagination__link pagination-control"
+                                  (click)="loadPage(currentPage + 1); $event.preventDefault()">
+                                  <span class="la la-angle-right"></span>
+                              </a>
+                          </li>
+                      </ul>
+                  </nav>
+              </div>
+
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm ">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Review Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+              <div class="container-fluid">
+                  <div class="row d-flex align-center justify-content-center">
+                      <div class="col-12">
+                          <div class="card mb-0 border-0 shadow-none">
+                              <div class="card-body text-center pt-10 px-25 pb-0">
+                                  <div class="account-profile-cards">
+                                      <div class="ap-img d-flex justify-content-center">
+                                          <img class="ap-img__main bg-opacity-primary wh-120 rounded-circle mb-3"
+                                              [src]="img_url + selectedReview?.coverImage" alt="profile">
+                                      </div>
+                                      <div class="ap-nameAddress">
+                                          <h6 class="ap-nameAddress__title">{{ selectedReview?.user?.name || 'Unknown'
+                                              }}</h6>
+                                      </div>
+                                  </div>
+                                  <div class="po-details py-4">
+                                      <h6 class="po-details__title">Review</h6>
+                                      <span class="po-details__title">{{ selectedReview?.text }}</span>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="modal-info-delete modal fade" id="modal-delete-review" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-info" role="document">
+      <div class="modal-content">
+          <div class="modal-body">
+              <div class="modal-info-body d-flex">
+                  <div class="modal-info-icon warning">
+                      <span data-feather="info"></span>
+                  </div>
+                  <div class="modal-info-text">
+                      <h6>Are you sure you want to delete this review?</h6>
+                      <h6 class="text-danger">{{ selectedReview?.text | slice:0:100 }}...</h6>
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer justify-content-center">
+              <button type="button" class="btn btn-danger btn-outlined btn-sm" data-bs-dismiss="modal"
+                  (click)="confirmDelete()">Yes</button>
+              <button type="button" class="btn btn-success btn-outlined btn-sm" data-bs-dismiss="modal">No</button>
+          </div>
+      </div>
+  </div>
+</div>
