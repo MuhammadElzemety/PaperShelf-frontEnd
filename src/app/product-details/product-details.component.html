@@ -1,3 +1,24 @@
+<div
+  *ngIf="showToastFlag"
+  class="toast align-items-center text-white border-0 position-fixed bottom-0 end-0 m-4 fade show"
+  [ngClass]="toastClass"
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  style="z-index: 9999; min-width: 250px"
+>
+  <div class="d-flex">
+    <div class="toast-body">
+      {{ toastMessage }}
+    </div>
+    <button
+      type="button"
+      class="btn-close btn-close-white me-2 m-auto"
+      aria-label="Close"
+      (click)="showToastFlag = false"
+    ></button>
+  </div>
+</div>
 <div class="container mt-5 product-details">
   <div class="row">
     <!-- Left: Product Images -->
@@ -62,12 +83,11 @@
 
       <!-- Actions -->
       <div class="d-flex gap-2 mb-3">
-
-      <button class="btn btn-dark" (click)="buyNow()">Buy Now</button>
+        <button class="btn btn-dark" (click)="buyNow()">Buy Now</button>
         <button class="btn btn-primary" (click)="addToCart()">
           Add to Cart
         </button>
-      
+
         <button
           class="btn"
           [ngClass]="isInWishlist ? 'btn-danger' : 'btn-outline-danger'"
@@ -151,21 +171,22 @@
     </div>
   </div>
 
-<!--  AI Summary Section -->
+  <!--  AI Summary Section -->
 
-<div class="mt-4">
-  <h5>📘 AI Summary</h5>
+  <div class="mt-4">
+    <h5>📘 AI Summary</h5>
 
-  <p *ngIf="isStreaming" class="text-muted">Loading summary...</p>
+    <p *ngIf="isStreaming" class="text-muted">Loading summary...</p>
 
-  <pre *ngIf="aiSummary" style="white-space: pre-wrap; font-family: inherit;">
+    <pre *ngIf="aiSummary" style="white-space: pre-wrap; font-family: inherit">
     {{ aiSummary }}
-  </pre>
+  </pre
+    >
 
-  <p *ngIf="!isStreaming && !aiSummary" class="text-muted">No summary available.</p>
-</div>
-
-
+    <p *ngIf="!isStreaming && !aiSummary" class="text-muted">
+      No summary available.
+    </p>
+  </div>
 
   <!-- Reviews Section -->
   <div *ngIf="tab === 'reviews'">
@@ -212,10 +233,11 @@
     </div>
     <div>
       <h6 class="mb-2">All Reviews</h6>
+
       <div *ngIf="product.reviews?.length; else noReviews">
         <div
           *ngFor="let review of product.reviews"
-          class="border-bottom pb-2 mb-2"
+          class="border-bottom pb-2 mb-3"
         >
           <span class="text-warning">
             <ng-container *ngFor="let star of [].constructor(review.rating)"
@@ -225,39 +247,47 @@
               >☆</ng-container
             >
           </span>
-          <span class="ms-2">{{ review.comment }}</span>
+
+          <div class="mt-1 ms-2">
+            <strong>By:</strong> {{ review.user?.name || "Anonymous" }}
+          </div>
+
+          <div class="ms-2 text-muted fst-italic">
+            {{ review.text }}
+          </div>
         </div>
       </div>
+
       <ng-template #noReviews>
         <div class="text-muted">No reviews yet.</div>
       </ng-template>
-    </div>
-  </div>
 
-  <!-- Related Products -->
-  <div class="mt-5">
-    <h4>Related Products</h4>
-    <div class="row">
-      <div class="col-md-3" *ngFor="let related of relatedProducts">
-        <div class="card h-100">
-          <img
-            [src]="
-              related.coverImage?.startsWith('http')
-                ? related.coverImage
-                : 'http://localhost:3000/' + related.coverImage
-            "
-            class="card-img-top"
-            alt="..."
-            style="height: 180px; object-fit: cover"
-          />
-          <div class="card-body">
-            <h6 class="card-title">{{ related.title }}</h6>
-            <p class="text-danger mb-0">${{ related.price }}</p>
-            <a
-              [routerLink]="['/product', related._id]"
-              class="btn btn-sm btn-outline-dark mt-2"
-              >View</a
-            >
+      <!-- Related Products -->
+      <div class="mt-5">
+        <h4>Related Products</h4>
+        <div class="row">
+          <div class="col-md-3" *ngFor="let related of relatedProducts">
+            <div class="card h-100">
+              <img
+                [src]="
+                  related.coverImage?.startsWith('http')
+                    ? related.coverImage
+                    : 'http://localhost:3000/' + related.coverImage
+                "
+                class="card-img-top"
+                alt="..."
+                style="height: 180px; object-fit: cover"
+              />
+              <div class="card-body">
+                <h6 class="card-title">{{ related.title }}</h6>
+                <p class="text-danger mb-0">${{ related.price }}</p>
+                <a
+                  [routerLink]="['/product', related._id]"
+                  class="btn btn-sm btn-outline-dark mt-2"
+                  >View</a
+                >
+              </div>
+            </div>
           </div>
         </div>
       </div>
