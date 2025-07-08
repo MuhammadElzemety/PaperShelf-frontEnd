@@ -72,7 +72,7 @@ export class ProductService {
     getAISummary(bookId: string): Observable<string> {
       return this.http
         .get<{ summary: string }>(
-          `${API_URL}${bookId}/formatted-summary`
+          `${API_URL}/${bookId}/formatted-summary`
         )
         .pipe(map((res) => res.summary || ''));
     }
