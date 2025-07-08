@@ -41,11 +41,14 @@ isStreaming: boolean = false;
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+  this.route.paramMap.subscribe(params => {
+    const id = params.get('id');
     if (id) {
       this.loadProductDetails(id);
     }
-  }
+  });
+}
+
 
   loadProductDetails(id: string) {
     this.http.get(`http://localhost:3000/api/v1/books/${id}`).subscribe((data: any) => {

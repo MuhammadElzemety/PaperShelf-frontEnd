@@ -2,7 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BookService } from '../services/book.service';
 import { Book } from '../interfaces/book';
-BookService
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-book-slider',
   standalone: true,
@@ -12,17 +13,19 @@ BookService
 })
 export class BookSliderComponent implements OnInit, OnDestroy {
   books: Book[] = [];
+  clonedBooks: Book[] = [];
   currentSlide = 0;
   slideWidth = 16.666; 
   intervalId: any;
+  isTransitioning = true;
 
-  constructor(private booksService: BookService) {}
+  constructor(private booksService: BookService , private router : Router) {}
 
   ngOnInit(): void {
-    this.booksService.getBooks({}, 1, 10).subscribe({
+    this.booksService.getBooks({}, 1, 25).subscribe({
       next: res => {
         this.books = res.data.books;
-        console.log('Books fetched:', this.books);
+        this.clonedBooks = [...this.books, ...this.books.slice(0, 6)]; 
         if (this.books.length > 0) {
           this.intervalId = setInterval(() => {
             this.nextSlide();
@@ -34,22 +37,24 @@ export class BookSliderComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
-
+  goToDetails(bookId: string) {
+    this.router.navigate(['/product', bookId]);
+  }
   nextSlide(): void {
     this.currentSlide++;
+    const maxSlide = this.clonedBooks.length - Math.floor(100 / this.slideWidth);
 
-    if (this.currentSlide >= this.getMaxSlide()) {
-      const track = document.querySelector('.auto-slider-track') as HTMLElement;
-      if (track) {
-        track.style.transition = 'none';
+    if (this.currentSlide >= maxSlide) {
+      this.isTransitioning = true;
+      setTimeout(() => {
+        this.isTransitioning = false;
         this.currentSlide = 0;
-        track.style.transform = 'translateX(0)';
-        setTimeout(() => {
-          track.style.transition = 'transform 0.8s ease-in-out';
-        }, 50);
-      }
+      }, 800); 
     }
+  }
+
+  getTransform(): string {
+    return `translateX(-${this.currentSlide * this.slideWidth}%)`;
   }
 
   getMaxSlide(): number {

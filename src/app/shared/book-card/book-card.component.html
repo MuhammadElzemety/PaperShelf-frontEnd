@@ -29,8 +29,11 @@
     <button class="wishlist-btn" (click)="addToWishlist(); $event.stopPropagation()">
       <i class="fas fa-heart"></i>
     </button>
-    <button class="cart-btn" (click)="addToCart(); openCart() ; $event.stopPropagation()">
+    <button class="cart-btn" (click)="addToCart(); $event.stopPropagation()">
       <i class="fas fa-shopping-cart"></i>
     </button>
   </div>
+  <div *ngIf="message" [ngClass]="{'message-success': messageColor === 'success', 'message-error': messageColor === 'error'}" class="book-message">
+  {{ message }}
+</div>
 </div>

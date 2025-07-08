@@ -21,19 +21,17 @@
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" routerLinkActive="active" href="#">MyProfile</a></li>
-            <li><a class="dropdown-item" routerLinkActive="active" href="#">Wishlist</a></li>
+            <li><a class="dropdown-item" routerLinkActive="active" href="/wishlist">Wishlist</a></li>
             <li><a class="dropdown-item" routerLinkActive="active" href="#">Order History</a></li>
-            <li><a class="dropdown-item" routerLinkActive="active" href="#" *ngIf="role === 'author'">My Work</a></li>
+            <li><a class="dropdown-item" routerLinkActive="active" routerLink="author/my-books" *ngIf="role === 'author'">My Work</a></li>
           </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" href="#">BLOG</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" routerLinkActive="active" routerLink="/shop">SHOP</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" href="#">CONTACT US</a>
+          <a class="nav-link" [routerLink]="['/home']" fragment="subscribe" >CONTACT US</a>
+
         </li>
       </ul>
 
@@ -70,24 +68,53 @@
   <div class="offcanvas-body d-flex flex-column cart-body">
     <div *ngIf="getcart?.items?.length > 0">
       <div class="cart-item d-flex mb-4" *ngFor="let cart of getcart.items">
-        <img [src]="'http://localhost:3000/' + cart.book.coverImage" alt="Book" class="cart-img me-3" />
+        <a [routerLink]="['/product', cart.book._id]" class="book-click-area">
+            <img [src]="'http://localhost:3000/' + cart.book.coverImage" alt="Book" class="cart-img me-3" />
+        </a>
         <div class="flex-grow-1">
           <div class="fw-bold">{{ cart.book.title }}</div>
           <div class="text-muted small">by {{ cart.book.author }}</div>
           <div class="fw-semibold mt-1">${{ cart.priceAtTime }} × {{ cart.quantity }}</div>
 
           <div class="btn-group mt-2" role="group">
-            <button class="btn btn-outline-secondary btn-sm" (click)="decreaseQuantity(cart)">−</button>
-            <input type="number" [(ngModel)]="cart.quantity" (change)="updateQuantity(cart, $event)" class="quantity-input" min="1" max="10" />
-            <button class="btn btn-outline-secondary btn-sm" (click)="increaseQuantity(cart)">+</button>
-            <button class="btn btn-outline-danger btn-sm ms-2 delete-btn" (click)="deleteItem(cart._id)" title="Delete item">🗑️</button>
-          </div>
+  <button 
+    class="btn btn-outline-secondary btn-sm" 
+    (click)="decreaseQuantity(cart)" 
+    [disabled]="cart.quantity <= 1"
+  >
+    −
+  </button>
+
+  <input 
+    type="number" 
+    [value]="cart.quantity" 
+    class="quantity-input" 
+    disabled
+  />
+
+  <button 
+    class="btn btn-outline-secondary btn-sm" 
+    (click)="increaseQuantity(cart)" 
+    [disabled]="cart.quantity >= 10"
+  >
+    +
+  </button>
+
+  <button 
+    class="btn btn-outline-primary btn-sm ms-2" 
+    (click)="deleteItem(cart._id)" 
+    title="Delete item"
+  >
+    <i class="delete-btn fas fa-trash"></i>
+  </button>
+</div>
+
         </div>
       </div>
     </div>
 
     <div class="mt-auto border-top pt-3" *ngIf="getcart.totalAmount">
-      <p class="fw-bold">❗Note : Max Items in Cart Is 10</p>
+      <p class="fw-bold">Note : Max Items in Cart Is 10</p>
       <div class="d-flex justify-content-between mb-3">
         <strong>Subtotal:</strong>
         <strong>${{ getcart.totalAmount }}</strong>
