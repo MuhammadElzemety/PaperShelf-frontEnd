@@ -211,13 +211,14 @@
   border-bottom: 1px solid #e5e5e5;
   padding-bottom: 10px;
 }
+
 .delete-btn {
   transition: color 0.3s ease;
+  color: #111;
 }
 
-.delete-btn:hover {
-  color: red;
-  cursor: pointer;
+.btn-outline-primary:hover .delete-btn {
+  color: #ff0000;
 }
 
 .quantity-input {

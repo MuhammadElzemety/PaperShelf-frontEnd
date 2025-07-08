@@ -179,6 +179,7 @@ export class AddBookComponent implements OnInit {
           setTimeout(() => this.router.navigate(['/author/my-books']), 2000);
         },
         error: (err) => {
+          console.error('Error placing order:', err);
           this.errorMessage = err.error?.message || ' Something went wrong while submitting the book.';
         }
       });

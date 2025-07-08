@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { HomebookService } from '../services/homebook.service';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { BookSliderComponent } from '../book-slider/book-slider.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule , BookSliderComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
@@ -18,7 +19,7 @@ export class HomeComponent implements OnInit {
   error = '';
   selectedCategory: string = 'all';
 
-  constructor(private bookService: HomebookService, private router: Router) {}
+  constructor(private bookService: HomebookService, private router: Router , private route : ActivatedRoute) {}
 
   goToDetails(bookId: string) {
     this.router.navigate(['/product', bookId]);
@@ -74,5 +75,15 @@ export class HomeComponent implements OnInit {
 
   getPopularBooks() {
     return this.books.slice(7, 15);
+  }
+   ngAfterViewInit(): void {
+    this.route.fragment.subscribe(fragment => {
+      if (fragment) {
+        const element = document.getElementById(fragment);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' }); // Scroll ناعم
+        }
+      }
+    });
   }
 }

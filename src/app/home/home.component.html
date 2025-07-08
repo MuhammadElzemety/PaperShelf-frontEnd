@@ -12,7 +12,7 @@
           Dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
           aspernatur aut odit aut fugit, sed quia.
         </p>
-        <button class="hero-cta text-dark fw-bold btn-primary">Shop Now</button>
+       <a routerLink="/shop"><button class="hero-cta text-dark fw-bold btn-primary">Shop Now</button></a> 
       </div>
 
       <!-- Right Content - Book Stack Image -->
@@ -52,32 +52,7 @@
         </div>
 
         <div class="product-list" data-aos="fade-up">
-          <div class="row">
-            <div class="col-md-3" *ngFor="let book of getFeaturedBooks()">
-              <div class="product-item">
-                <figure class="product-style">
-                  <img
-                    [src]="'http://localhost:3000/' + book.coverImage"
-                    alt="{{ book.title }}"
-                    class="product-item"
-                  />
-                  <button
-                    type="button"
-                    class="add-to-cart"
-                    (click)="goToDetails(book._id)"
-                    data-product-tile="add-to-cart"
-                  >
-                    View Details
-                  </button>
-                </figure>
-                <figcaption>
-                  <h3>{{ book.title }}</h3>
-                  <span>{{ book.author }}</span>
-                  <div class="item-price">$ {{ book.price }}</div>
-                </figcaption>
-              </div>
-            </div>
-          </div>
+          <app-book-slider></app-book-slider>
         </div>
         <!--grid-->
       </div>
@@ -259,14 +234,14 @@
           </div>
         </div>
         <div class="row">
-          <div class="btn-wrap align-center">
+          <!-- <div class="btn-wrap align-center">
             <a
               href="#"
               class="btn btn-outline-accent btn-accent-arrow"
               tabindex="0"
               >All Authors<i class="icon icon-ns-arrow-right"></i
             ></a>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CartService } from '../../services/cart.service';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { RoleService } from '../../services/role.service';
@@ -12,7 +12,7 @@ declare var bootstrap: any;
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule , FormsModule],
+  imports: [RouterLink, RouterLinkActive, CommonModule , FormsModule ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
@@ -31,6 +31,7 @@ constructor(
     private logoutserv: RoleService,
     private _roleser: RoleService,
     private _getcart: CartService,
+    private router : Router
   ) {}
   private cartToggleSub!: Subscription;
   ngOnInit(): void {
@@ -60,6 +61,7 @@ constructor(
     this.cartToggleSub = this._getcart.toggleCart$.subscribe(() => {
       this.toggleCart();
     });
+    
   }
 
   toggleCart() {
