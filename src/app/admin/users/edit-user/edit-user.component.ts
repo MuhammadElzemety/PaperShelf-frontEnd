@@ -63,16 +63,7 @@ export class EditUserComponent implements OnInit {
     console.log('[Submit] Form value:', this.userForm.value);
 
     const payload = { ...this.userForm.value };
-    delete payload.email; // ⛔️ remove email before sending to backend
-
-    // Map status to isActive for backend compatibility
-    payload.isActive = payload.status;
-    delete payload.status;
-
-    // Ensure isActive is always present (even if false)
-    if (payload.isActive === undefined) {
-      payload.isActive = false;
-    }
+    delete payload.email;
 
     this.userAdminService.updateUser(this.userId, payload).subscribe({
       next: (res: any) => {

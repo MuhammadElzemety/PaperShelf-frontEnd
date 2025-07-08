@@ -41,7 +41,7 @@ export class ProductDetailsComponent implements OnInit {
     private productService: ProductService,
     private toastr: ToastrService,
     private cartService: CartService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -114,8 +114,7 @@ export class ProductDetailsComponent implements OnInit {
 
   buyNow() {
     alert(
-      ` You are buying ${this.quantity} × "${this.product.title}" for $${
-        this.product.price * this.quantity
+      ` You are buying ${this.quantity} × "${this.product.title}" for $${this.product.price * this.quantity
       }`
     );
   }
@@ -187,7 +186,7 @@ export class ProductDetailsComponent implements OnInit {
     };
 
     this.http
-      .post(`/api/reviews/${this.product._id}`, reviewPayload)
+      .post(`http://localhost:3000/api/reviews/${this.product._id}`, reviewPayload)
       .subscribe({
         next: () => {
           this.newReview = { rating: 0, comment: '' };
