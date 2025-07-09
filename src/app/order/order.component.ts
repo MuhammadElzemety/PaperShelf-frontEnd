@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CartService } from '../services/cart.service';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormGroupDirective } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormGroupDirective,
+} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -9,10 +15,9 @@ import { HttpClient } from '@angular/common/http';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './order.component.html',
-  styleUrl: './order.component.css'
+  styleUrl: './order.component.css',
 })
 export class OrderComponent implements OnInit {
-
   cartData: any = { items: [], totalAmount: 0 };
   checkoutForm: FormGroup;
   apiURL = 'http://localhost:3000/api/checkout/process';
@@ -24,22 +29,71 @@ export class OrderComponent implements OnInit {
   ) {
     this.checkoutForm = this.fb.group({
       shippingAddress: this.fb.group({
-        firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-        lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+        firstName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ],
+        ],
+        lastName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ],
+        ],
         email: ['', [Validators.required, Validators.email]],
-        phone: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(15)]],
-        address: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(200)]],
-        city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-        state: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-        country: ['Egypt', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]]
+        phone: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(10),
+            Validators.maxLength(15),
+          ],
+        ],
+        address: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(10),
+            Validators.maxLength(200),
+          ],
+        ],
+        city: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ],
+        ],
+        state: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ],
+        ],
+        country: [
+          'Egypt',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ],
+        ],
       }),
       paymentMethod: ['cash_on_delivery', Validators.required],
-      notes: ['']
+      notes: [''],
     });
   }
 
   ngOnInit(): void {
-    this._cartService.cart$.subscribe(cart => this.cartData = cart);
+    this._cartService.cart$.subscribe((cart) => (this.cartData = cart));
     this._cartService.refreshCart();
   }
 
@@ -60,7 +114,10 @@ export class OrderComponent implements OnInit {
     }
 
     const payload = this.checkoutForm.value;
-    console.log('Final payload being sent to server:', JSON.stringify(payload, null, 2));
+    console.log(
+      'Final payload being sent to server:',
+      JSON.stringify(payload, null, 2)
+    );
 
     this.http.post(this.apiURL, payload).subscribe({
       next: (response) => {
@@ -69,9 +126,10 @@ export class OrderComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error placing order:', error);
-        const serverError = error.error?.message || 'Failed to place order. Please try again.';
+        const serverError =
+          error.error?.message || 'Failed to place order. Please try again.';
         alert(serverError);
-      }
+      },
     });
   }
 
