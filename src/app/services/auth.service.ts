@@ -16,16 +16,23 @@ export class AuthService {
     if (!refreshToken) {
       return throwError(() => new Error('No refresh token'));
     }
-    return this._HttpClient.post<{ accessToken: string }>(
-      `${API_URL}/refresh-token`,
-      { refreshToken }
-    ).pipe(
+  
+    return this._HttpClient.post<{
+      success: boolean,
+      message: string,
+      data: {
+        accessToken: string,
+        refreshToken: string
+      }
+    }>(`${API_URL}/refresh-token`, { refreshToken }).pipe(
       switchMap((response) => {
-        localStorage.setItem('accessToken', response.accessToken);
+        localStorage.setItem('accessToken', response.data.accessToken);
+        localStorage.setItem('refreshToken', response.data.refreshToken);
         return of(true);
       })
     );
   }
+  
   
   login(data: { email: string, password: string }): Observable<any> {
     return this._HttpClient.post(`${API_URL}/login`, data);
