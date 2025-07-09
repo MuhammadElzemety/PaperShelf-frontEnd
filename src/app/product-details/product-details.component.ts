@@ -48,8 +48,10 @@ export class ProductDetailsComponent implements OnInit {
       if (id) {
         this.loadProductDetails(id);
       }
+      
     });
   }
+
 
   loadProductDetails(id: string) {
     this.http
@@ -59,11 +61,24 @@ export class ProductDetailsComponent implements OnInit {
         this.selectedImage = this.product.coverImage.startsWith('http')
           ? this.product.coverImage
           : `http://localhost:3000/${this.product.coverImage}`;
-
+        this.checkIfInWishlist(this.product._id);
         this.loadRelated(this.product.category);
         this.loadReviews();
         this.loadAISummary(id);
       });
+  }
+
+  checkIfInWishlist(productId: string) {
+    this.http.get('http://localhost:3000/api/wishlist').subscribe({
+      next: (res: any) => {
+        const wishlist = res.data || [];
+        this.isInWishlist = wishlist.some((item: any) => item._id === productId);
+      },
+      error: (err) => {
+        console.error('Failed to fetch wishlist', err);
+        this.isInWishlist = false;
+      },
+    });
   }
 
   showToast(message: string, type: 'success' | 'danger') {

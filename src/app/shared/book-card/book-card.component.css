@@ -148,3 +148,8 @@
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
+
+.disabled-heart {
+  opacity: 0.6;
+  pointer-events: none;
+}

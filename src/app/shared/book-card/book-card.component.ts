@@ -17,7 +17,11 @@ export class BookCardComponent {
   @Input() book!: Book;
   message: string = '';
   messageColor: 'success' | 'error' = 'success';
+  @Input() wishlistIds: string[] = [];
 
+  get isInWishlist(): boolean {
+  return this.wishlistIds.includes(this.book.id);
+  }
   constructor(
     private cartService: CartService,
     private productService: ProductService
@@ -73,6 +77,7 @@ export class BookCardComponent {
     this.productService.addToWishlist(this.book.id).subscribe({
       next: () => {
         this.showMessage(`"${this.book.title}" added to wishlist!`, 'success');
+        this.wishlistIds.push(this.book.id);
       },
       error: (err) => {
         const message = err.error?.message || 'Failed to add to wishlist.';

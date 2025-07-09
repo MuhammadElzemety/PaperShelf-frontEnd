@@ -46,3 +46,10 @@ pre {
 .toast-body {
   font-size: 0.95rem;
 }
+
+.related-section {
+  border-top: none !important;
+  /* margin-top: 3rem;  */
+  padding-top: 0 !important;
+  box-shadow: none !important;
+}
