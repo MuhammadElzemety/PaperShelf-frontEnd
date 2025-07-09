@@ -39,7 +39,7 @@ constructor(
       this.getcart = cart;
       this.updateCartTotal();
     });
-
+    
     this._getcart.refreshCart();
     this.userSub = this._roleser.userChanged.subscribe(user => {
       if (user) {
@@ -63,6 +63,9 @@ constructor(
     });
     
   }
+//   get isLoggedIn(): boolean {
+//   return this._roleser.isLoggedIn();
+// }
 
   toggleCart() {
     const cartSidebar = document.getElementById('cartSidebar');

@@ -61,17 +61,48 @@
 
     <div class="row">
       <div class="col-md-12">
-        <div class="btn-wrap align-right">
+        <!-- <div class="btn-wrap align-right">
           <a href="#" class="btn-accent-arrow"
             >View all products <i class="icon icon-ns-arrow-right"></i
           ></a>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
 </section>
+<div class="categories-section py-5 bg-light">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h6 class="text-uppercase text-muted">Our Books</h6>
+        <h2 class="fw-bold">Top categories</h2>
+        <p class="text-muted">Choose from various categories below</p>
+      </div>
+      <a routerLink="/shop" class="text-decoration-none fw-semibold">View All →</a>
+    </div>
 
-<section id="popular-books" class="bookshelf my-5">
+    <div class="row justify-content-center g-4">
+      <div
+        class="col-6 col-sm-4 col-md-3 col-lg-2 text-center category-card"
+        *ngFor="let category of categories"
+        (click)="goToCategory(category.name)"
+        style="cursor: pointer;"
+      >
+        <div class="icon-circle d-flex align-items-center justify-content-center mx-auto">
+          <img [src]="'http://localhost:3000' + category.image" alt="{{ category.name }}" />
+        </div>
+        <p class="mt-2 fw-semibold">{{ category.name }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<!-- <section id="popular-books" class="bookshelf my-5">
   <div class="container">
     <div class="row">
       <div class="col-md-12">
@@ -97,7 +128,6 @@
             (click)="selectCategory(category.name)"
           >
             {{ category.name }}
-            <!--  ({{ category.bookCount }}) -->
           </li>
         </ul>
 
@@ -130,10 +160,9 @@
           </div>
         </div>
       </div>
-      <!--inner-tabs-->
     </div>
   </div>
-</section>
+</section> -->
 
 <section id="quotation" class="align-center pb-5 mb-5">
   <div class="inner-content">

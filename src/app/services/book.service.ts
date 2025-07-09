@@ -15,6 +15,7 @@ export class BookService {
   private apiUrl = API_URL;
 
   constructor(private http: HttpClient) { }
+
   private mapBook(book: any): Book {
     return {
       id: book._id,
@@ -46,12 +47,17 @@ export class BookService {
 
   getBooks(filters: any, page: number, limit: number): Observable<{ data: { books: Book[], pagination: BookPagination } }> {
     let params = new HttpParams()
-      .set('page', page)
-      .set('limit', limit);
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+
+    if (filters.category) {
+      params = params.set('category', filters.category);
+    }
 
     if (filters.categories?.length) {
       params = params.set('category', filters.categories.join(','));
     }
+
     if (filters.authors?.length) {
       params = params.set('author', filters.authors.join(','));
     }
@@ -78,8 +84,8 @@ export class BookService {
   searchBooks(query: string, page: number = 1, limit: number = 20): Observable<{ data: { books: Book[], pagination: any } }> {
     const params = new HttpParams()
       .set('q', query)
-      .set('page', page)
-      .set('limit', limit);
+      .set('page', page.toString())
+      .set('limit', limit.toString());
 
     return this.http.get<any>(`${this.apiUrl}/search`, { params }).pipe(
       map(res => {
@@ -93,12 +99,10 @@ export class BookService {
     return this.http.post(`${this.apiUrl}`, formData);
   }
 
-  //  Add new book (form data)
   addBook(bookData: any): Observable<any> {
     return this.http.post(`${environment.apiBaseUrl}/author/books`, bookData);
   }
 
-  //  Upload cover image
   uploadCoverImage(formData: FormData): Observable<{ path: string }> {
     return this.http.post<{ path: string }>(
       `${environment.apiBaseUrl}/upload/book-cover`,
@@ -106,7 +110,6 @@ export class BookService {
     );
   }
 
-  //  Upload multiple images
   uploadMultipleImages(formData: FormData): Observable<{ paths: string[] }> {
     return this.http.post<{ paths: string[] }>(
       `${environment.apiBaseUrl}/upload/book-images`,
@@ -114,7 +117,6 @@ export class BookService {
     );
   }
 
-  //  Get books by logged-in author
   getMyBooks(): Observable<Book[]> {
     return this.http
       .get<{ success: boolean; data: any[] }>(`${environment.apiBaseUrl}/author/books`)
@@ -123,23 +125,19 @@ export class BookService {
       );
   }
 
-  //  Get book by ID
   getBookById(id: string): Observable<{ data: any }> {
     return this.http.get<{ data: any }>(`${environment.apiBaseUrl}/author/books/${id}`);
   }
 
-  //  Update book
   updateBook(id: string, data: any): Observable<any> {
     return this.http.put(`${environment.apiBaseUrl}/author/books/${id}`, data);
   }
 
-  //  Get full image URL
   getFullImageUrl(path: string): string {
     if (!path) return '';
     return `${environment.apiUrlForImgs}${path}`;
   }
 
-  //  Delete book
   deleteBook(bookId: string): Observable<any> {
     return this.http.delete(`${environment.apiBaseUrl}/author/books/${bookId}`);
   }

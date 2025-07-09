@@ -7,6 +7,7 @@ import { BookCardComponent } from '../../shared/book-card/book-card.component';
 import { Book } from '../../interfaces/book';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-main-shop',
@@ -23,8 +24,10 @@ export class MainShopComponent {
   showSearch: boolean = false;
   isLoading = false;
   searchQuery: string = '';
+
   totalPages = 1;
   wishlistIds: string[] = [];
+
 
   pagination: {
     currentPage: number;
@@ -37,16 +40,27 @@ export class MainShopComponent {
 
   private searchSubject = new Subject<string>();
 
-  constructor(private bookService: BookService, private http: HttpClient) { }
+
+  constructor(private bookService: BookService, private route: ActivatedRoute ,private http:HttpClient) { }
 
   ngOnInit() {
-    this.loadBooks();
-    this.loadWishlist();
-    this.searchSubject.pipe(
+    this.route.queryParams.subscribe(params => {
+      if (params['category']) {
+        this.currentFilters = { ...this.currentFilters, category: params['category'] };
+      } else {
+        const { category, ...rest } = this.currentFilters;
+        this.currentFilters = { ...rest };
+      }
+      this.currentPage = 1;
+      this.loadBooks();
+      this.loadWishlist();
+      this.searchSubject.pipe(
       debounceTime(500)
     ).subscribe(query => {
       this.performSearch(query);
     });
+
+   
   }
 
   toggleSearch() {
@@ -71,16 +85,8 @@ export class MainShopComponent {
     });
   }
 
-  totalPagesArray(): number[] {
-    const pages: number[] = [];
-    for (let i = 1; i <= this.totalPages; i++) {
-      pages.push(i);
-    }
-    return pages;
-  }
-
   onFiltersApplied(filters: any) {
-    this.currentFilters = filters;
+    this.currentFilters = { ...this.currentFilters, ...filters };
     this.currentPage = 1;
     this.loadBooks();
   }
