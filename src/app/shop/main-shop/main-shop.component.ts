@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { BookService } from '../../services/book.service';
 import { FilterComponent } from '../filter/filter.component';
 import { BookCardComponent } from '../../shared/book-card/book-card.component';
@@ -24,6 +25,10 @@ export class MainShopComponent {
   isLoading = false;
   searchQuery: string = '';
 
+  totalPages = 1;
+  wishlistIds: string[] = [];
+
+
   pagination: {
     currentPage: number;
     totalPages: number;
@@ -35,7 +40,8 @@ export class MainShopComponent {
 
   private searchSubject = new Subject<string>();
 
-  constructor(private bookService: BookService, private route: ActivatedRoute) { }
+
+  constructor(private bookService: BookService, private route: ActivatedRoute ,private http:HttpClient) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -47,13 +53,14 @@ export class MainShopComponent {
       }
       this.currentPage = 1;
       this.loadBooks();
-    });
-
-    this.searchSubject.pipe(
+      this.loadWishlist();
+      this.searchSubject.pipe(
       debounceTime(500)
     ).subscribe(query => {
       this.performSearch(query);
     });
+
+   
   }
 
   toggleSearch() {
@@ -104,4 +111,16 @@ export class MainShopComponent {
       }
     });
   }
+
+  loadWishlist() {
+    this.http.get('http://localhost:3000/api/wishlist').subscribe({
+      next: (res: any) => {
+        this.wishlistIds = res.data.map((item: any) => item._id); 
+      },
+      error: (err: any) => {
+        console.error('Failed to load wishlist', err);
+      },
+    });
+  }
+  
 }

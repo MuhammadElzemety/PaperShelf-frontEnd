@@ -28,11 +28,20 @@
 
   <div class="book-actions" (click)="$event.stopPropagation()">
     <button
-      class="wishlist-btn"
-      (click)="addToWishlist(); $event.stopPropagation()"
-    >
-      <i class="fas fa-heart"></i>
-    </button>
+    class="wishlist-btn"
+    (click)="addToWishlist(); $event.stopPropagation()"
+    [disabled]="isInWishlist"
+    [ngClass]="{ 'disabled-heart': isInWishlist }"
+  >
+    <i
+      class="fa-heart"
+      [ngClass]="{
+        'fas text-warn': isInWishlist,
+        'far': !isInWishlist
+      }"
+    ></i>
+  </button>
+  
     <button class="cart-btn" (click)="addToCart(); $event.stopPropagation()">
       <i class="fas fa-shopping-cart"></i>
     </button>
