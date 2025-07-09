@@ -42,7 +42,7 @@ export class EditUserComponent implements OnInit {
           name: [user.name, [Validators.required, Validators.minLength(3)]],
           email: [user.email, [Validators.required, Validators.email]],
           role: [user.role, Validators.required],
-          status: [user.isActive],
+          isActive: [user.isActive],
           isEmailVerified: [user.isEmailVerified]
         });
         this.lastloginUser = user.lastLogin;
@@ -57,26 +57,27 @@ export class EditUserComponent implements OnInit {
       }
     });
   }
-
   onSubmit() {
     if (this.userForm.invalid) return;
-  
+
     console.log('[Submit] Form value:', this.userForm.value);
-  
-    this.userAdminService.updateUser(this.userId, this.userForm.value).subscribe({
-      next: (res:any) => {
+
+    const payload = { ...this.userForm.value };
+    delete payload.email;
+
+    this.userAdminService.updateUser(this.userId, payload).subscribe({
+      next: (res: any) => {
         console.log('[API Response] User updated successfully:', res);
-          const updatedUser = res.user;
+        const updatedUser = res.user;
         this.userForm.patchValue({
           name: updatedUser.name,
-          email: updatedUser.email,
           role: updatedUser.role,
-          status: updatedUser.isActive,
+          isActive: updatedUser.isActive,
           isEmailVerified: updatedUser.isEmailVerified,
         });
-  
+
         this.showSuccessAlert = true;
-          setTimeout(() => {
+        setTimeout(() => {
           this.showSuccessAlert = false;
         }, 5000);
       },
@@ -89,6 +90,39 @@ export class EditUserComponent implements OnInit {
       }
     });
   }
+  // onSubmit() {
+  //   if (this.userForm.invalid) return;
+
+  //   console.log('[Submit] Form value:', this.userForm.value);
+
+  //   const payload = { ...this.userForm.value };
+  //   delete payload.email; // ⛔️ remove email before sending to backend
+
+  //   this.userAdminService.updateUser(this.userId, payload).subscribe({
+  //     next: (res: any) => {
+  //       console.log('[API Response] User updated successfully:', res);
+  //       const updatedUser = res.user;
+  //       this.userForm.patchValue({
+  //         name: updatedUser.name,
+  //         role: updatedUser.role,
+  //         isActive: updatedUser.isActive,
+  //         isEmailVerified: updatedUser.isEmailVerified,
+  //       });
+
+  //       this.showSuccessAlert = true;
+  //       setTimeout(() => {
+  //         this.showSuccessAlert = false;
+  //       }, 5000);
+  //     },
+  //     error: (err) => {
+  //       console.error('[API Error] Failed to update user:', err);
+  //       this.showErrorAlert = true;
+  //       setTimeout(() => {
+  //         this.showErrorAlert = false;
+  //       }, 5000);
+  //     }
+  //   });
+  
   confirmDelete() {
     this.userAdminService.deleteUser(this.userId).subscribe({
       next: () => {

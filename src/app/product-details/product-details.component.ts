@@ -40,7 +40,7 @@ export class ProductDetailsComponent implements OnInit {
     private productService: ProductService,
     private toastr: ToastrService,
     private cartService: CartService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -107,6 +107,7 @@ export class ProductDetailsComponent implements OnInit {
     }, 30); // Adjust speed as needed
   }
 
+
   addToWishlist() {
     this.productService.addToWishlist(this.product._id).subscribe({
       next: () => {
@@ -152,7 +153,7 @@ export class ProductDetailsComponent implements OnInit {
     };
 
     this.http
-      .post(`/api/reviews/${this.product._id}`, reviewPayload)
+      .post(`http://localhost:3000/api/reviews/${this.product._id}`, reviewPayload)
       .subscribe({
         next: () => {
           this.newReview = { rating: 0, comment: '' };
