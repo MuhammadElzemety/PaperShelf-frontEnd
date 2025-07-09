@@ -18,9 +18,13 @@ export class HomebookService {
   getBooks(): Observable<{ success: boolean, data: { books: Book[] } }> {
     return this.http.get<{ success: boolean, data: { books: Book[] } }>(this.apiUrl);
   }
-  getCategories(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/categories/`);
-  }
+  getCategories(): Observable<{ success: boolean; data: { name: string; image: string }[] }> {
+  return this.http.get<{ success: boolean; data: { name: string; image: string }[] }>(
+    'http://localhost:3000/api/v1/categories/with-icons'
+  );
+}
+
+
   getAuthors(): Observable<any> {
     return this.http.get<any>(this.authorurl);
   }
