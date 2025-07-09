@@ -19,21 +19,32 @@
           <span class="discounted-price">${{ book.price.toFixed(2) }}</span>
         </ng-template>
       </div>
-      <div class="book-rating" *ngIf="book.rating">
-        <span *ngFor="let star of getStars(book.rating)">⭐</span>
+      <div class="rating">
+        <i class="fas fa-star text-warning"></i>
+        <span class="ms-1">{{ book.averageRating.toFixed(1) || "0.0" }}</span>
       </div>
     </div>
   </a>
 
   <div class="book-actions" (click)="$event.stopPropagation()">
-    <button class="wishlist-btn" (click)="addToWishlist(); $event.stopPropagation()">
+    <button
+      class="wishlist-btn"
+      (click)="addToWishlist(); $event.stopPropagation()"
+    >
       <i class="fas fa-heart"></i>
     </button>
     <button class="cart-btn" (click)="addToCart(); $event.stopPropagation()">
       <i class="fas fa-shopping-cart"></i>
     </button>
   </div>
-  <div *ngIf="message" [ngClass]="{'message-success': messageColor === 'success', 'message-error': messageColor === 'error'}" class="book-message">
-  {{ message }}
-</div>
+  <div
+    *ngIf="message"
+    [ngClass]="{
+      'message-success': messageColor === 'success',
+      'message-error': messageColor === 'error'
+    }"
+    class="book-message"
+  >
+    {{ message }}
+  </div>
 </div>

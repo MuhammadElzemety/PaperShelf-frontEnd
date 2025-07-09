@@ -1,24 +1,31 @@
+<!-- ✅ Custom Toast -->
 <div
   *ngIf="showToastFlag"
-  class="toast align-items-center text-white border-0 position-fixed bottom-0 end-0 m-4 fade show"
-  [ngClass]="toastClass"
-  role="alert"
-  aria-live="assertive"
-  aria-atomic="true"
-  style="z-index: 9999; min-width: 250px"
+  class="toast-container position-fixed bottom-0 end-0 p-3"
+  style="z-index: 1055"
 >
-  <div class="d-flex">
-    <div class="toast-body">
-      {{ toastMessage }}
+  <div
+    class="toast show align-items-center text-white border-0 shadow"
+    [ngClass]="toastClass"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    style="min-width: 260px; border-radius: 0.5rem"
+  >
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ toastMessage }}
+      </div>
+      <button
+        type="button"
+        class="btn-close btn-close-white me-2 m-auto"
+        aria-label="Close"
+        (click)="showToastFlag = false"
+      ></button>
     </div>
-    <button
-      type="button"
-      class="btn-close btn-close-white me-2 m-auto"
-      aria-label="Close"
-      (click)="showToastFlag = false"
-    ></button>
   </div>
 </div>
+
 <div class="container mt-5 product-details">
   <div class="row">
     <!-- Left: Product Images -->
@@ -34,15 +41,6 @@
           margin: 0 auto;
         "
       />
-      <div class="d-flex gap-2">
-        <img
-          *ngFor="let img of product.images"
-          [src]="selectedImage"
-          (click)="changeImage(img)"
-          class="img-thumbnail thumb-image"
-          [class.border-primary]="img === selectedImage"
-        />
-      </div>
     </div>
 
     <!-- Right: Product Info -->
@@ -66,9 +64,6 @@
 
       <!-- Price -->
       <p class="fs-4 text-danger mb-1">${{ product.price }}</p>
-      <!-- <p class="text-muted">
-        <del>${{ product.discount }}</del>
-      </p> -->
 
       <!-- Quantity Selector -->
       <div class="mb-3">
@@ -83,7 +78,6 @@
 
       <!-- Actions -->
       <div class="d-flex gap-2 mb-3">
-        <button class="btn btn-dark" (click)="buyNow()">Buy Now</button>
         <button class="btn btn-primary" (click)="addToCart()">
           Add to Cart
         </button>
@@ -122,10 +116,7 @@
           {{ product.stock ? "In Stock" : "Out of Stock" }}
         </span>
       </p>
-      <!-- <p>
-        <strong>Stock:</strong>
-        {{ product.stock || 0 }}
-      </p> -->
+
       <div
         *ngIf="product.stock < 5 && product.stock > 0"
         class="alert alert-warning py-1 px-2 mb-2"
@@ -143,14 +134,6 @@
             >Description</a
           >
         </li>
-        <!-- <li class="nav-item">
-          <a
-            class="nav-link"
-            [class.active]="tab === 'info'"
-            (click)="tab = 'info'"
-            >Additional Info</a
-          >
-        </li> -->
         <li class="nav-item">
           <a
             class="nav-link"
@@ -162,7 +145,6 @@
       </ul>
       <div class="border border-top-0 p-3">
         <div *ngIf="tab === 'description'">{{ product.title }}</div>
-        <!-- <div *ngIf="tab === 'info'">{{ product.additionalInfo }}</div> -->
         <div *ngIf="tab === 'reviews'">
           Rating: {{ newReview.rating }}<br />
           Comment: {{ newReview.comment }}
@@ -234,12 +216,13 @@
     <div>
       <h6 class="mb-2">All Reviews</h6>
 
-      <div *ngIf="product.reviews?.length; else noReviews">
+      <div *ngIf="product.reviews.length; else noReviews">
         <div
           *ngFor="let review of product.reviews"
-          class="border-bottom pb-2 mb-3"
+          class="border-bottom pb-3 mb-3"
         >
-          <span class="text-warning">
+          <!-- النجوم -->
+          <span class="text-warning fs-5">
             <ng-container *ngFor="let star of [].constructor(review.rating)"
               >★</ng-container
             >
@@ -248,12 +231,17 @@
             >
           </span>
 
-          <div class="mt-1 ms-2">
-            <strong>By:</strong> {{ review.user?.name || "Anonymous" }}
+          <!-- اسم المستخدم -->
+          <div class="mt-1 ms-1 fw-bold">By: {{ review.user.name }}</div>
+
+          <!-- نص الريفيو -->
+          <div class="ms-1 text-muted fst-italic">
+            {{ review.text }}
           </div>
 
-          <div class="ms-2 text-muted fst-italic">
-            {{ review.text }}
+          <!-- التاريخ -->
+          <div class="ms-1 text-secondary small">
+            {{ review.createdAt | date : "mediumDate" }}
           </div>
         </div>
       </div>
@@ -261,33 +249,37 @@
       <ng-template #noReviews>
         <div class="text-muted">No reviews yet.</div>
       </ng-template>
+    </div>
+  </div>
 
-      <!-- Related Products -->
-      <div class="mt-5">
-        <h4>Related Products</h4>
-        <div class="row">
-          <div class="col-md-3" *ngFor="let related of relatedProducts">
-            <div class="card h-100">
-              <img
-                [src]="
-                  related.coverImage?.startsWith('http')
-                    ? related.coverImage
-                    : 'http://localhost:3000/' + related.coverImage
-                "
-                class="card-img-top"
-                alt="..."
-                style="height: 180px; object-fit: cover"
-              />
-              <div class="card-body">
-                <h6 class="card-title">{{ related.title }}</h6>
-                <p class="text-danger mb-0">${{ related.price }}</p>
-                <a
-                  [routerLink]="['/product', related._id]"
-                  class="btn btn-sm btn-outline-dark mt-2"
-                  >View</a
-                >
-              </div>
-            </div>
+  <!-- Related Products -->
+  <div class="related-section mt-5 mb-5">
+    <h4 class="mb-4">📚 Related Products</h4>
+
+    <div class="row g-3">
+      <div
+        class="col-sm-6 col-md-4 col-lg-3"
+        *ngFor="let related of relatedProducts"
+      >
+        <div class="card h-100 shadow-sm border-0">
+          <img
+            [src]="
+              related.coverImage?.startsWith('http')
+                ? related.coverImage
+                : 'http://localhost:3000/' + related.coverImage
+            "
+            class="card-img-top"
+            alt="{{ related.title }}"
+            style="height: 200px; object-fit: cover; border-radius: 6px 6px 0 0"
+          />
+          <div class="card-body d-flex flex-column">
+            <h6 class="card-title mb-1">{{ related.title }}</h6>
+            <p class="text-danger fw-semibold mb-2">${{ related.price }}</p>
+            <a
+              [routerLink]="['/product', related._id]"
+              class="btn btn-outline-dark btn-sm mt-auto"
+              >View Details</a
+            >
           </div>
         </div>
       </div>

@@ -3,11 +3,10 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-
 const API_BASE = `${environment.apiBase}`;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CartService {
   private apiUrl = `${API_BASE}/cart`;
@@ -17,8 +16,8 @@ export class CartService {
 
   constructor(private http: HttpClient) {}
 
-  addToCart(bookId: string) {
-    return this.http.post(`${this.apiUrl}/add`, { bookId, quantity: 1 });
+  addToCart(payload: { bookId: string; quantity: number }) {
+    return this.http.post(`${this.apiUrl}/add`, payload);
   }
 
   getCart() {
@@ -34,14 +33,18 @@ export class CartService {
       },
       error: () => {
         this.cartSubject.next({ items: [], totalAmount: 0 });
-      }
+      },
     });
   }
 
   updateCartItemQuantity(itemId: string, quantity: number) {
     const token = localStorage.getItem('token') || '';
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.put(`${this.apiUrl}/update`, { itemId, quantity }, { headers });
+    return this.http.put(
+      `${this.apiUrl}/update`,
+      { itemId, quantity },
+      { headers }
+    );
   }
 
   removeCartItem(itemId: string) {
