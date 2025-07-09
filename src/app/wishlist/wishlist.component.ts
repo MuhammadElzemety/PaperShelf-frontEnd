@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService, WishlistItem } from '../services/product.service';
 import { Router } from '@angular/router';
+import { CartService } from '../services/cart.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-wishlist',
@@ -18,7 +20,12 @@ export class WishlistComponent implements OnInit {
   loading: boolean = true;
   error: string = '';
 
-  constructor(private productService: ProductService, private route: Router) {}
+  constructor(
+    private productService: ProductService,
+    private route: Router,
+    private cartService: CartService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.loadProducts();
@@ -37,38 +44,8 @@ export class WishlistComponent implements OnInit {
         console.error('Error loading products:', error);
         this.error = 'Failed to load products. Please try again later.';
         this.loading = false;
-        this.loadFallbackData();
       },
     });
-  }
-
-  private loadFallbackData(): void {
-    this.wishlistItems = [
-      {
-        id: '1',
-        name: 'A Crooked Tree',
-        price: 26.0,
-        image: 'assets/images/crooked-tree.jpg',
-        inStock: true,
-        selected: false,
-      },
-      {
-        id: '2',
-        name: 'White Cat, Black Dog',
-        price: 34.0,
-        image: 'assets/images/white-cat-black-dog.jpg',
-        inStock: true,
-        selected: false,
-      },
-      {
-        id: '3',
-        name: 'Black Door',
-        price: 46.0,
-        image: 'assets/images/black-door.jpg',
-        inStock: false,
-        selected: false,
-      },
-    ];
   }
 
   toggleSelectAll(): void {
@@ -81,31 +58,60 @@ export class WishlistComponent implements OnInit {
   }
 
   addToCart(item: WishlistItem): void {
-    console.log(`Adding ${item.name} to cart`);
     if (!item.inStock) {
-      alert(`${item.name} is currently out of stock.`);
+      this.toastr.warning(
+        `${item.name} is currently out of stock.`,
+        'Out of Stock'
+      );
       return;
     }
-    // Logic to add item to cart can go here
+
+    this.cartService.addToCart({ bookId: item.id, quantity: 1 }).subscribe({
+      next: () => {
+        this.toastr.success('Added to cart!', item.name);
+        this.cartService.refreshCart();
+      },
+      error: (error) => {
+        this.toastr.error(
+          error.error?.message || `Failed to add "${item.name}" to cart.`,
+          'Error'
+        );
+        console.error('Add to cart failed:', error);
+      },
+    });
   }
 
   addSelectedToCart(): void {
     const selectedItems = this.wishlistItems.filter((item) => item.selected);
-    if (selectedItems.length === 0) {
-      alert('Please select at least one item.');
-      return;
-    }
-    console.log('Adding selected items to cart:', selectedItems);
-    // Add logic to handle adding to cart
-  }
 
-  addAllToCart(): void {
-    const inStockItems = this.wishlistItems.filter((item) => item.inStock);
-    if (inStockItems.length === 0) {
-      alert('No items are currently in stock.');
+    if (selectedItems.length === 0) {
+      this.toastr.info('Please select at least one item.', 'No Selection');
       return;
     }
-    console.log('Adding all in-stock items to cart:', inStockItems);
+
+    selectedItems.forEach((item) => {
+      if (!item.inStock) {
+        this.toastr.warning(
+          `"${item.name}" is out of stock. Skipping.`,
+          'Out of Stock'
+        );
+        return;
+      }
+
+      this.cartService.addToCart({ bookId: item.id, quantity: 1 }).subscribe({
+        next: () => {
+          this.toastr.success(`"${item.name}" added to cart!`, 'Added');
+          this.cartService.refreshCart();
+        },
+        error: (err) => {
+          this.toastr.error(
+            err.error?.message || `Failed to add "${item.name}"`,
+            'Add Failed'
+          );
+          console.error(`Failed to add "${item.name}" to cart:`, err);
+        },
+      });
+    });
   }
 
   applyAction(): void {

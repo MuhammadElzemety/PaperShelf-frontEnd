@@ -1,29 +1,48 @@
 .main-image {
-    max-height: 450px;
-    object-fit: cover;
-  }
-  .thumb-image {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    cursor: pointer;
-  }
-  .payment-icon {
-    width: 50px;
-    margin-right: 10px;
-  }
-  .wishlist-btn {
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-  }
-  pre {
+  max-height: 450px;
+  object-fit: cover;
+}
+.thumb-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  cursor: pointer;
+}
+.payment-icon {
+  width: 50px;
+  margin-right: 10px;
+}
+.wishlist-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+pre {
   background-color: #f8f9fa;
   padding: 15px;
   border-left: 4px solid #007bff;
   border-radius: 6px;
   white-space: pre-wrap;
-   }
+}
+
+.related-section {
+  padding-top: 2rem;
+  border-top: 1px solid #ddd;
+  margin-top: 2rem;
+}
+
+.related-section h4 {
+  font-weight: 600;
+  color: #333;
+}
+
+.toast-container {
+  max-width: 100%;
+}
+
+.toast-body {
+  font-size: 0.95rem;
+}
