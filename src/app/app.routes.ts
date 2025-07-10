@@ -30,6 +30,7 @@ import { OrderHistoryComponent } from './order-history/order-history.component';
 import { AddBookComponent } from './author/add-book/add-book.component';
 import { MyBooksComponent } from './author/my-books/my-books.component';
 import { OrderComponent } from './order/order.component';
+import { OrdersDashboardComponent } from './admin/orders-dashboard/orders-dashboard.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -75,6 +76,7 @@ export const routes: Routes = [
       { path: 'books/edit/:id', component: EditBookComponent },
       { path: 'reviews/approve', component: ApprovedComponent },
       { path: 'reviews/pending', component: PendingComponent },
+      { path: 'orders', component: OrdersDashboardComponent },
       { path: '**', component: NotFoundDashboardComponent }
     ]
   },

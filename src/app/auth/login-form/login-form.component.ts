@@ -13,7 +13,6 @@ import { CartService } from '../../services/cart.service'; // ← ضيف الا�
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    RouterLinkActive
   ],
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css']
