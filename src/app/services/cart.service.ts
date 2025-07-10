@@ -27,6 +27,8 @@ export class CartService {
   }
 
   refreshCart() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user?.role === 'admin') return;
     this.getCart().subscribe({
       next: (response: any) => {
         this.cartSubject.next(response.data || { items: [], totalAmount: 0 });

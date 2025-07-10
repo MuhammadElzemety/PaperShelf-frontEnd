@@ -27,7 +27,7 @@ export class LoginFormComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private rolrserv: RoleService,
-    private cartService: CartService, // ← هنا كمان
+    private cartService: CartService, 
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -59,15 +59,16 @@ export class LoginFormComponent {
             token: response.data.accessToken
           });
 
-          // ✅ تحديث الكارت بعد تسجيل الدخول
           this.cartService.refreshCart();
 
           const userRole = response.data.user.role;
-          if (userRole === 'admin') {
-            this.router.navigate(['/dashboard']);
-          } else {
-            this.router.navigate(['/home']);
-          }
+          setTimeout(() => {
+            if (userRole === 'admin') {
+              window.location.href = '/dashboard';
+            } else {
+              this.router.navigateByUrl('/home');
+            }
+          }, 10)
         },
         error: (err: any) => {
           this.errorMessage = err.error?.message || 'Login failed. Please try again.';
