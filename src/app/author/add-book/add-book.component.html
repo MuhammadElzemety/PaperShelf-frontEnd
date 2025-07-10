@@ -44,19 +44,16 @@
       <input type="number" class="form-control" formControlName="pages" />
     </div>
 
-    <!-- ✅ Category Dropdown -->
+    <!-- Category -->
     <div class="mb-3">
       <label>Category</label>
-      <select
-        class="form-control"
-        formControlName="category"
-        (change)="onCategoryChange($event)">
+      <select class="form-control" formControlName="category" (change)="onCategoryChange($event)">
         <option value="" disabled>Select category</option>
         <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
       </select>
     </div>
 
-    <!-- ✅ يظهر فقط لو المستخدم اختار Other -->
+    <!-- New Category (if Other) -->
     <div class="mb-3" *ngIf="addBookForm.get('category')?.value === 'Other'">
       <label>New Category</label>
       <input
@@ -72,11 +69,13 @@
     <div class="mb-3">
       <label>Cover Image</label>
       <input type="file" accept="image/*" class="form-control" (change)="onCoverImageSelected($event)" />
+      <div class="text-danger" *ngIf="addBookForm.get('coverImage')?.touched && addBookForm.get('coverImage')?.invalid">
+        Cover image is required.
+      </div>
       <div *ngIf="coverImagePreview" class="mt-2 text-center">
         <img [src]="coverImagePreview" alt="Cover Preview" class="img-thumbnail" style="max-width: 200px;" />
       </div>
     </div>
-    
 
     <!-- Additional Images -->
     <div class="mb-3">
