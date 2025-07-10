@@ -1,0 +1,371 @@
+<div class="container-fluid">
+    <div *ngIf="alert.show" [ngClass]="{
+       'alert': true,
+       'alert-success': alert.type === 'success',
+       'alert-danger': alert.type === 'error'
+    }" class="position-fixed top-20 start-50 translate-middle-x mt-3" style="z-index: 99999;" role="alert">
+        <div class="alert-content">
+            <p>{{ alert.message }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="breadcrumb-main user-member justify-content-sm-between">
+                <div class="d-flex flex-wrap justify-content-center breadcrumb-main__wrapper">
+
+                    <div class="d-flex align-items-center user-member__title justify-content-center mr-sm-25">
+                        <h4 class="text-capitalize fw-500 breadcrumb-title">orders</h4>
+                    </div>
+
+                    <!-- Search input -->
+                    <form class="d-flex align-items-center user-member__form my-sm-0 my-2"
+                        (submit)="onSearch(); $event.preventDefault()" style="max-width: 250px;">
+                        <span data-feather="search"></span>
+                        <input class="form-control mr-sm-2 border-0 box-shadow-none" type="search"
+                            placeholder="Search....." aria-label="Search" [formControl]="searchControl" />
+
+                    </form>
+
+                    <!-- Order Status Filter -->
+                    <div class="d-flex align-items-center user-member__form my-sm-0 my-2 mx-3"
+                        style="max-width: 200px;">
+                        <label class="mr-2 mb-0 font-weight-bold">Orders:</label>
+                        <select class="form-control" [formControl]="statusFilter">
+                            <option [ngValue]="null">Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+
+                    <!-- Payment Status Filter -->
+                    <div class="d-flex align-items-center user-member__form my-sm-0 my-2 mx-3"
+                        style="max-width: 200px;">
+                        <label class="mr-2 mb-0 font-weight-bold">Payment:</label>
+                        <select class="form-control" [formControl]="paymentStatusFilter">
+                            <option [ngValue]="null">Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                            <option value="failed">Failed</option>
+                            <option value="refunded">Refunded</option>
+                        </select>
+                    </div>
+
+                    <!-- Payment Methods Filter -->
+                    <div class="d-flex align-items-center user-member__form my-sm-0 my-2 mx-3"
+                        style="max-width: 200px;">
+                        <label class="mr-2 mb-0 font-weight-bold">Methods:</label>
+                        <select class="form-control" [formControl]="paymentMethodFilter">
+                            <option [ngValue]="null">All</option>
+                            <option value="paypal">Paypal</option>
+                            <option value="cash_on_delivery">Cash</option>
+                        </select>
+                    </div>
+
+                    <!-- Reset button - moved inside the wrapper -->
+                    <div class="d-flex align-items-center my-sm-0 my-2 mx-3">
+                        <button type="button" class="btn btn-info" (click)="resetFilters()">
+                            Reset
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="userDatatable global-shadow border p-30 bg-white radius-xl w-100 mb-30">
+                <div class="table-responsive text-center" *ngIf="isLoading">
+                    <div class="py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive text-center" *ngIf="!isLoading && orders.length === 0">
+                    <div class="py-5 text-danger">
+                        No Orders found.
+                    </div>
+                </div>
+
+                <div class="table-responsive" *ngIf="!isLoading && orders.length > 0">
+                    <table class="table mb-0 table-borderless">
+                        <thead>
+                            <tr class="userDatatable-header">
+                                <th><span class="userDatatable-title">Order #</span></th>
+                                <th><span class="userDatatable-title">User</span></th>
+                                <th><span class="userDatatable-title">Items</span></th>
+                                <th><span class="userDatatable-title">Total</span></th>
+                                <th><span class="userDatatable-title">Order Status</span></th>
+                                <th><span class="userDatatable-title">Payment</span></th>
+                                <th><span class="userDatatable-title">Payment Status</span></th>
+                                <th><span class="userDatatable-title">Date</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let order of orders;">
+                                <td>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modal-order-details"
+                                        (click)="onSelectOrder(order)" class="text-dark fw-500">
+                                        <div class="userDatatable-content">{{ order.orderNumber }}</div>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modal-order-details"
+                                        (click)="onSelectOrder(order)" class="text-dark fw-500">
+                                        <div class="userDatatable-content text-truncate" style="max-width: 200px;">{{
+                                            order.userName }}</div>
+                                        <p class="d-block mb-0 text-truncate" style="max-width: 200px;">{{
+                                            order.userEmail }}</p>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modal-order-details"
+                                        (click)="onSelectOrder(order)" class="text-dark fw-500">
+                                        <div class="userDatatable-content">{{ order.quantityOfItemsPurchased }}</div>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modal-order-details"
+                                        (click)="onSelectOrder(order)" class="text-dark fw-500">
+                                        <div class="userDatatable-content">{{ order.totalPrice }}$</div>
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button
+                                            class="btn dropdown-toggle rounded-pill px-3 py-1 fw-bold d-flex align-items-center gap-2"
+                                            [ngClass]="{
+                                                'bg-opacity-warning text-warning': order.statusOfOrder === 'pending',
+                                                'bg-opacity-info text-info': order.statusOfOrder === 'shipped',
+                                                'bg-opacity-success text-success': order.statusOfOrder === 'delivered',
+                                                'bg-opacity-danger text-danger': order.statusOfOrder === 'cancelled'
+                                            }" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                                            <span *ngIf="!loadingOrderIds.includes(order.orderId)">
+                                                {{ order.statusOfOrder }}
+                                            </span>
+                                            <span *ngIf="loadingOrderIds.includes(order.orderId)"
+                                                class="spinner-border spinner-border-sm" role="status"
+                                                aria-hidden="true"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item text-warning fw-bold"
+                                                    (click)="changeOrderStatus(order, 'pending')">Pending</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item text-info fw-bold"
+                                                    (click)="changeOrderStatus(order, 'shipped')">Shipped</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item text-success fw-bold"
+                                                    (click)="changeOrderStatus(order, 'delivered')">Delivered</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item text-danger fw-bold"
+                                                    (click)="changeOrderStatus(order, 'cancelled')">Cancelled</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+
+
+                                <td>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modal-order-details"
+                                        (click)="onSelectOrder(order)" class="text-dark fw-500">
+                                        <div class="userDatatable-content">{{ order.paymentMethod === "cash_on_delivery"
+                                            ? 'Cash' : 'Paypal' }}</div>
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button
+                                            class="btn dropdown-toggle rounded-pill px-3 py-1 fw-bold w-100px text-capitalize d-flex align-items-center gap-2"
+                                            [ngClass]="{
+                                                'bg-opacity-warning text-warning': order.paymentStatus === 'pending',
+                                                'bg-opacity-success text-success': order.paymentStatus === 'paid',
+                                                'bg-opacity-danger text-danger': order.paymentStatus === 'failed',
+                                                'bg-opacity-info text-info': order.paymentStatus === 'refunded'
+                                            }" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                                            <span *ngIf="!loadingPaymentIds.includes(order.orderId)">
+                                                {{ order.paymentStatus }}
+                                            </span>
+                                            <span *ngIf="loadingPaymentIds.includes(order.orderId)"
+                                                class="spinner-border spinner-border-sm" role="status"
+                                                aria-hidden="true"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item text-warning fw-bold"
+                                                    (click)="changePaymentStatus(order, 'pending')">Pending</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item text-success fw-bold"
+                                                    (click)="changePaymentStatus(order, 'paid')">Paid</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item text-danger fw-bold"
+                                                    (click)="changePaymentStatus(order, 'failed')">Failed</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item text-info fw-bold"
+                                                    (click)="changePaymentStatus(order, 'refunded')">Refunded</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modal-order-details"
+                                        (click)="onSelectOrder(order)" class="text-dark fw-500">
+                                        <div class="userDatatable-content">{{ order.createdAt | date: 'mediumDate' }}
+                                        </div>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-end pt-30">
+                    <nav class="atbd-page">
+                        <ul class="atbd-pagination d-flex">
+                            <li class="atbd-pagination__item" [class.disabled]="currentPage === 1">
+                                <a href="#" class="atbd-pagination__link pagination-control"
+                                    (click)="loadPage(currentPage - 1); $event.preventDefault()">
+                                    <span class="la la-angle-left"></span>
+                                </a>
+                            </li>
+
+                            <li class="atbd-pagination__item"
+                                *ngFor="let page of [].constructor(pagination?.totalPages); let i = index">
+                                <a href="#" class="atbd-pagination__link" [class.active]="(i + 1) === currentPage"
+                                    (click)="loadPage(i + 1); $event.preventDefault()">
+                                    <span class="page-number">{{ i + 1 }}</span>
+                                </a>
+                            </li>
+
+                            <li class="atbd-pagination__item" [class.disabled]="currentPage === pagination?.totalPages">
+                                <a href="#" class="atbd-pagination__link pagination-control"
+                                    (click)="loadPage(currentPage + 1); $event.preventDefault()">
+                                    <span class="la la-angle-right"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div #orderModal class="modal fade" id="modal-order-details" tabindex="-1" aria-labelledby="orderModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 1100px; width: 95%;">
+        <div class="modal-content p-3 bg-white rounded-3 overflow-auto" style="max-height: 90vh;">
+            <div class="cartPage global-shadow border radius-xl w-100 mb-30">
+                <div class="row justify-content-center">
+
+                    <div class="col-lg-8 col-md-12 mb-3">
+                        <div class="product-cart">
+                            <div class="table-responsive">
+                                <table id="cart" class="table table-borderless table-hover">
+                                    <thead>
+                                        <tr class="product-cart__header">
+                                            <th>Book</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th class="text-center">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of selectedOrder?.bookInfo">
+                                            <td class="Product-cart-title">
+                                                <a routerLinkActive="active"
+                                                    [routerLink]="'/dashboard/books/view/' + item.bookId"
+                                                    (click)="closeModal()">
+                                                    <div class="d-flex align-items-center">
+                                                        <img class="mr-3 wh-80 align-self-center radius-xl bg-opacity-primary"
+                                                            [style.background-image]="'url(' + img_url + item.bookCoverImage + ')'">
+                                                        <div class="userDatatable-inline-title">
+                                                            <h6 class="text-truncate" style="max-width: 200px;">{{
+                                                                item.bookName || '-' }}
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+                                            <td class="price">${{ item.priceAtTime }}</td>
+                                            <td>
+                                                <div class="quantity product-cart__quantity">
+                                                    <input type="number" disabled [value]="item.quantity"
+                                                        class="qty qh-36 input" />
+                                                </div>
+                                            </td>
+                                            <td class="text-center subtotal">${{ item.priceAtTime * item.quantity }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-10">
+                        <div class="card order-summery bg-normal p-3 order-summery--width">
+                            <div class="card-header border-bottom-0 p-0 pb-25">
+                                <h5 class="fw-500">Order: #{{ selectedOrder?.orderNumber }}</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="total">
+                                    <div>Subtotal: <span>${{ selectedOrder?.subtotal }}</span></div>
+                                    <div>Shipping: <span>${{ selectedOrder?.shippingPrice || 0 }}</span></div>
+                                    <div>Payment Method: <span>{{ selectedOrder?.paymentMethod === 'cash_on_delivery' ? 'Cash' : 'Paypal' }}
+                                    </span></div>
+                                    <div>
+                                        Order Status:
+                                        <span class="rounded-pill text-center py-1 fw-bold w-100px text-capitalize"
+                                            [ngClass]="{
+                                'bg-opacity-warning text-warning': selectedOrder?.statusOfOrder === 'pending',
+                                'bg-opacity-info text-info': selectedOrder?.statusOfOrder === 'shipped',
+                                'bg-opacity-success text-success': selectedOrder?.statusOfOrder === 'delivered',
+                                'bg-opacity-danger text-danger': selectedOrder?.statusOfOrder === 'cancelled'
+                            }">
+                                            {{ selectedOrder?.statusOfOrder }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        Payment Status:
+                                        <span class="rounded-pill text-center py-1 fw-bold w-100px text-capitalize"
+                                            [ngClass]="{
+                                'bg-opacity-warning text-warning': selectedOrder?.paymentStatus === 'pending',
+                                'bg-opacity-success text-success':  selectedOrder?.paymentStatus === 'paid',
+                                'bg-opacity-danger text-danger':  selectedOrder?.paymentStatus === 'failed',
+                                'bg-opacity-info text-info':  selectedOrder?.paymentStatus === 'refunded'
+                            }">
+                                            {{ selectedOrder?.paymentStatus }}
+                                        </span>
+                                    </div>
+
+                                </div>
+                                <div class="total-money d-flex justify-content-between">
+                                    <h5>Total:</h5>
+                                    <h5>${{ selectedOrder?.totalPrice }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
