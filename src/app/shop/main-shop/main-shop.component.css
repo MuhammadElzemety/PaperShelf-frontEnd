@@ -57,13 +57,15 @@
 
 @media (max-width: 1600px) {
     .book-flex-card {
-        flex: 1 1 calc(25% - 1rem);
+        width: 100%;
+  max-width: 280px;
     }
 }
 
 @media (max-width: 1200px) {
     .book-flex-card {
-        flex: 1 1 calc(33.33% - 1rem);
+        width: 100%; 
+  max-width: 280px;
     }
 }
 

@@ -10,7 +10,7 @@
   width: 300px;
   max-width: 100%;
   border-right: 1px solid #ddd;
-  background-color: var(--off-white);
+  background-color: #faf7f0;
   z-index: 1050;
   height: auto !important;
   overflow-y: visible !important;
