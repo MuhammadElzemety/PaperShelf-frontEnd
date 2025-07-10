@@ -72,6 +72,12 @@ export class BookService {
         params = params.set('maxPrice', filters.priceRange.max.toString());
       }
     }
+    if (filters.sort) {
+      params = params.set('sort', filters.sort);
+    }
+    if (filters.order) {
+      params = params.set('order', filters.order);
+    }
 
     return this.http.get<any>(`${this.apiUrl}`, { params }).pipe(
       map(res => {

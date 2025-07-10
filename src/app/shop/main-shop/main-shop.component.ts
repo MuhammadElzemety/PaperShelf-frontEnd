@@ -25,6 +25,9 @@ export class MainShopComponent {
   isLoading = false;
   searchQuery: string = '';
 
+  sort: string = 'createdAt'; // default sort field
+  order: string = 'desc';     // default order
+
   totalPages = 1;
   wishlistIds: string[] = [];
 
@@ -62,8 +65,8 @@ export class MainShopComponent {
     });
   }
 
-   
-  
+
+
 
   toggleSearch() {
     this.showSearch = !this.showSearch;
@@ -100,7 +103,12 @@ export class MainShopComponent {
 
   loadBooks() {
     this.isLoading = true;
-    this.bookService.getBooks(this.currentFilters, this.currentPage, this.itemsPerPage).subscribe({
+    const filtersWithSort = {
+      ...this.currentFilters,
+      sort: this.sort,
+      order: this.order
+    };
+    this.bookService.getBooks(filtersWithSort, this.currentPage, this.itemsPerPage).subscribe({
       next: res => {
         this.books = res.data.books;
         this.pagination = res.data.pagination;
@@ -114,6 +122,13 @@ export class MainShopComponent {
     });
   }
 
+  setSort(sortField: string, order: string) {
+    this.sort = sortField;
+    this.order = order;
+    this.currentPage = 1;
+    this.loadBooks();
+  }
+
   loadWishlist() {
     this.http.get('http://localhost:3000/api/wishlist').subscribe({
       next: (res: any) => {
@@ -124,6 +139,6 @@ export class MainShopComponent {
       },
     });
   }
-  
+
 
 }

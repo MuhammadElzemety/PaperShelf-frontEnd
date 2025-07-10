@@ -1,84 +1,91 @@
 <section class="shop">
     <h2 class="fancy-bookshop-title text-center pt-3">Explore Our Book Shop</h2>
-   <div class="shop-header d-flex justify-content-end align-items-center gap-2 p-3 mb-3 shadow-sm rounded"
-    >
-    <div class="position-relative">
-        <button class="btn btn-outline-secondary" type="button" (click)="toggleSearch()">
-            <i class="fas fa-search"></i>
+    <div class="shop-header d-flex justify-content-end align-items-center gap-2 p-3 mb-3 shadow-sm rounded">
+        <div class="position-relative">
+            <button class="btn btn-outline-secondary" type="button" (click)="toggleSearch()">
+                <i class="fas fa-search"></i>
+            </button>
+            <input *ngIf="showSearch" type="text" id="searchInput" class="form-control position-absolute end-0 top-0"
+                [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()" style="width: 200px; z-index: 100;"
+                placeholder="Search books...">
+        </div>
+
+
+        <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas">
+            <i class="fas fa-filter me-2"></i>
         </button>
-        <input *ngIf="showSearch" type="text" id="searchInput" class="form-control position-absolute end-0 top-0"
-            [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()" style="width: 200px; z-index: 100;"
-            placeholder="Search books...">
+
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Sort
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+                <li><a class="dropdown-item" (click)="setSort('title', 'asc')">Title (A-Z)</a></li>
+                <li><a class="dropdown-item" (click)="setSort('price', 'asc')">Price (Low to High)</a></li>
+                <li><a class="dropdown-item" (click)="setSort('price', 'desc')">Price (High to Low)</a></li>
+                <li><a class="dropdown-item" (click)="setSort('averageRating', 'desc')">Rating (High to Low)</a></li>
+                <li><a class="dropdown-item" (click)="setSort('createdAt', 'desc')">Newest</a></li>
+            </ul>
+        </div>
     </div>
 
-
-    <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas"
-        data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas">
-        <i class="fas fa-filter me-2"></i>
-    </button>
-
-    <div class="dropdown">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown"
-            data-bs-toggle="dropdown" aria-expanded="false">
-            Sort
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
-            <li><a class="dropdown-item" href="">Title</a></li>
-            <li><a class="dropdown-item" href="#">Price</a></li>
-            <li><a class="dropdown-item" href="#">Rating</a></li>
-        </ul>
+    <div *ngIf="isLoading"
+        class="position-fixed top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center bg-white bg-opacity-100 z-3">
+        <i class="fas fa-book fa-4x text-primary mb-3 spin-animation"></i>
+        <p class="fw-bold text-primary fs-5">Loading books...</p>
     </div>
-</div>
 
-<div *ngIf="isLoading" class="position-fixed top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center bg-white bg-opacity-100 z-3">
-    <i class="fas fa-book fa-4x text-primary mb-3 spin-animation"></i>
-    <p class="fw-bold text-primary fs-5">Loading books...</p>
-  </div>
+    <div class="shop-container d-flex gap-4 p-4">
+        <app-filter (filtersApplied)="onFiltersApplied($event)"></app-filter>
 
-<div class="shop-container d-flex gap-4 p-4">
-    <app-filter (filtersApplied)="onFiltersApplied($event)"></app-filter>
 
     <main class="flex-grow-1  d-flex flex-column justify-content-center align-items-center py-4">
 
-        <div class="d-flex flex-wrap gap-4 justify-content-center w-100">
-            <div *ngFor="let book of books" class="book-flex-card">
-              <app-book-card [book]="book" [wishlistIds]="wishlistIds"></app-book-card>
+
+            <div class="d-flex flex-wrap gap-4 justify-content-center w-100">
+                <div *ngFor="let book of books" class="book-flex-card">
+                    <app-book-card [book]="book" [wishlistIds]="wishlistIds"></app-book-card>
+                </div>
             </div>
+
         </div>
 
-        <ng-template #noData>
-            <div class="text-center p-5">
-                <i class="fas fa-box-open fa-3x mb-3 text-muted"></i>
-                <h4 class="fw-bold text-muted">No books found</h4>
+
+            <ng-template #noData>
+                <div class="text-center p-5">
+                    <i class="fas fa-box-open fa-3x mb-3 text-muted"></i>
+                    <h4 class="fw-bold text-muted">No books found</h4>
+                </div>
+            </ng-template>
+
+            <div class="pagination-container d-flex flex-wrap justify-content-center align-items-center gap-2 mt-4"
+                *ngIf="pagination && books.length > 0 && pagination.totalBooks > itemsPerPage">
+
+                <button class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-sm"
+                    (click)="onPageChanged(pagination.currentPage - 1)" [disabled]="!pagination.hasPrevPage">
+                    <i class="bi bi-chevron-left"></i> Prev
+                </button>
+
+                <span class="fw-semibold fs-6 text-primary-emphasis bg-light rounded-pill px-3 py-2 shadow-sm">
+                    Page {{pagination.currentPage}} of {{pagination.totalPages}}
+                </span>
+
+                <button class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-sm"
+                    (click)="onPageChanged(pagination.currentPage + 1)" [disabled]="!pagination.hasNextPage">
+                    Next <i class="bi bi-chevron-right"></i>
+                </button>
             </div>
-        </ng-template>
 
-        <div class="pagination-container d-flex flex-wrap justify-content-center align-items-center gap-2 mt-4"
-            *ngIf="pagination && books.length > 0 && pagination.totalBooks > itemsPerPage">
+            <div class="text-center mt-2 text-muted"
+                *ngIf="pagination && books.length > 0 && pagination.totalBooks > itemsPerPage">
+                <small class="bg-light rounded-pill px-3 py-1 shadow-sm d-inline-block">
+                    Showing {{pagination.limit}} books per page • Total Books: {{pagination.totalBooks}}
+                </small>
+            </div>
 
-            <button class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-sm"
-                (click)="onPageChanged(pagination.currentPage - 1)" [disabled]="!pagination.hasPrevPage">
-                <i class="bi bi-chevron-left"></i> Prev
-            </button>
+        </main>
 
-            <span class="fw-semibold fs-6 text-primary-emphasis bg-light rounded-pill px-3 py-2 shadow-sm">
-                Page {{pagination.currentPage}} of {{pagination.totalPages}}
-            </span>
-
-            <button class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-sm"
-                (click)="onPageChanged(pagination.currentPage + 1)" [disabled]="!pagination.hasNextPage">
-                Next <i class="bi bi-chevron-right"></i>
-            </button>
-        </div>
-
-        <div class="text-center mt-2 text-muted"
-            *ngIf="pagination && books.length > 0 && pagination.totalBooks > itemsPerPage">
-            <small class="bg-light rounded-pill px-3 py-1 shadow-sm d-inline-block">
-                Showing {{pagination.limit}} books per page • Total Books: {{pagination.totalBooks}}
-            </small>
-        </div>
-
-    </main>
-
-</div> 
+    </div>
 </section>

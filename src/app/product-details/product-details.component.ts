@@ -48,7 +48,7 @@ export class ProductDetailsComponent implements OnInit {
       if (id) {
         this.loadProductDetails(id);
       }
-      
+
     });
   }
 
@@ -138,7 +138,7 @@ export class ProductDetailsComponent implements OnInit {
   addToCart() {
     const payload = {
       bookId: this.product._id,
-      quantity: this.quantity,
+      quantity: this.quantity
     };
 
     this.cartService.addToCart(payload).subscribe({
