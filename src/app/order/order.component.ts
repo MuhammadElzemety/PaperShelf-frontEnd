@@ -10,6 +10,8 @@ import {
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
+declare const paypal: any;
+
 @Component({
   selector: 'app-order',
   standalone: true,
@@ -21,6 +23,10 @@ export class OrderComponent implements OnInit {
   cartData: any = { items: [], totalAmount: 0 };
   checkoutForm: FormGroup;
   apiURL = 'http://localhost:3000/api/checkout/process';
+  toastMessage: string = '';
+  toastType: 'success' | 'error' = 'success';
+  showToastFlag: boolean = false;
+
 
   constructor(
     private _cartService: CartService,
@@ -97,6 +103,15 @@ export class OrderComponent implements OnInit {
     this._cartService.refreshCart();
   }
 
+  showToast(message: string, type: 'success' | 'error' = 'success'): void {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToastFlag = true;
+    setTimeout(() => {
+      this.showToastFlag = false;
+    }, 3000);
+  }
+
   // ✅ This is the corrected getter
   get shippingAddress(): FormGroup {
     return this.checkoutForm.get('shippingAddress') as FormGroup;
@@ -134,8 +149,83 @@ export class OrderComponent implements OnInit {
   }
 
   proceedToPayPal(): void {
-    alert('Redirecting to PayPal...');
-    // You can add logic here to save the form before redirecting, for example:
-    // if (this.checkoutForm.valid) { this.onSubmit(); }
+    if (this.checkoutForm.invalid) {
+      this.checkoutForm.markAllAsTouched();
+      this.showToast('Please complete the required fields.', 'error');
+      return;
+    }
+  
+    const formValue = this.checkoutForm.value;
+    const shipping = formValue.shippingAddress;
+    const amount = this.cartData.totalAmount.toFixed(2);
+    
+  
+    // Save order before payment
+    this.http.post<{ orderId: string }>('http://localhost:3000/api/checkout/process', formValue).subscribe({
+      next: (res) => {
+        const createdOrderId = res.orderId;
+  
+        // Create PayPal order
+        this.http.post<{ id: string }>('http://localhost:3000/api/paypal/create-order', { amount }).subscribe({
+          next: (paypalRes) => {
+            const paypalOrderId = paypalRes.id;
+  
+            const container = document.querySelector('.paypal-btn-container');
+            if (container) container.innerHTML = '';
+  
+            // Render PayPal buttons
+            paypal.Buttons({
+              createOrder: () => paypalOrderId,
+              onApprove: () => {
+                // Capture PayPal payment
+                this.http.post(`http://localhost:3000/api/paypal/capture-order/${paypalOrderId}`, { orderID: paypalOrderId }).subscribe({
+                  next: () => {
+                    // Confirm order after successful payment
+                    const confirmPayload = {
+                      orderId: createdOrderId, 
+                      paymentMethod: 'paypal',
+                      paymentDetails: {
+                        paypalId: paypalOrderId
+                      }
+                    };
+  
+                    this.http.post('http://localhost:3000/api/checkout/payment', confirmPayload).subscribe({
+                      next: () => {
+                        this.showToast('Order placed successfully!', 'success');
+                      },
+                      error: (err) => {
+                        console.error('Order failed after PayPal payment', err);
+                        this.showToast('Error processing order', 'error');
+                      }
+                    });
+                  },
+                  error: (err) => {
+                    console.error('PayPal capture error:', err);
+                    this.showToast('PayPal payment capture failed', 'error');
+                  }
+                });
+              },
+              onCancel: () => {
+                this.showToast('Payment cancelled', 'error');
+              },
+              onError: (err: any) => {
+                this.showToast('Payment error occurred', 'error');
+                console.error(err);
+              }
+            }).render('.paypal-btn-container');
+          },
+          error: (err) => {
+            console.error('Error creating PayPal order:', err);
+            alert('Error initiating PayPal payment');
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error creating order before PayPal:', err);
+        this.showToast('Please check your shipping info before proceeding to PayPal.', 'error');
+      }
+    });
   }
+  
+  
 }

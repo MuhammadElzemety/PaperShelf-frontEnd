@@ -1,3 +1,9 @@
+<div
+  *ngIf="showToastFlag"
+  [ngClass]="'custom-toast ' + (toastType === 'success' ? 'success' : 'error')"
+>
+  {{ toastMessage }}
+</div>
 <div class="checkout-container">
   <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" novalidate>
     <div class="billing-details">
@@ -113,7 +119,9 @@
         </button>
         <button *ngIf="selectedPaymentMethod === 'paypal'" type="button" (click)="proceedToPayPal()" class="place-order-btn paypal-btn">
           Proceed to PayPal
+          <div class="paypal-btn-container"></div>
         </button>
+        
       </div>
     </div>
   </form>

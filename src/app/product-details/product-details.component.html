@@ -46,24 +46,24 @@
     <!-- Right: Product Info -->
     <div class="col-md-6">
       <h2>{{ product.title }}</h2>
-
+      <p class="fs-4 text-danger mb-1">${{ product.price }}</p>
       <!-- Ratings -->
       <div class="mb-2">
-        <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+        <!-- <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
           <i
-            class="bi"
+            class="fa-star"
             [ngClass]="
               star <= product.averageRating
-                ? 'bi-star-fill text-warning'
-                : 'bi-star text-muted'
+                ? 'fa-star-fill text-warning'
+                : 'fa-star text-muted'
             "
           ></i>
-        </ng-container>
-        <span class="text-muted">({{ product.totalReviews }} reviews)</span>
+        </ng-container> -->
+        <span class="text-muted">{{ product.totalReviews }}  review</span>
       </div>
 
       <!-- Price -->
-      <p class="fs-4 text-danger mb-1">${{ product.price }}</p>
+     
 
       <!-- Quantity Selector -->
       <div class="mb-3">

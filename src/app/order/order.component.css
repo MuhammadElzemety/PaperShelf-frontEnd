@@ -143,6 +143,42 @@ h2 {
   background-color: #728529;
 }
 
+.custom-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 16px 28px;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  z-index: 9999;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 280px;
+  text-align: center;
+  background-color: #333; /* fallback */
+  transition: opacity 0.3s ease-in-out;
+}
+
+.toast-success {
+  background-color: #28a745; /* أخضر قوي */
+}
+
+.toast-error {
+  background-color: #dc3545; /* أحمر قوي */
+}
+
+.custom-toast.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+
 /* Responsive adjustments */
 @media (max-width: 992px) {
   form {
@@ -152,3 +188,4 @@ h2 {
 .order-item{
     border-bottom: 1px solid rgba(0, 0, 0, 0.377);
 }
+
