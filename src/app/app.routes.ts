@@ -23,6 +23,9 @@ import { ViewBookComponent } from './admin/books-dashboard/view-book/view-book.c
 import { EditBookComponent } from './admin/books-dashboard/edit-book/edit-book.component';
 import { ApprovedComponent } from './admin/reviews/approved/approved.component';
 import { PendingComponent } from './admin/reviews/pending/pending.component';
+import { ProfileComponent } from './profile/profile.component';
+import { OrderHistoryComponent } from './order-history/order-history.component';
+
 
 import { AddBookComponent } from './author/add-book/add-book.component';
 import { MyBooksComponent } from './author/my-books/my-books.component';
@@ -49,6 +52,9 @@ export const routes: Routes = [
   { path: 'product/:id', component: ProductDetailsComponent },
   { path: 'home', component: HomeComponent },
   { path: 'book', component: BookSliderComponent, canActivate: [AuthGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  { path: 'orders', component: OrderHistoryComponent, canActivate: [AuthGuard] },
+
 
   { path: 'author/add-book', component: AddBookComponent, canActivate: [AuthGuard] },
   { path: 'author/my-books', component: MyBooksComponent, canActivate: [AuthGuard] },

@@ -1,0 +1,111 @@
+.profile-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+  background-color: #f7f7f7;
+  padding: 2rem;
+}
+
+.profile-card {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 500px;
+  position: relative; /* ضروري علشان التوست يظهر داخله */
+}
+
+.profile-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.profile-info p {
+  margin: 0.5rem 0;
+  font-size: 16px;
+  color: #555;
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: space-between;
+  margin: 1.5rem 0;
+}
+
+.profile-btn {
+  flex: 1;
+  margin: 0 0.25rem;
+  padding: 0.5rem 1rem;
+  background-color: #074f92;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.profile-btn:hover {
+  background-color: #05396b;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-form input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+.save-btn {
+  padding: 0.6rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.save-btn:hover {
+  background-color: #218838;
+}
+
+::ng-deep .custom-position {
+  position: absolute !important;
+  bottom: 20px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 9999 !important;
+}
+
+::ng-deep .custom-toast {
+  padding: 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width: 300px;
+}
+
+::ng-deep .success-toast {
+  background-color: #e6ffed !important;
+  color: #155724 !important;
+  border-left: 6px solid #28a745;
+  font-weight: bold;
+}
+
+::ng-deep .error-toast {
+  background-color: #ffe6e6 !important;
+  color: #721c24 !important;
+  border-left: 6px solid #dc3545;
+  font-weight: bold;
+}
