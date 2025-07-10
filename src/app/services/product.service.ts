@@ -15,6 +15,7 @@ export interface WishlistItem {
   price: number;
   image: string;
   inStock: boolean;
+  discount?: number;
   selected?: boolean;
 }
 
@@ -24,10 +25,10 @@ export interface WishlistItem {
 export class ProductService {
   private baseUrl = `${API_BASE}/wishlist`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private getAuthHeaders() {
-    const token = localStorage.getItem('accessToken'); 
+    const token = localStorage.getItem('accessToken');
     return {
       headers: new HttpHeaders({
         Authorization: `Bearer ${token}`,
@@ -46,6 +47,7 @@ export class ProductService {
             ? book.coverImage
             : `${API_IMG}${book.coverImage}`,
           inStock: book.stock > 0,
+          discount: book.discount,
           selected: false,
         }))
       )
@@ -69,12 +71,12 @@ export class ProductService {
   }
 
   //  Define a method to get the AI summary for a book
-    getAISummary(bookId: string): Observable<string> {
-      return this.http
-        .get<{ summary: string }>(
-          `${API_URL}/${bookId}/formatted-summary`
-        )
-        .pipe(map((res) => res.summary || ''));
-    }
+  getAISummary(bookId: string): Observable<string> {
+    return this.http
+      .get<{ summary: string }>(
+        `${API_URL}/${bookId}/formatted-summary`
+      )
+      .pipe(map((res) => res.summary || ''));
+  }
 
 }

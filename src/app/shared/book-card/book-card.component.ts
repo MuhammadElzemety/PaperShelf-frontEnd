@@ -20,12 +20,12 @@ export class BookCardComponent {
   @Input() wishlistIds: string[] = [];
 
   get isInWishlist(): boolean {
-  return this.wishlistIds.includes(this.book.id);
+    return this.wishlistIds.includes(this.book.id);
   }
   constructor(
     private cartService: CartService,
     private productService: ProductService
-  ) {}
+  ) { }
 
   addToCart() {
     this.cartService.cart$.pipe(take(1)).subscribe((cart) => {
