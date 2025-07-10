@@ -1,0 +1,31 @@
+<div class="order-history-wrapper">
+  <h2 class="section-title">🧾 Order History</h2>
+
+  <div *ngIf="loading" class="loading-text">Loading your orders...</div>
+
+  <ng-container *ngIf="!loading && orders.length > 0; else noOrders">
+    <div class="order-card" *ngFor="let order of orders">
+      <div class="order-header">
+        <div><strong>Order #</strong> {{ order.orderNumber }}</div>
+        <div><strong>Status:</strong> {{ order.orderStatus }}</div>
+      </div>
+
+      <div class="order-info">
+        <div><strong>Total:</strong> {{ order.totalAmount }} EGP</div>
+        <div>
+          <strong>Payment:</strong> {{ order.paymentMethod }} - {{ order.paymentStatus }}
+        </div>
+      </div>
+
+      <div class="order-items">
+        <div *ngFor="let item of order.items" class="order-item">
+          📚 {{ item.book.title }} × {{ item.quantity }}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #noOrders>
+    <div class="no-orders-text">You have no previous orders.</div>
+  </ng-template>
+</div>

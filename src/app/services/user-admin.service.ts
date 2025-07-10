@@ -35,13 +35,41 @@ export class UserAdminService {
     console.log('[API Request URL]', url);
     return this.http.get(url);
   }
-  updateUser(id: string, data: any) {
+
+  //  Update any user (admin only)
+  updateUser(id: string, data: any): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${id}`, data);
   }
+
+  updateOwnProfile(data: any): Observable<any> {
+  return this.http.patch(`${this.apiUrl}/profile/${this.getUserIdFromToken()}`, data);
+}
   
   deleteUser(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+    //  Helper: extract user ID from localStorage token
+ private getUserIdFromToken(): string | null {
+  const userStr = localStorage.getItem('user');
+  if (!userStr) return null;
+
+  try {
+    const user = JSON.parse(userStr);
+    const token = user?.token;
+    if (!token) return null;
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const id = payload.userId || payload._id || null;
+
+    console.log('✅ Extracted User ID from token:', id); // 🔍
+    return id;
+  } catch (err) {
+    console.error('❌ Failed to decode token', err);
+    return null;
+  }
+}
+
   
 }
 

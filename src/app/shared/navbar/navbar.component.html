@@ -20,9 +20,9 @@
             PAGES
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" routerLinkActive="active" href="#">MyProfile</a></li>
+            <li><a class="dropdown-item" routerLinkActive="active" routerLink="/profile">MyProfile</a></li>
             <li><a class="dropdown-item" routerLinkActive="active" href="/wishlist">Wishlist</a></li>
-            <li><a class="dropdown-item" routerLinkActive="active" href="#">Order History</a></li>
+            <li><a class="dropdown-item" routerLinkActive="active" routerLink="/orders">Order History</a></li>
             <li><a class="dropdown-item" routerLinkActive="active" routerLink="author/my-books" *ngIf="role === 'author'">My Work</a></li>
           </ul>
         </li>

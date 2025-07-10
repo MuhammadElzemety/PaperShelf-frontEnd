@@ -1,0 +1,30 @@
+<div class="profile-wrapper">
+  <div class="profile-card">
+    <h2 class="profile-title">👤 My Profile</h2>
+
+    <div class="profile-info">
+      <p><strong>Name:</strong> {{ user.name }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+    </div>
+
+    <div class="profile-actions">
+      <button class="profile-btn" (click)="toggleEditName()">Update Name</button>
+      <button class="profile-btn" (click)="toggleEditPassword()">Change Password</button>
+    </div>
+
+    <!-- Edit Name Form -->
+    <form [formGroup]="editNameForm" (ngSubmit)="submitEditName()" *ngIf="showEditName" class="profile-form">
+      <input formControlName="name" type="text" placeholder="New name" />
+      <input formControlName="currentPassword" type="password" placeholder="Current password" />
+      <button type="submit" class="save-btn">Save</button>
+    </form>
+
+    <!-- Change Password Form -->
+    <form [formGroup]="passwordForm" (ngSubmit)="submitChangePassword()" *ngIf="showEditPassword" class="profile-form">
+      <input formControlName="currentPassword" type="password" placeholder="Current password" />
+      <input formControlName="newPassword" type="password" placeholder="New password" />
+      <input formControlName="confirmNewPassword" type="password" placeholder="Confirm new password" />
+      <button type="submit" class="save-btn">Change Password</button>
+    </form>
+  </div>
+</div>
