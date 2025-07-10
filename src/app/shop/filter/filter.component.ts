@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 
 const API_URL = environment.apiBaseUrl + '/books';
-const APIAuthors_URL = environment.apiBaseUrl + '/users';
+const APIAuthors_URL = environment.apiBaseUrl + '/books';
 
 @Component({
   selector: 'app-filter',
@@ -39,7 +39,7 @@ export class FilterComponent {
 
   isAuthorSelected: { [key: string]: boolean } = {};
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   ngOnInit() {
     this.loadFilters();
@@ -57,8 +57,8 @@ export class FilterComponent {
     });
 
     this.http.get<any>(`${APIAuthors_URL}/authors`).subscribe(res => {
-      if (res.success && res.authors) {
-        this.authors = res.authors.map((a: any) => a.name);
+      if (res.success && res.data?.authors) {
+        this.authors = res.data.authors.map((a: any) => a.name);
         console.log('Authors loaded:', this.authors);
       }
     });
