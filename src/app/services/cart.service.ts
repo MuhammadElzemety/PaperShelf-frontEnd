@@ -14,7 +14,7 @@ export class CartService {
   private cartSubject = new BehaviorSubject<any>({ items: [], totalAmount: 0 });
   cart$ = this.cartSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   addToCart(payload: { bookId: string; quantity: number }) {
     return this.http.post(`${this.apiUrl}/add`, payload);

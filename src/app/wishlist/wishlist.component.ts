@@ -25,7 +25,7 @@ export class WishlistComponent implements OnInit {
     private route: Router,
     private cartService: CartService,
     private toastr: ToastrService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadProducts();
