@@ -27,7 +27,6 @@ export class OrderComponent implements OnInit {
   toastType: 'success' | 'error' = 'success';
   showToastFlag: boolean = false;
 
-
   constructor(
     private _cartService: CartService,
     private fb: FormBuilder,
@@ -137,13 +136,14 @@ export class OrderComponent implements OnInit {
     this.http.post(this.apiURL, payload).subscribe({
       next: (response) => {
         console.log('Order placed successfully!', response);
-        alert('Order placed successfully!');
+        this._cartService.refreshCart();
+        this.showToast('Order placed successfully!', 'success');
       },
       error: (error) => {
         console.error('Error placing order:', error);
         const serverError =
           error.error?.message || 'Failed to place order. Please try again.';
-        alert(serverError);
+        this.showToast(serverError, 'error');
       },
     });
   }
@@ -154,78 +154,115 @@ export class OrderComponent implements OnInit {
       this.showToast('Please complete the required fields.', 'error');
       return;
     }
-  
+
     const formValue = this.checkoutForm.value;
     const shipping = formValue.shippingAddress;
     const amount = this.cartData.totalAmount.toFixed(2);
-    
-  
+
     // Save order before payment
-    this.http.post<{ orderId: string }>('http://localhost:3000/api/checkout/process', formValue).subscribe({
-      next: (res) => {
-        const createdOrderId = res.orderId;
-  
-        // Create PayPal order
-        this.http.post<{ id: string }>('http://localhost:3000/api/paypal/create-order', { amount }).subscribe({
-          next: (paypalRes) => {
-            const paypalOrderId = paypalRes.id;
-  
-            const container = document.querySelector('.paypal-btn-container');
-            if (container) container.innerHTML = '';
-  
-            // Render PayPal buttons
-            paypal.Buttons({
-              createOrder: () => paypalOrderId,
-              onApprove: () => {
-                // Capture PayPal payment
-                this.http.post(`http://localhost:3000/api/paypal/capture-order/${paypalOrderId}`, { orderID: paypalOrderId }).subscribe({
-                  next: () => {
-                    // Confirm order after successful payment
-                    const confirmPayload = {
-                      orderId: createdOrderId, 
-                      paymentMethod: 'paypal',
-                      paymentDetails: {
-                        paypalId: paypalOrderId
-                      }
-                    };
-  
-                    this.http.post('http://localhost:3000/api/checkout/payment', confirmPayload).subscribe({
-                      next: () => {
-                        this.showToast('Order placed successfully!', 'success');
-                      },
-                      error: (err) => {
-                        console.error('Order failed after PayPal payment', err);
-                        this.showToast('Error processing order', 'error');
-                      }
-                    });
-                  },
-                  error: (err) => {
-                    console.error('PayPal capture error:', err);
-                    this.showToast('PayPal payment capture failed', 'error');
-                  }
-                });
+    this.http
+      .post<{ orderId: string }>(
+        'http://localhost:3000/api/checkout/process',
+        formValue
+      )
+      .subscribe({
+        next: (res) => {
+          const createdOrderId = res.orderId;
+
+          // Create PayPal order
+          this.http
+            .post<{ id: string }>(
+              'http://localhost:3000/api/paypal/create-order',
+              { amount }
+            )
+            .subscribe({
+              next: (paypalRes) => {
+                const paypalOrderId = paypalRes.id;
+
+                const container = document.querySelector(
+                  '.paypal-btn-container'
+                );
+                if (container) container.innerHTML = '';
+
+                // Render PayPal buttons
+                paypal
+                  .Buttons({
+                    createOrder: () => paypalOrderId,
+                    onApprove: () => {
+                      // Capture PayPal payment
+                      this.http
+                        .post(
+                          `http://localhost:3000/api/paypal/capture-order/${paypalOrderId}`,
+                          { orderID: paypalOrderId }
+                        )
+                        .subscribe({
+                          next: () => {
+                            // Confirm order after successful payment
+                            const confirmPayload = {
+                              orderId: createdOrderId,
+                              paymentMethod: 'paypal',
+                              paymentDetails: {
+                                paypalId: paypalOrderId,
+                              },
+                            };
+
+                            this.http
+                              .post(
+                                'http://localhost:3000/api/checkout/payment',
+                                confirmPayload
+                              )
+                              .subscribe({
+                                next: () => {
+                                  this._cartService.refreshCart();
+                                  this.showToast(
+                                    'Order placed successfully!',
+                                    'success'
+                                  );
+                                },
+                                error: (err) => {
+                                  console.error(
+                                    'Order failed after PayPal payment',
+                                    err
+                                  );
+                                  this.showToast(
+                                    'Error processing order',
+                                    'error'
+                                  );
+                                },
+                              });
+                          },
+                          error: (err) => {
+                            console.error('PayPal capture error:', err);
+                            this.showToast(
+                              'PayPal payment capture failed',
+                              'error'
+                            );
+                          },
+                        });
+                    },
+                    onCancel: () => {
+                      this.showToast('Payment cancelled', 'error');
+                    },
+                    onError: (err: any) => {
+                      this.showToast('Payment error occurred', 'error');
+                      console.error(err);
+                    },
+                  })
+                  .render('.paypal-btn-container');
               },
-              onCancel: () => {
-                this.showToast('Payment cancelled', 'error');
+              error: (err) => {
+                console.error('Error creating PayPal order:', err);
+                alert('Error initiating PayPal payment');
               },
-              onError: (err: any) => {
-                this.showToast('Payment error occurred', 'error');
-                console.error(err);
-              }
-            }).render('.paypal-btn-container');
-          },
-          error: (err) => {
-            console.error('Error creating PayPal order:', err);
-            alert('Error initiating PayPal payment');
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Error creating order before PayPal:', err);
-        this.showToast('Please check your shipping info before proceeding to PayPal.', 'error');
-      }
-    });
+            });
+        },
+        error: (err) => {
+          console.error('Error creating order before PayPal:', err);
+          this.showToast(
+            'Please check your shipping info before proceeding to PayPal.',
+            'error'
+          );
+        },
+      });
   }
-  
-  
 }
