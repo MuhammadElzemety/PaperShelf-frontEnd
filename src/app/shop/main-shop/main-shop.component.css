@@ -3,6 +3,14 @@
       background: linear-gradient(135deg, #E8E1D1 0%, #FAF7F0 50%, #F4EEE0 100%);
       font-family: "Open Sans", sans-serif;
 }
+.shop-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
 .text-center {
     text-align: center;
   }
