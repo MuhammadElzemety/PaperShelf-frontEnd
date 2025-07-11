@@ -150,8 +150,9 @@ export class PendingComponent implements OnInit {
 
   confirmDelete(): void {
     if (!this.selectedReview) return;
-
-    this.reviewService.deleteReview(this.selectedReview.reviewId).subscribe({
+    const { bookId, reviewId } = this.selectedReview;
+  
+    this.reviewService.deleteReview(bookId, reviewId).subscribe({
       next: (res) => {
         if (res.success) {
           this.showAlert('success', 'Review deleted successfully');
