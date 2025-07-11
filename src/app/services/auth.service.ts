@@ -6,17 +6,18 @@ import { switchMap, throwError, Observable, of } from 'rxjs';
 const API_URL = `${environment.apiBaseUrl}/auth`;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  constructor(private _HttpClient: HttpClient) {}
+  private unverifiedUserData: any = null;
+  constructor(private _HttpClient: HttpClient) { }
 
   refreshAccessToken() {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
       return throwError(() => new Error('No refresh token'));
     }
-  
+
     return this._HttpClient.post<{
       success: boolean,
       message: string,
@@ -32,8 +33,8 @@ export class AuthService {
       })
     );
   }
-  
-  
+
+
   login(data: { email: string, password: string }): Observable<any> {
     return this._HttpClient.post(`${API_URL}/login`, data);
   }
@@ -46,12 +47,28 @@ export class AuthService {
     return this._HttpClient.post(`${API_URL}/verify-email`, data);
   }
 
+  resendVerificationOTP(data: { email: string }): Observable<any> {
+    return this._HttpClient.post(`${API_URL}/resend-verification-otp`, data);
+  }
+
   requestPasswordReset(data: { email: string }): Observable<any> {
     return this._HttpClient.post(`${API_URL}/request-password-reset`, data);
   }
 
   resetPassword(data: { otp: string, newPassword: string }): Observable<any> {
     return this._HttpClient.post(`${API_URL}/reset-password`, data);
+  }
+
+  setUnverifiedUserData(userData: any): void {
+    this.unverifiedUserData = userData;
+  }
+
+  getUnverifiedUserData(): any {
+    return this.unverifiedUserData;
+  }
+
+  clearUnverifiedUserData(): void {
+    this.unverifiedUserData = null;
   }
 
   isLoggedIn(): boolean {
@@ -62,6 +79,7 @@ export class AuthService {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
+    this.clearUnverifiedUserData();
   }
 
   getCurrentUser(): any {
