@@ -17,11 +17,26 @@
                         <span class="menu-text">Users</span>
                     </a>
                 </li>
-                <li class="has-child">
+                <!-- <li class="has-child">
                     <a routerLink="/dashboard/books" routerLinkActive="active" class="">
                         <span data-feather="book-open" class="nav-icon"></span>
                         <span class="menu-text">Books</span>
                     </a>
+                </li> -->
+                <li class="has-child">
+                    <a href="#" class="">
+                        <span data-feather="cpu" class="nav-icon"></span>
+                        <span class="book-open">Books</span>
+                        <span class="toggle-icon"></span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a routerLink="/dashboard/books" routerLinkActive="active" class="">Approved</a>
+                        </li>
+                        <li>
+                            <a routerLink="/dashboard/books/pending" routerLinkActive="active" class="">Pending</a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="has-child">
                     <a href="#" class="">

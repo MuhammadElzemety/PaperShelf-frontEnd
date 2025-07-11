@@ -1,25 +1,24 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { BookService } from '../../services/book.service';
-import { Book } from '../../interfaces/book';
+import { BookPendingService } from '../../../services/book-pending.service';
+import { Book } from '../../../interfaces/book';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-
-declare var bootstrap: any;
 
 const API_URL = environment.apiBaseUrl + '/books';
 
 @Component({
-  selector: 'app-books-dashboard',
+  selector: 'app-pending-book',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule,RouterLink,RouterLinkActive],
-  templateUrl: './books-dashboard.component.html',
-  styleUrls: ['./books-dashboard.component.css']
+  templateUrl: './pending-book.component.html',
+  styleUrl: './pending-book.component.css'
 })
-export class BooksDashboardComponent implements OnInit {
+export class PendingBookComponent implements OnInit{
+
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   books: Book[] = [];
@@ -34,13 +33,13 @@ export class BooksDashboardComponent implements OnInit {
   validExtensions = /\.(jpg|jpeg|png|webp)$/i;
 
   alert = {
-    type: '',      
+    type: '',     
     message: '',
     show: false
   };
 
   constructor(
-    private bookService: BookService,
+    private BookPendingService: BookPendingService,
     private fb: FormBuilder,
     private http: HttpClient
   ) { }
@@ -87,7 +86,7 @@ export class BooksDashboardComponent implements OnInit {
     const page = this.currentPage;
     const limit = 10;
 
-    this.bookService.getBooks(filters, page, limit).subscribe({
+    this.BookPendingService.getBooks(filters, page, limit).subscribe({
       next: (res) => {
         this.books = res.data.books;
         this.pagination = res.data.pagination;
@@ -109,8 +108,8 @@ export class BooksDashboardComponent implements OnInit {
     const trimmedQuery = (this.searchControl.value ?? '').trim();
 
     const loadObservable = trimmedQuery
-      ? this.bookService.searchBooks(trimmedQuery, page, limit)
-      : this.bookService.getBooks(filters, page, limit);
+      ? this.BookPendingService.searchBooks(trimmedQuery, page, limit)
+      : this.BookPendingService.getBooks(filters, page, limit);
 
     loadObservable.subscribe({
       next: (res) => {
@@ -131,7 +130,7 @@ export class BooksDashboardComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.bookService.searchBooks(trimmedQuery).subscribe({
+    this.BookPendingService.searchBooks(trimmedQuery).subscribe({
       next: (res) => {
         this.books = res.data.books;
         this.pagination = res.data.pagination;

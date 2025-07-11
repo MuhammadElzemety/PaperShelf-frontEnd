@@ -13,7 +13,7 @@
             <div class="breadcrumb-main user-member justify-content-sm-between ">
                 <div class="d-flex flex-wrap justify-content-center breadcrumb-main__wrapper">
                     <div class="d-flex align-items-center user-member__title justify-content-center mr-sm-25">
-                        <h4 class="text-capitalize fw-500 breadcrumb-title">Approved Books</h4>
+                        <h4 class="text-capitalize fw-500 breadcrumb-title">Pending Books</h4>
                     </div>
                     <form class="d-flex align-items-center user-member__form my-sm-0 my-2"
                         (submit)="onSearch(); $event.preventDefault()">
@@ -21,11 +21,6 @@
                         <input class="form-control mr-sm-2 border-0 box-shadow-none" type="search"
                             placeholder="Search....." aria-label="Search" [formControl]="searchControl">
                     </form>
-                </div>
-                <div class="action-btn">
-                    <a href="#" class="btn px-15 btn-primary" data-toggle="modal" data-target="#new-member">
-                        <i class="las la-plus fs-16"></i>Add New Book
-                    </a>
                 </div>
             </div>
         </div>
