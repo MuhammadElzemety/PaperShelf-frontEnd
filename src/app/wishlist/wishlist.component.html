@@ -114,4 +114,7 @@
       </div>
     </div>
   </div>
+  <div *ngIf="showToastFlag" class="custom-toast" [ngClass]="toastType">
+    {{ toastMessage }}
+  </div>
 </div>
