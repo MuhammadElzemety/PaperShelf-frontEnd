@@ -198,7 +198,7 @@
           <img [src]="
               related.coverImage?.startsWith('http')
                 ? related.coverImage
-                : 'http://localhost:3000/' + related.coverImage
+                : environment.apiUrlForImgs + related.coverImage
             " class="card-img-top" alt="{{ related.title }}"
             style="height: 200px; object-fit: cover; border-radius: 6px 6px 0 0" />
           <div class="card-body d-flex flex-column">

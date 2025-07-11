@@ -20,7 +20,7 @@ export class HomebookService {
   }
   getCategories(): Observable<{ success: boolean; data: { name: string; image: string }[] }> {
   return this.http.get<{ success: boolean; data: { name: string; image: string }[] }>(
-    'http://localhost:3000/api/v1/categories/with-icons'
+      `${API_URL}/categories/with-icons`
   );
 }
 

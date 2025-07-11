@@ -4,6 +4,9 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { ProductService, WishlistItem } from './product.service';
+import { environment } from '../../environments/environment'; 
+const API_URL = environment.apiBaseUrl;
+
 
 describe('ProductService', () => {
   let service: ProductService;
@@ -58,7 +61,7 @@ describe('ProductService', () => {
       expect(items[1].inStock).toBeFalse();
     });
 
-    const req = httpMock.expectOne('http://localhost:3000/api/wishlist');
+    const req = httpMock.expectOne(`${API_URL}/wishlist`); 
     expect(req.request.method).toBe('GET');
     expect(req.request.headers.get('Authorization')).toBe(
       `Bearer ${dummyToken}`
@@ -71,8 +74,7 @@ describe('ProductService', () => {
     service.addToWishlist(bookId).subscribe((res) => {
       expect(res.success).toBeTrue();
     });
-
-    const req = httpMock.expectOne('http://localhost:3000/api/wishlist');
+    const req = httpMock.expectOne(`${API_URL}/wishlist`); 
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ bookId });
     req.flush({ success: true });
@@ -84,9 +86,8 @@ describe('ProductService', () => {
       expect(res.success).toBeTrue();
     });
 
-    const req = httpMock.expectOne(
-      `http://localhost:3000/api/wishlist/${bookId}`
-    );
+       const req = httpMock.expectOne(`${API_URL}/wishlist/${bookId}`); 
+
     expect(req.request.method).toBe('DELETE');
     req.flush({ success: true });
   });

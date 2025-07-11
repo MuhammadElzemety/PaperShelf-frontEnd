@@ -21,8 +21,9 @@
     <div class="mb-3">
       <label>ISBN</label>
       <input type="text" class="form-control" formControlName="isbn" />
-      <div class="text-danger" *ngIf="addBookForm.get('isbn')?.touched && addBookForm.get('isbn')?.invalid">
-        ISBN is required.
+      <div class="text-danger" *ngIf="addBookForm.get('isbn')?.touched && addBookForm.get('isbn')?.errors">
+        <div *ngIf="addBookForm.get('isbn')?.errors?.['required']">ISBN is required.</div>
+        <div *ngIf="addBookForm.get('isbn')?.errors?.['pattern']">ISBN must be exactly 10 digits.</div>
       </div>
     </div>
 
@@ -30,18 +31,29 @@
     <div class="mb-3">
       <label>Price</label>
       <input type="number" class="form-control" formControlName="price" />
+      <div class="text-danger" *ngIf="addBookForm.get('price')?.touched && addBookForm.get('price')?.invalid">
+        <div *ngIf="addBookForm.get('price')?.errors?.['required']">Price is required.</div>
+        <div *ngIf="addBookForm.get('price')?.errors?.['min']">Price must be at least 1.</div>
+      </div>
     </div>
 
     <!-- Discount -->
     <div class="mb-3">
       <label>Discount (%)</label>
       <input type="number" class="form-control" formControlName="discount" />
+      <div class="text-danger" *ngIf="addBookForm.get('discount')?.touched && addBookForm.get('discount')?.invalid">
+        <div *ngIf="addBookForm.get('discount')?.errors?.['min']">Discount cannot be negative.</div>
+        <div *ngIf="addBookForm.get('discount')?.errors?.['max']">Discount cannot exceed 100%.</div>
+      </div>
     </div>
 
     <!-- Pages -->
     <div class="mb-3">
       <label>Pages</label>
       <input type="number" class="form-control" formControlName="pages" />
+      <div class="text-danger" *ngIf="addBookForm.get('pages')?.touched && addBookForm.get('pages')?.invalid">
+        <div *ngIf="addBookForm.get('pages')?.errors?.['min']">Pages cannot be negative.</div>
+      </div>
     </div>
 
     <!-- Category -->
@@ -51,9 +63,12 @@
         <option value="" disabled>Select category</option>
         <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
       </select>
+      <div class="text-danger" *ngIf="addBookForm.get('category')?.touched && addBookForm.get('category')?.invalid">
+        Category is required.
+      </div>
     </div>
 
-    <!-- New Category (if Other) -->
+    <!-- New Category -->
     <div class="mb-3" *ngIf="addBookForm.get('category')?.value === 'Other'">
       <label>New Category</label>
       <input
@@ -90,6 +105,10 @@
     <div class="mb-3">
       <label>Stock</label>
       <input type="number" class="form-control" formControlName="stock" />
+      <div class="text-danger" *ngIf="addBookForm.get('stock')?.touched && addBookForm.get('stock')?.invalid">
+        <div *ngIf="addBookForm.get('stock')?.errors?.['required']">Stock is required.</div>
+        <div *ngIf="addBookForm.get('stock')?.errors?.['min']">Stock must be at least 1.</div>
+      </div>
     </div>
 
     <!-- Submit -->
@@ -97,8 +116,9 @@
       {{ isEditMode ? 'Update Book' : 'Add Book' }}
     </button>
 
-    <!-- Success & Error Messages -->
+    <!-- Messages -->
     <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
     <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+
   </form>
 </div>

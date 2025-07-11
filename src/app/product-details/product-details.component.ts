@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { CartService } from '../services/cart.service';
 import { ProductService } from '../services/product.service';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-product-details',
@@ -27,6 +28,7 @@ export class ProductDetailsComponent implements OnInit {
   toastMessage: string = '';
   toastClass: string = '';
   showToastFlag: boolean = false;
+  environment = environment;
 
   //  AI Summary Variables
   aiSummary: string = '';
@@ -55,12 +57,12 @@ export class ProductDetailsComponent implements OnInit {
 
   loadProductDetails(id: string) {
     this.http
-      .get(`http://localhost:3000/api/v1/books/${id}`)
+      .get(`${environment.apiBaseUrl}/books/${id}`)
       .subscribe((data: any) => {
         this.product = data.data.book;
         this.selectedImage = this.product.coverImage.startsWith('http')
           ? this.product.coverImage
-          : `http://localhost:3000/${this.product.coverImage}`;
+          : `${environment.apiUrlForImgs}${this.product.coverImage}`;
         this.checkIfInWishlist(this.product._id);
         this.loadRelated(this.product.category);
         this.loadReviews();
@@ -69,7 +71,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   checkIfInWishlist(productId: string) {
-    this.http.get('http://localhost:3000/api/wishlist').subscribe({
+    this.http.get(`${environment.apiBase}/wishlist`).subscribe({
       next: (res: any) => {
         const wishlist = res.data || [];
         this.isInWishlist = wishlist.some((item: any) => item._id === productId);
@@ -168,7 +170,7 @@ export class ProductDetailsComponent implements OnInit {
     };
 
     this.http
-      .post(`http://localhost:3000/api/reviews/${this.product._id}`, reviewPayload)
+      .post(`${environment.apiBase}/reviews/${this.product._id}`, reviewPayload)
       .subscribe({
         next: () => {
           this.newReview = { rating: 0, comment: '' };
@@ -186,7 +188,7 @@ export class ProductDetailsComponent implements OnInit {
 
   loadReviews() {
     this.http
-      .get(`http://localhost:3000/api/reviews/${this.product._id}`)
+      .get(`${environment.apiBase}/reviews/${this.product._id}`)
       .subscribe((res: any) => {
         this.product.reviews = Array.isArray(res.data) ? res.data : [];
       });
@@ -194,7 +196,7 @@ export class ProductDetailsComponent implements OnInit {
 
   loadRelated(category: string) {
     this.http
-      .get(`http://localhost:3000/api/v1/books?category=${category}&limit=4`)
+      .get(`${environment.apiBaseUrl}/books?category=${category}&limit=4`)
       .subscribe((res: any) => {
         if (Array.isArray(res.data.books)) {
           this.relatedProducts = res.data.books.filter(

@@ -3,6 +3,7 @@ import { HomebookService } from '../services/homebook.service';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BookSliderComponent } from '../book-slider/book-slider.component';
+import { environment } from '../../environments/environment'; 
 
 @Component({
   selector: 'app-home',
@@ -18,6 +19,7 @@ export class HomeComponent implements OnInit {
   isLoading = true;
   error = '';
   selectedCategory: string = 'all';
+   environment = environment;
 
   constructor(private bookService: HomebookService, private router: Router, private route: ActivatedRoute) {}
 

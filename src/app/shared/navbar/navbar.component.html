@@ -68,7 +68,7 @@
     <div *ngIf="getcart?.items?.length > 0">
       <div class="cart-item d-flex mb-4" *ngFor="let cart of getcart.items">
         <a [routerLink]="['/product', cart.book._id]" class="book-click-area">
-            <img [src]="'http://localhost:3000/' + cart.book.coverImage" alt="Book" class="cart-img me-3" />
+            <img [src]="imgBaseUrl + cart.book.coverImage" alt="Book" class="cart-img me-3" />
         </a>
         <div class="flex-grow-1">
           <div class="fw-bold">{{ cart.book.title }}</div>
