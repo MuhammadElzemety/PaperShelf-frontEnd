@@ -44,11 +44,21 @@
     <main class="flex-grow-1  d-flex flex-column justify-content-center align-items-center py-4">
 
 
-            <div class="d-flex flex-wrap gap-4 justify-content-center w-100">
-                <div *ngFor="let book of books" class="book-flex-card">
-                    <app-book-card [book]="book" [wishlistIds]="wishlistIds"></app-book-card>
+            <div
+                class="d-flex flex-wrap gap-4 justify-content-center w-100"
+                *ngIf="books.length > 0"
+                infiniteScroll
+                [infiniteScrollDistance]="2"
+                [infiniteScrollThrottle]="300"
+                (scrolled)="onScrollSearch()"
+                >
+                <div *ngIf="books.length > 0" class="d-flex flex-wrap gap-4 justify-content-center w-100">
+                    <div *ngFor="let book of books" class="book-flex-card">
+                        <app-book-card [book]="book" [wishlistIds]="wishlistIds"></app-book-card>
+                    </div>
                 </div>
             </div>
+
 
 
             <ng-template #noData>
@@ -59,7 +69,8 @@
             </ng-template>
 
             <div class="pagination-container d-flex flex-wrap justify-content-center align-items-center gap-2 mt-4"
-                *ngIf="pagination && books.length > 0 && pagination.totalBooks > itemsPerPage">
+     *ngIf="!searchQuery && pagination && books.length > 0 && pagination.totalBooks > itemsPerPage">
+
 
                 <button class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-sm"
                     (click)="onPageChanged(pagination.currentPage - 1)" [disabled]="!pagination.hasPrevPage">
@@ -77,10 +88,12 @@
             </div>
 
             <div class="text-center mt-2 text-muted"
-                *ngIf="pagination && books.length > 0 && pagination.totalBooks > itemsPerPage">
-                <small class="bg-light rounded-pill px-3 py-1 shadow-sm d-inline-block">
-                    Showing {{pagination.limit}} books per page • Total Books: {{pagination.totalBooks}}
+     *ngIf="!searchQuery && pagination && books.length > 0 && pagination.totalBooks > itemsPerPage">
+
+                <small *ngIf="searchQuery && books.length > 0" class="text-muted">
+                Found {{ books.length }} results
                 </small>
+
             </div>
 
         </main>
