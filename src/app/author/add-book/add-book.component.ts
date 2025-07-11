@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookService } from '../../services/book.service';
 
@@ -41,7 +40,7 @@ export class AddBookComponent implements OnInit {
       discount: [0, [Validators.min(0), Validators.max(100)]],
       pages: [0, [Validators.min(0)]],
       category: ['', Validators.required],
-      coverImage: ['', Validators.required],
+      coverImage: [null, Validators.required],
       images: [[]],
       stock: [1, [Validators.required, Validators.min(1)]],
       isNew: [false],
@@ -69,33 +68,19 @@ export class AddBookComponent implements OnInit {
     this.bookService.getBookById(bookId).subscribe({
       next: (res) => {
         const book = res.data;
-        this.addBookForm.patchValue({
-          title: book.title,
-          description: book.description,
-          isbn: book.isbn,
-          price: book.price,
-          discount: book.discount,
-          pages: book.pages,
-          category: book.category,
-          coverImage: book.coverImage,
-          images: book.images,
-          stock: book.stock,
-          isNew: book.isNew,
-          isBestseller: book.isBestseller,
-          isFeatured: book.isFeatured
-        });
+        this.addBookForm.patchValue(book);
         this.coverImagePreview = this.bookService.getFullImageUrl(book.coverImage);
         this.additionalImagePreviews = book.images?.map((img: string) => this.bookService.getFullImageUrl(img)) || [];
       },
       error: () => {
-        this.errorMessage = ' Failed to load book details.';
+        this.errorMessage = 'Failed to load book details.';
       }
     });
   }
 
   onCoverImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
+    if (input.files?.length) {
       this.coverImageFile = input.files[0];
       const reader = new FileReader();
       reader.onload = () => {
@@ -107,7 +92,7 @@ export class AddBookComponent implements OnInit {
 
   onImagesSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
+    if (input.files?.length) {
       this.additionalImageFiles = Array.from(input.files);
       this.additionalImagePreviews = [];
 
@@ -121,74 +106,71 @@ export class AddBookComponent implements OnInit {
     }
   }
 
-
-
   async onSubmit(): Promise<void> {
-  console.log('Form Submitted', this.addBookForm.value);
-  console.log('Form Valid?', this.addBookForm.valid);
+    this.successMessage = null;
+    this.errorMessage = null;
 
-  this.successMessage = null;
-  this.errorMessage = null;
+    const category = this.addBookForm.get('category')?.value === 'Other'
+      ? this.customCategory
+      : this.addBookForm.get('category')?.value;
+    this.addBookForm.patchValue({ category });
 
-  const category = this.addBookForm.get('category')?.value === 'Other'
-    ? this.customCategory
-    : this.addBookForm.get('category')?.value;
-
-  this.addBookForm.patchValue({ category });
-
-  try {
-    // ✅ 1. Upload cover image
-    if (this.coverImageFile) {
-      const coverForm = new FormData();
-      coverForm.append('coverImage', this.coverImageFile);
-      const coverResponse = await this.bookService.uploadCoverImage(coverForm).toPromise();
-      this.addBookForm.patchValue({ coverImage: coverResponse?.path });
-    }
-
-    // ✅ 2. Upload additional images
-    if (this.additionalImageFiles.length > 0) {
-      const imagesForm = new FormData();
-      this.additionalImageFiles.forEach(file => {
-        imagesForm.append('images', file);
-      });
-      const imagesResponse = await this.bookService.uploadMultipleImages(imagesForm).toPromise();
-      this.addBookForm.patchValue({ images: imagesResponse?.paths || [] });
-    }
-
-    // ✅ 3. Check form validity *AFTER PATCHING*
-    if (this.addBookForm.invalid) {
-      this.addBookForm.markAllAsTouched();
-      return;
-    }
-
-    // ✅ 4. Submit or update
-    if (this.isEditMode && this.bookId) {
-      this.bookService.updateBook(this.bookId, this.addBookForm.value).subscribe({
-        next: () => {
-          this.successMessage = ' Your changes have been submitted for review.';
-          setTimeout(() => this.router.navigate(['/author/my-books']), 2000);
-        },
-        error: () => {
-          this.errorMessage = ' Failed to update the book.';
+    try {
+      if (this.coverImageFile) {
+        const form = new FormData();
+        form.append('coverImage', this.coverImageFile);
+        const response = await this.bookService.uploadCoverImage(form).toPromise();
+        if (response?.path) {
+          const control = this.addBookForm.get('coverImage');
+          control?.setValue(response.path);
+          control?.markAsDirty();
+          control?.markAsTouched();
+          control?.updateValueAndValidity({ onlySelf: true });
+        } else {
+          this.errorMessage = 'Cover image upload failed.';
+          return;
         }
-      });
-    } else {
-      this.bookService.addBook(this.addBookForm.value).subscribe({
-        next: () => {
-          this.successMessage = ' Book submitted successfully and awaiting admin approval.';
-          setTimeout(() => this.router.navigate(['/author/my-books']), 2000);
-        },
-        error: (err) => {
-          console.error('Error placing order:', err);
-          this.errorMessage = err.error?.message || ' Something went wrong while submitting the book.';
-        }
-      });
-    }
+      }
 
-  } catch (err) {
-    this.errorMessage = ' Image upload failed.';
+      if (this.additionalImageFiles.length > 0) {
+        const imagesForm = new FormData();
+        this.additionalImageFiles.forEach(file => imagesForm.append('images', file));
+        const imagesResponse = await this.bookService.uploadMultipleImages(imagesForm).toPromise();
+        this.addBookForm.patchValue({ images: imagesResponse?.paths || [] });
+      }
+
+      if (this.addBookForm.invalid) {
+        this.addBookForm.markAllAsTouched();
+        return;
+      }
+
+      const formData = this.addBookForm.value;
+
+      if (this.isEditMode && this.bookId) {
+        this.bookService.updateBook(this.bookId, formData).subscribe({
+          next: () => {
+            this.successMessage = 'Your changes have been submitted for review.';
+            setTimeout(() => this.router.navigate(['/author/my-books']), 2000);
+          },
+          error: () => {
+            this.errorMessage = 'Failed to update the book.';
+          }
+        });
+      } else {
+        this.bookService.addBook(formData).subscribe({
+          next: () => {
+            this.successMessage = 'Book submitted successfully and awaiting admin approval.';
+            setTimeout(() => this.router.navigate(['/author/my-books']), 2000);
+          },
+          error: (err) => {
+            this.errorMessage = err.error?.message || 'Something went wrong while submitting the book.';
+          }
+        });
+      }
+    } catch (err) {
+      this.errorMessage = 'Image upload failed.';
+    }
   }
-}
 
   onImagesInput(event: Event): void {
     const input = (event.target as HTMLInputElement).value;
