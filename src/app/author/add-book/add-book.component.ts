@@ -23,7 +23,7 @@ export class AddBookComponent implements OnInit {
   bookId: string | null = null;
   isEditMode: boolean = false;
 
-  categories: string[] = ['Fiction', 'Science', 'History', 'Children', 'Other'];
+  categories: string[] = ['Fiction', 'Programming', 'History', 'Classic', 'Adventure', 'Other'];
   customCategory: string = '';
 
   constructor(
@@ -35,7 +35,7 @@ export class AddBookComponent implements OnInit {
     this.addBookForm = this.fb.group({
       title: ['', Validators.required],
       description: [''],
-      isbn: ['', Validators.required],
+      isbn: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       price: [0, [Validators.required, Validators.min(1)]],
       discount: [0, [Validators.min(0), Validators.max(100)]],
       pages: [0, [Validators.min(0)]],

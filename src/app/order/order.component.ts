@@ -9,6 +9,7 @@ import {
   FormGroupDirective,
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment'; 
 
 declare const paypal: any;
 
@@ -22,10 +23,10 @@ declare const paypal: any;
 export class OrderComponent implements OnInit {
   cartData: any = { items: [], totalAmount: 0 };
   checkoutForm: FormGroup;
-  apiURL = 'http://localhost:3000/api/checkout/process';
   toastMessage: string = '';
   toastType: 'success' | 'error' = 'success';
   showToastFlag: boolean = false;
+  environment = environment;
 
   constructor(
     private _cartService: CartService,
@@ -36,60 +37,32 @@ export class OrderComponent implements OnInit {
       shippingAddress: this.fb.group({
         firstName: [
           '',
-          [
-            Validators.required,
-            Validators.minLength(2),
-            Validators.maxLength(50),
-          ],
+          [Validators.required, Validators.minLength(2), Validators.maxLength(50)],
         ],
         lastName: [
           '',
-          [
-            Validators.required,
-            Validators.minLength(2),
-            Validators.maxLength(50),
-          ],
+          [Validators.required, Validators.minLength(2), Validators.maxLength(50)],
         ],
         email: ['', [Validators.required, Validators.email]],
         phone: [
           '',
-          [
-            Validators.required,
-            Validators.minLength(10),
-            Validators.maxLength(15),
-          ],
+          [Validators.required, Validators.minLength(10), Validators.maxLength(15)],
         ],
         address: [
           '',
-          [
-            Validators.required,
-            Validators.minLength(10),
-            Validators.maxLength(200),
-          ],
+          [Validators.required, Validators.minLength(10), Validators.maxLength(200)],
         ],
         city: [
           '',
-          [
-            Validators.required,
-            Validators.minLength(2),
-            Validators.maxLength(50),
-          ],
+          [Validators.required, Validators.minLength(2), Validators.maxLength(50)],
         ],
         state: [
           '',
-          [
-            Validators.required,
-            Validators.minLength(2),
-            Validators.maxLength(50),
-          ],
+          [Validators.required, Validators.minLength(2), Validators.maxLength(50)],
         ],
         country: [
           'Egypt',
-          [
-            Validators.required,
-            Validators.minLength(2),
-            Validators.maxLength(50),
-          ],
+          [Validators.required, Validators.minLength(2), Validators.maxLength(50)],
         ],
       }),
       paymentMethod: ['cash_on_delivery', Validators.required],
@@ -111,7 +84,6 @@ export class OrderComponent implements OnInit {
     }, 3000);
   }
 
-  // ✅ This is the corrected getter
   get shippingAddress(): FormGroup {
     return this.checkoutForm.get('shippingAddress') as FormGroup;
   }
@@ -128,12 +100,8 @@ export class OrderComponent implements OnInit {
     }
 
     const payload = this.checkoutForm.value;
-    console.log(
-      'Final payload being sent to server:',
-      JSON.stringify(payload, null, 2)
-    );
 
-    this.http.post(this.apiURL, payload).subscribe({
+    this.http.post(`${environment.apiBase}/checkout/process`, payload).subscribe({
       next: (response) => {
         console.log('Order placed successfully!', response);
         this._cartService.refreshCart();
@@ -161,27 +129,19 @@ export class OrderComponent implements OnInit {
 
     // Save order before payment
     this.http
-      .post<{ orderId: string }>(
-        'http://localhost:3000/api/checkout/process',
-        formValue
-      )
+      .post<{ orderId: string }>(`${environment.apiBase}/checkout/process`, formValue)
       .subscribe({
         next: (res) => {
           const createdOrderId = res.orderId;
 
           // Create PayPal order
           this.http
-            .post<{ id: string }>(
-              'http://localhost:3000/api/paypal/create-order',
-              { amount }
-            )
+            .post<{ id: string }>(`${environment.apiBase}/paypal/create-order`, { amount })
             .subscribe({
               next: (paypalRes) => {
                 const paypalOrderId = paypalRes.id;
 
-                const container = document.querySelector(
-                  '.paypal-btn-container'
-                );
+                const container = document.querySelector('.paypal-btn-container');
                 if (container) container.innerHTML = '';
 
                 // Render PayPal buttons
@@ -189,15 +149,13 @@ export class OrderComponent implements OnInit {
                   .Buttons({
                     createOrder: () => paypalOrderId,
                     onApprove: () => {
-                      // Capture PayPal payment
                       this.http
                         .post(
-                          `http://localhost:3000/api/paypal/capture-order/${paypalOrderId}`,
+                          `${environment.apiBase}/paypal/capture-order/${paypalOrderId}`,
                           { orderID: paypalOrderId }
                         )
                         .subscribe({
                           next: () => {
-                            // Confirm order after successful payment
                             const confirmPayload = {
                               orderId: createdOrderId,
                               paymentMethod: 'paypal',
@@ -207,36 +165,21 @@ export class OrderComponent implements OnInit {
                             };
 
                             this.http
-                              .post(
-                                'http://localhost:3000/api/checkout/payment',
-                                confirmPayload
-                              )
+                              .post(`${environment.apiBase}/checkout/payment`, confirmPayload)
                               .subscribe({
                                 next: () => {
                                   this._cartService.refreshCart();
-                                  this.showToast(
-                                    'Order placed successfully!',
-                                    'success'
-                                  );
+                                  this.showToast('Order placed successfully!', 'success');
                                 },
                                 error: (err) => {
-                                  console.error(
-                                    'Order failed after PayPal payment',
-                                    err
-                                  );
-                                  this.showToast(
-                                    'Error processing order',
-                                    'error'
-                                  );
+                                  console.error('Order failed after PayPal payment', err);
+                                  this.showToast('Error processing order', 'error');
                                 },
                               });
                           },
                           error: (err) => {
                             console.error('PayPal capture error:', err);
-                            this.showToast(
-                              'PayPal payment capture failed',
-                              'error'
-                            );
+                            this.showToast('PayPal payment capture failed', 'error');
                           },
                         });
                     },
@@ -258,10 +201,7 @@ export class OrderComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error creating order before PayPal:', err);
-          this.showToast(
-            'Please check your shipping info before proceeding to PayPal.',
-            'error'
-          );
+          this.showToast('Please check your shipping info before proceeding to PayPal.', 'error');
         },
       });
   }

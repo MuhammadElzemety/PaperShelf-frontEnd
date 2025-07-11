@@ -6,6 +6,8 @@ import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { RoleService } from '../../services/role.service';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../environments/environment';
+
 declare var bootstrap: any;
 
 
@@ -23,7 +25,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   getcart: any = { items: [], totalAmount: 0 };
   private cartSub!: Subscription;
   private cartInstance: any;
-
+  imgBaseUrl = environment.apiUrlForImgs;
+ 
   @ViewChild('cartSidebar') cartSidebar!: ElementRef;
 
 constructor(

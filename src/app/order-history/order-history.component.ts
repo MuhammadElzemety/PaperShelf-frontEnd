@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../environments/environment';  
 
 @Component({
   selector: 'app-order-history',
@@ -20,7 +21,7 @@ export class OrderHistoryComponent implements OnInit {
   }
 
   fetchOrders() {
-    this.http.get<any>('http://localhost:3000/api/orders').subscribe({
+    this.http.get<any>(`${environment.apiBase}/orders`).subscribe({ 
       next: (res) => {
         this.orders = res.data.orders;
         this.loading = false;

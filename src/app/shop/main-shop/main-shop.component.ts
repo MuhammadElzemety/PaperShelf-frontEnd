@@ -8,6 +8,7 @@ import { Book } from '../../interfaces/book';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-main-shop',
@@ -24,6 +25,7 @@ export class MainShopComponent {
   showSearch: boolean = false;
   isLoading = false;
   searchQuery: string = '';
+  wishlistUrl = `${environment.apiBaseUrl}/wishlist`;
 
   sort: string = 'createdAt'; // default sort field
   order: string = 'desc';     // default order
@@ -130,7 +132,7 @@ export class MainShopComponent {
   }
 
   loadWishlist() {
-    this.http.get('http://localhost:3000/api/wishlist').subscribe({
+    this.http.get(this.wishlistUrl).subscribe({  
       next: (res: any) => {
         this.wishlistIds = res.data.map((item: any) => item._id);
       },

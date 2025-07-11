@@ -89,7 +89,7 @@
         style="cursor: pointer;"
       >
         <div class="icon-circle d-flex align-items-center justify-content-center mx-auto">
-          <img [src]="'http://localhost:3000' + category.image" alt="{{ category.name }}" />
+          <img [src]="environment.apiUrlForImgs + category.image" alt="{{ category.name }}" />
         </div>
         <p class="mt-2 fw-semibold">{{ category.name }}</p>
       </div>
@@ -137,7 +137,7 @@
               <div class="product-item">
                 <figure class="product-style">
                   <img
-                    [src]="'http://localhost:3000/' + book.coverImage"
+                    [src]="environment.apiUrlForImgs + book.coverImage"
                     alt="{{ book.title }}"
                     class="product-item"
                   />
@@ -231,7 +231,7 @@
                   <img
                     [src]="
                       author.avatar
-                        ? 'http://localhost:3000/' + author.avatar
+                        ? environment.apiUrlForImgs + author.avatar
                         : '../../assets/imgs/author.jpg'
                     "
                     alt="{{ author.name }}"
