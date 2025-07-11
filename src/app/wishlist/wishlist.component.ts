@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { ProductService, WishlistItem } from '../services/product.service';
 import { Router } from '@angular/router';
 import { CartService } from '../services/cart.service';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-wishlist',
@@ -20,12 +19,15 @@ export class WishlistComponent implements OnInit {
   loading: boolean = true;
   error: string = '';
 
+  showToastFlag: boolean = false;
+  toastMessage: string = '';
+  toastType: 'success' | 'error' | 'info' | 'warning' = 'info';
+
   constructor(
     private productService: ProductService,
     private route: Router,
-    private cartService: CartService,
-    private toastr: ToastrService
-  ) { }
+    private cartService: CartService
+  ) {}
 
   ngOnInit(): void {
     this.loadProducts();
@@ -59,23 +61,17 @@ export class WishlistComponent implements OnInit {
 
   addToCart(item: WishlistItem): void {
     if (!item.inStock) {
-      this.toastr.warning(
-        `${item.name} is currently out of stock.`,
-        'Out of Stock'
-      );
+      this.showToast(`${item.name} is currently out of stock.`, 'warning');
       return;
     }
 
     this.cartService.addToCart({ bookId: item.id, quantity: 1 }).subscribe({
       next: () => {
-        this.toastr.success('Added to cart!', item.name);
+        this.showToast('Added to cart!', 'success');
         this.cartService.refreshCart();
       },
       error: (error) => {
-        this.toastr.error(
-          error.error?.message || `Failed to add "${item.name}" to cart.`,
-          'Error'
-        );
+        this.showToast(`Failed to add "${item.name}" to cart.`, 'error');
         console.error('Add to cart failed:', error);
       },
     });
@@ -85,29 +81,23 @@ export class WishlistComponent implements OnInit {
     const selectedItems = this.wishlistItems.filter((item) => item.selected);
 
     if (selectedItems.length === 0) {
-      this.toastr.info('Please select at least one item.', 'No Selection');
+      this.showToast('Please select at least one item.', 'info');
       return;
     }
 
     selectedItems.forEach((item) => {
       if (!item.inStock) {
-        this.toastr.warning(
-          `"${item.name}" is out of stock. Skipping.`,
-          'Out of Stock'
-        );
+        this.showToast(`"${item.name}" is out of stock. Skipping.`, 'warning');
         return;
       }
 
       this.cartService.addToCart({ bookId: item.id, quantity: 1 }).subscribe({
         next: () => {
-          this.toastr.success(`"${item.name}" added to cart!`, 'Added');
+          this.showToast(`"${item.name}" added to cart!`, 'success');
           this.cartService.refreshCart();
         },
         error: (err) => {
-          this.toastr.error(
-            err.error?.message || `Failed to add "${item.name}"`,
-            'Add Failed'
-          );
+          this.showToast(`Failed to add "${item.name}"`, 'error');
           console.error(`Failed to add "${item.name}" to cart:`, err);
         },
       });
@@ -141,10 +131,25 @@ export class WishlistComponent implements OnInit {
           (wishlistItem) => wishlistItem.id !== item.id
         );
         this.updateSelectAll();
+        this.showToast(`"${item.name}" removed from wishlist.`, 'info');
       },
       error: (err) => {
         console.error('Failed to delete from wishlist:', err);
+        this.showToast('Failed to delete item.', 'error');
       },
     });
+  }
+
+  showToast(
+    message: string,
+    type: 'success' | 'error' | 'info' | 'warning' = 'info'
+  ): void {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToastFlag = true;
+
+    setTimeout(() => {
+      this.showToastFlag = false;
+    }, 3000);
   }
 }

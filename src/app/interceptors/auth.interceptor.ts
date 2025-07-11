@@ -19,27 +19,30 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
+      if (
+        error.status === 401 &&
+        !req.url.includes('/auth/login') &&
+        !req.url.includes('/auth/register') &&
+        !req.url.includes('/auth/verify-email')
+      ) {
         return authService.refreshAccessToken().pipe(
           switchMap(() => {
             const newToken = localStorage.getItem('accessToken');
             if (!newToken) {
-              
               authService.logout();
-              router.navigate(['/login']);
+              router.navigate(['/auth/login']);
               return throwError(() => error);
             }
 
             const newAuthReq = req.clone({
-              setHeaders: { Authorization: `Bearer ${newToken}` }
+              setHeaders: { Authorization: `Bearer ${newToken}` },
             });
-            
+
             return next(newAuthReq);
           }),
           catchError((refreshError) => {
-            
             authService.logout();
-            router.navigate(['/login']);
+            router.navigate(['/auth/login']);
             return throwError(() => refreshError);
           })
         );

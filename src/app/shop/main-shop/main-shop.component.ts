@@ -10,10 +10,12 @@ import { Subject, debounceTime } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+
 @Component({
   selector: 'app-main-shop',
   standalone: true,
-  imports: [CommonModule, FilterComponent, BookCardComponent, FormsModule],
+  imports: [CommonModule, FilterComponent, BookCardComponent, FormsModule , InfiniteScrollModule],
   templateUrl: './main-shop.component.html',
   styleUrls: ['./main-shop.component.css']
 })
@@ -26,6 +28,10 @@ export class MainShopComponent {
   isLoading = false;
   searchQuery: string = '';
   wishlistUrl = `${environment.apiBaseUrl}/wishlist`;
+
+  searchPage = 1;
+  searchLoading = false;
+  searchFinished = false;
 
   sort: string = 'createdAt'; // default sort field
   order: string = 'desc';     // default order
@@ -83,15 +89,53 @@ export class MainShopComponent {
   }
 
   performSearch(query: string) {
-    if (!query.trim()) {
-      this.loadBooks();
-      return;
-    }
-    this.bookService.searchBooks(query, this.currentPage, this.itemsPerPage).subscribe(res => {
-      this.books = res.data.books;
-    });
+  if (!query.trim()) {
+    this.books = [];
+    this.pagination = null;
+    this.loadBooks(); // رجع للعرض العادي
+    return;
   }
 
+  this.searchPage = 1;
+  this.searchFinished = false;
+  this.books = [];
+  this.searchLoading = true;
+
+  this.bookService.searchBooks(query, this.searchPage, this.itemsPerPage).subscribe({
+    next: res => {
+      this.books = res.data.books;
+      if (res.data.books.length < this.itemsPerPage) {
+        this.searchFinished = true;
+      }
+    },
+    error: err => console.error('Search failed:', err),
+    complete: () => {
+      this.searchLoading = false;
+    }
+  });
+}
+onScrollSearch() {
+  if (this.searchLoading || this.searchFinished) return;
+
+  this.searchLoading = true;
+  this.searchPage++;
+
+  this.bookService.searchBooks(this.searchQuery, this.searchPage, this.itemsPerPage).subscribe({
+    next: res => {
+      const newBooks = res.data.books;
+      this.books = [...this.books, ...newBooks];
+      if (newBooks.length < this.itemsPerPage) {
+        this.searchFinished = true;
+      }
+    },
+    error: err => console.error('Error loading more search results:', err),
+    complete: () => {
+      this.searchLoading = false;
+    }
+  });
+}
+
+  
   onFiltersApplied(filters: any) {
     this.currentFilters = { ...this.currentFilters, ...filters };
     this.currentPage = 1;

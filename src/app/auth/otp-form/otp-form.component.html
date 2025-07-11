@@ -12,39 +12,32 @@
 
 <form [formGroup]="otpForm" (ngSubmit)="onSubmit()" class="login-form w-100" autocomplete="off">
     <div class="form-group mb-4 text-start">
-        <label for="password" class="form-label">Verfication Code</label>
+        <label for="otp" class="form-label">Verification Code</label>
         <input autocomplete="off" type="text" id="otp" name="otp" formControlName="otp"
-            placeholder="Enter your secret password" class="form-control"
+            placeholder="Enter your verification code" class="form-control"
             [ngClass]="{'is-invalid': otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched}">
         <div *ngIf="otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched"
             class="invalid-feedback validation-message">
-            <div *ngIf="otpForm.get('otp')?.errors?.['required']">Otp is required.</div>
-            <div *ngIf="otpForm.get('otp')?.errors?.['minlength']">Must be at least 6 Digit long.</div>
-            <div *ngIf="otpForm.get('otp')?.errors?.['maxlength']">Must be at least 6 Digit long.</div>
-            <!-- <div *ngIf="otpForm.get('password')?.errors?.['pattern']">
-                Password: A-Z, a-z, 0-9 & special ($!%*?&).
-            </div> -->
+            <div *ngIf="otpForm.get('otp')?.errors?.['required']">OTP is required.</div>
+            <div *ngIf="otpForm.get('otp')?.errors?.['minlength']">Must be exactly 6 digits.</div>
+            <div *ngIf="otpForm.get('otp')?.errors?.['maxlength']">Must be exactly 6 digits.</div>
         </div>
     </div>
 
     <div class="form-group mb-4 text-start">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label">New Password</label>
         <input autocomplete="off" type="password" id="password" name="password" formControlName="password"
-            placeholder="Enter your New password" class="form-control"
+            placeholder="Enter your new password" class="form-control"
             [ngClass]="{'is-invalid': otpForm.get('password')?.invalid && otpForm.get('password')?.touched}">
         <div *ngIf="otpForm.get('password')?.invalid && otpForm.get('password')?.touched"
             class="invalid-feedback validation-message">
             <div *ngIf="otpForm.get('password')?.errors?.['required']">Password is required.</div>
-            <div *ngIf="otpForm.get('password')?.errors?.['minlength']">Must be at least 8 characters long.
-            </div>
-            <div *ngIf="otpForm.get('password')?.errors?.['maxLength']">Cannot exceed 30 characters.</div>
-            <!-- <div *ngIf="otpForm.get('password')?.errors?.['pattern']">
-                Password: A-Z, a-z, 0-9 & special ($!%*?&).
-            </div> -->
+            <div *ngIf="otpForm.get('password')?.errors?.['minlength']">Must be at least 8 characters long.</div>
+            <div *ngIf="otpForm.get('password')?.errors?.['maxlength']">Cannot exceed 30 characters.</div>
         </div>
     </div>
 
-
-    <button type="submit" class="btn btn-primary w-100 fw-bold py-3 fs-5 login-btn" [disabled]="otpForm.invalid">Verify
-        Email</button>
+    <button type="submit" class="btn btn-primary w-100 fw-bold py-3 fs-5 login-btn" [disabled]="otpForm.invalid">
+        Reset Password
+    </button>
 </form>

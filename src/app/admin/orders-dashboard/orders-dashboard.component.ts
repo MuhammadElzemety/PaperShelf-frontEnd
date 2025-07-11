@@ -112,11 +112,11 @@ export class OrdersDashboardComponent implements OnInit {
   }
 
   changeOrderStatus(order: any, status: string) {
-    this.loadingOrderIds.push(order._id);
+    this.loadingOrderIds.push(order.orderId);
 
-    this.orderService.updateOrderStatus(order._id, { orderStatus: status }).subscribe({
+    this.orderService.updateOrderStatus(order.orderId, { orderStatus: status }).subscribe({
       next: (res) => {
-        order.orderStatus = res.data.orderStatus; 
+        order.statusOfOrder = res.data.orderStatus; 
         this.showAlert('success', 'Order status updated successfully.');
       },
       error: (err) => {
@@ -124,15 +124,15 @@ export class OrdersDashboardComponent implements OnInit {
         console.error(err);
       },
       complete: () => {
-        this.loadingOrderIds = this.loadingOrderIds.filter(id => id !== order._id);
+        this.loadingOrderIds = this.loadingOrderIds.filter(id => id !== order.orderId);
       }
     });
   }
 
   changePaymentStatus(order: any, status: string) {
-    this.loadingPaymentIds.push(order._id);
+    this.loadingPaymentIds.push(order.orderId);
   
-    this.orderService.updatePaymentStatus(order._id, { paymentStatus: status }).subscribe({
+    this.orderService.updatePaymentStatus(order.orderId, { paymentStatus: status }).subscribe({
       next: (res) => {
         order.paymentStatus = res.data.paymentStatus;
         this.showAlert('success', 'Payment status updated');
@@ -142,7 +142,7 @@ export class OrdersDashboardComponent implements OnInit {
         console.error(err);
       },
       complete: () => {
-        this.loadingPaymentIds = this.loadingPaymentIds.filter(id => id !== order._id);
+        this.loadingPaymentIds = this.loadingPaymentIds.filter(id => id !== order.orderId);
       }
     });
   }

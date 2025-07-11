@@ -135,7 +135,9 @@ export class ApprovedComponent implements OnInit {
   onViewReview(review: any) {
     this.selectedReview = review;
   }
+
   setPending(review: Review): void {
+    console.log(review.bookId, review.reviewId);
     this.reviewService.setReviewPending(review.bookId, review.reviewId).subscribe({
       next: (res) => {
         if (res.success) {
@@ -150,13 +152,15 @@ export class ApprovedComponent implements OnInit {
   }
   
   onPrepareDelete(review: Review): void {
+    console.log(review.bookId, review.reviewId);
     this.selectedReview = review;
   }
   
   confirmDelete(): void {
     if (!this.selectedReview) return;
+    const { bookId, reviewId } = this.selectedReview;
   
-    this.reviewService.deleteReview(this.selectedReview.reviewId).subscribe({
+    this.reviewService.deleteReview(bookId, reviewId).subscribe({
       next: (res) => {
         if (res.success) {
           this.showAlert('success', 'Review deleted successfully');
@@ -168,6 +172,7 @@ export class ApprovedComponent implements OnInit {
       error: () => this.showAlert('error', 'Error deleting review')
     });
   }
+  
   
   
   

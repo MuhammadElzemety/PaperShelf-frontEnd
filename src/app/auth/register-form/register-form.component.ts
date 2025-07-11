@@ -47,7 +47,17 @@ export class RegisterFormComponent {
       const { name, email, password, role } = this.registerForm.value;
 
       this.authService.register({ name, email, password, role }).subscribe({
-        next: () => this.router.navigate(['/auth/verify']),
+        next: (response) => {
+          // Store user data for verification flow
+          this.authService.setUnverifiedUserData({
+            email: email,
+            name: name,
+            role: role
+          });
+
+          // Redirect to verify component for email verification
+          this.router.navigate(['/auth/verify']);
+        },
         error: (err: any) => {
           this.errorMessage = err.error?.message || 'Registration failed. Please try again.';
         }

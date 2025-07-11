@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-otp-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './otp-form.component.html',
   styleUrl: './otp-form.component.css'
 })
@@ -35,37 +35,30 @@ export class OtpFormComponent {
       ]]
     });
   }
+
   onSubmit() {
-  this.errorMessage = null;
-  this.otpForm.markAllAsTouched();
+    this.errorMessage = null;
+    this.otpForm.markAllAsTouched();
 
-  if (this.otpForm.valid) {
-    const { otp, password } = this.otpForm.value;
+    if (this.otpForm.valid) {
+      const { otp, password } = this.otpForm.value;
 
-    this.otpserv.resetPassword({ otp, newPassword: password }).subscribe({
-      next: (response) => {
-        console.log('Password Change Successfuly', response);
-        localStorage.setItem('accessToken', response.accessToken);
-        localStorage.setItem('refreshToken', response.refreshToken);
-        this.verfiyMessage = 'Password changed successfully. Redirecting to login page...';
-        setTimeout(() => {
-          this.router.navigate(['/auth/login']);
-        }, 2000);
-      },
-      error: (err: any) => {
-        this.errorMessage = err.error?.message || 'Code Sent failed. Please try again.';
-      }
-    });
-  } else {
-    this.errorMessage = 'Please correct the highlighted errors to proceed.';
-    this.verfiyMessage = 'Password Notchanged successfully. ';
-        setTimeout(() => {
-          this.router.navigate(['/auth/login']);
-        }, 2000);
+      this.otpserv.resetPassword({ otp, newPassword: password }).subscribe({
+        next: (response) => {
+          console.log('Password Change Successfully', response);
+          localStorage.setItem('accessToken', response.accessToken);
+          localStorage.setItem('refreshToken', response.refreshToken);
+          this.verfiyMessage = 'Password changed successfully. Redirecting to login page...';
+          setTimeout(() => {
+            this.router.navigate(['/auth/login']);
+          }, 2000);
+        },
+        error: (err: any) => {
+          this.errorMessage = err.error?.message || 'Code Sent failed. Please try again.';
+        }
+      });
+    } else {
+      this.errorMessage = 'Please correct the highlighted errors to proceed.';
+    }
   }
-}
-
-
-  
-
 }

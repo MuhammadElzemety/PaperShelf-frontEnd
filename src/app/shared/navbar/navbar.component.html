@@ -73,7 +73,7 @@
         <div class="flex-grow-1">
           <div class="fw-bold">{{ cart.book.title }}</div>
           <div class="text-muted small">by {{ cart.book.author }}</div>
-          <div class="fw-semibold mt-1">${{ cart.priceAtTime }} × {{ cart.quantity }}</div>
+          <div class="fw-semibold mt-1">  ${{ (cart.priceAtTime + '').slice(0, 6) }} × {{ cart.quantity }}</div>
 
           <div class="btn-group mt-2" role="group">
   <button 
@@ -116,7 +116,7 @@
       <p class="fw-bold">Note : Max Items in Cart Is 10</p>
       <div class="d-flex justify-content-between mb-3">
         <strong>Subtotal:</strong>
-        <strong>${{ getcart.totalAmount }}</strong>
+        <strong>${{ (getcart.totalAmount + '').slice(0, 6) }}</strong>
       </div>
 
       <a routerLink="/shop"><button class="btn btn-light w-100 mb-2 fw-semibold rounded-3">Continue shopping</button></a>
