@@ -26,7 +26,7 @@ export class LoginFormComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private rolrserv: RoleService,
-    private cartService: CartService, 
+    private cartService: CartService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -48,29 +48,57 @@ export class LoginFormComponent {
 
       this.authService.login({ email, password }).subscribe({
         next: (response) => {
-          localStorage.setItem('accessToken', response.data.accessToken);
-          localStorage.setItem('refreshToken', response.data.refreshToken);
+          // Check if user is verified
+          if (response.data.user.isEmailVerified) {
+            // User is verified - proceed with normal login
+            localStorage.setItem('accessToken', response.data.accessToken);
+            localStorage.setItem('refreshToken', response.data.refreshToken);
 
-          this.rolrserv.setUser({
-            name: response.data.user.name,
-            email: response.data.user.email,
-            role: response.data.user.role,
-            token: response.data.accessToken
-          });
+            this.rolrserv.setUser({
+              name: response.data.user.name,
+              email: response.data.user.email,
+              role: response.data.user.role,
+              token: response.data.accessToken
+            });
 
-          this.cartService.refreshCart();
+            this.cartService.refreshCart();
 
-          const userRole = response.data.user.role;
-          setTimeout(() => {
-            if (userRole === 'admin') {
-              window.location.href = '/dashboard';
-            } else {
-              this.router.navigateByUrl('/home');
-            }
-          }, 10)
+            const userRole = response.data.user.role;
+            setTimeout(() => {
+              if (userRole === 'admin') {
+                window.location.href = '/dashboard';
+              } else {
+                this.router.navigateByUrl('/home');
+              }
+            }, 10);
+          } else {
+            // User is not verified - redirect to verify component
+            this.authService.setUnverifiedUserData({
+              email: response.data.user.email,
+              name: response.data.user.name,
+              role: response.data.user.role
+            });
+
+            // Redirect to verify component for email verification
+            this.router.navigate(['/auth/verify']);
+          }
         },
         error: (err: any) => {
-          this.errorMessage = err.error?.message || 'Login failed. Please try again.';
+          // Check if the error is due to unverified email
+          if (err.error?.message?.includes('Email not verified')) {
+            // Store user data and redirect to verify component
+            this.authService.setUnverifiedUserData({
+              email: email,
+              name: '', // We don't have this from error response
+              role: 'user' // Default role
+            });
+
+            // Redirect to verify component for email verification
+            this.router.navigate(['/auth/verify']);
+          } else {
+            // Handle other login errors
+            this.errorMessage = err.error?.message || 'Login failed. Please try again.';
+          }
         }
       });
     } else {

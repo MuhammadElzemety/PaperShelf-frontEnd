@@ -1,27 +1,48 @@
 <div class="login-header text-center mb-4">
     <h2 class="fw-bold text-dark" style="font-family: 'Merriweather', serif;">Welcome Back!</h2>
     <p class="slogan fs-6 text-muted">Confirm Your Email</p>
+    <p *ngIf="userEmail" class="text-muted small">Code sent to: {{ userEmail }}</p>
 </div>
 
 <div *ngIf="errorMessage" class="alert alert-danger text-center general-error-message">
     {{ errorMessage }}
 </div>
-<div *ngIf="!errorMessage" class="alert alert-success text-center general-success-message">
+<div *ngIf="successMessage" class="alert alert-success text-center">
+    {{ successMessage }}
+</div>
+<div *ngIf="!errorMessage && !successMessage" class="alert alert-success text-center general-success-message">
     Please Check Your Mail
 </div>
 
 <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()" class="login-form w-100" autocomplete="off">
     <div class="form-group mb-4 text-start">
         <label for="otp" class="form-label">OTP</label>
-        <input autocomplete="off" type="otp" id="otp" name="otp" formControlName="otp"
-            placeholder="Enter Code OTP" class="form-control"
+        <input autocomplete="off" type="text" id="otp" name="otp" formControlName="otp" placeholder="Enter Code OTP"
+            class="form-control"
             [ngClass]="{'is-invalid': verifyForm.get('otp')?.invalid && verifyForm.get('otp')?.touched}">
         <div *ngIf="verifyForm.get('otp')?.invalid && verifyForm.get('otp')?.touched"
             class="invalid-feedback validation-message">
             <div *ngIf="verifyForm.get('otp')?.errors?.['required']">OTP is required.</div>
+            <div *ngIf="verifyForm.get('otp')?.errors?.['minlength']">Must be exactly 6 digits.</div>
+            <div *ngIf="verifyForm.get('otp')?.errors?.['maxlength']">Must be exactly 6 digits.</div>
         </div>
     </div>
 
     <button type="submit" class="btn btn-primary w-100 fw-bold py-3 fs-5 login-btn"
         [disabled]="verifyForm.invalid">Verify</button>
 </form>
+
+<!-- Resend OTP Section -->
+<div *ngIf="userEmail" class="text-center mt-4">
+    <p class="text-muted mb-2">Didn't receive the code?</p>
+    <button type="button" class="btn btn-link text-decoration-none" (click)="resendOTP()">
+        Resend Verification Code
+    </button>
+</div>
+
+<!-- Back to Login Link -->
+<div class="text-center mt-3">
+    <a routerLink="/auth/login" class="text-decoration-none">
+        ← Back to Login
+    </a>
+</div>
