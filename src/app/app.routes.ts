@@ -31,6 +31,7 @@ import { AddBookComponent } from './author/add-book/add-book.component';
 import { MyBooksComponent } from './author/my-books/my-books.component';
 import { OrderComponent } from './order/order.component';
 import { OrdersDashboardComponent } from './admin/orders-dashboard/orders-dashboard.component';
+import { PendingBookComponent } from './admin/books-dashboard/pending-book/pending-book.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -72,6 +73,7 @@ export const routes: Routes = [
       { path: 'users', component: ListUsersDashboardComponent },
       { path: 'users/edit/:id', component: EditUserComponent },
       { path: 'books', component: BooksDashboardComponent },
+      { path: 'books/pending', component: PendingBookComponent },
       { path: 'books/view/:id', component: ViewBookComponent },
       { path: 'books/edit/:id', component: EditBookComponent },
       { path: 'reviews/approve', component: ApprovedComponent },
