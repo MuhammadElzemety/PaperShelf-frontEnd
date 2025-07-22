@@ -239,7 +239,7 @@ src/
 
 ```bash
 
-git clone https://github.com/your-username/PaperShelf-frontEnd.git
+git clone https://github.com/MuhammadElzemety/PaperShelf-frontEnd.git
 
 cd PaperShelf-frontEnd
 
